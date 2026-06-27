@@ -1,0 +1,281 @@
+@use '../styles/variables' as *;
+
+.m3 {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: $color-bg;
+  overflow: hidden;
+
+  * {
+    text-transform: uppercase;
+    font-weight: 700;
+  }
+
+  /* ── PLACEHOLDERS 1:1 ── */
+
+  &__img {
+    aspect-ratio: 1;
+    background: #1c1c1c;
+    border-radius: 6px;
+    flex-shrink: 0;
+
+    &--lg { height: 7em; }
+    &--md { height: 4.5em; }
+    &--sm { height: 3em; }
+  }
+
+  /* ── HEADER ── */
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.65em 2em;
+    border-bottom: 1px solid $color-border;
+    flex-shrink: 0;
+  }
+
+  &__brand {
+    font-family: $font-display;
+    font-weight: 900;
+    font-size: 1.2em;
+    color: $color-white;
+    display: flex;
+    flex-direction: column;
+    line-height: 0.9;
+    span { display: block; }
+  }
+
+  &__page-title {
+    font-family: $font-display;
+    font-weight: 900;
+    font-size: 2em;
+    color: $color-white;
+    letter-spacing: 0.05em;
+  }
+
+  &__head-right {
+    display: flex;
+    align-items: center;
+    gap: 0.9em;
+  }
+
+  &__menu-note {
+    display: flex;
+    align-items: center;
+    gap: 0.6em;
+    padding: 0.4em 0.9em;
+    background: $color-bg-section;
+    border-radius: 2px;
+
+    span {
+      font-size: 0.6em;
+      letter-spacing: 0.12em;
+      color: $color-muted;
+    }
+    strong {
+      font-family: $font-display;
+      font-weight: 900;
+      font-size: 0.95em;
+      color: $color-white;
+    }
+  }
+
+  &__halal {
+    font-family: $font-display;
+    font-weight: 700;
+    font-size: 0.7em;
+    letter-spacing: 0.22em;
+    color: $color-bg;
+    background: $color-white;
+    padding: 0.35em 1em;
+    border-radius: 2px;
+  }
+
+  /* ── ROW BASE ── */
+
+  &__row {
+    border-bottom: 1px solid $color-border;
+    min-height: 0;
+  }
+
+  &__spine {
+    flex-shrink: 0;
+    width: 2.6em;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1em;
+    border-right: 1px solid $color-border;
+
+    span {
+      font-family: $font-display;
+      font-weight: 700;
+      font-size: 0.62em;
+      letter-spacing: 0.3em;
+      color: $color-muted;
+      writing-mode: vertical-rl;
+      transform: rotate(180deg);
+      white-space: nowrap;
+    }
+  }
+
+  &__spine-surcharge {
+    font-weight: 900 !important;
+    font-size: 0.85em !important;
+    letter-spacing: 0.1em !important;
+    color: $color-white !important;
+  }
+
+  /* ── GRID CARDS ── */
+
+  &__grid {
+    flex: 1;
+    display: grid;
+    min-height: 0;
+
+    &--6 { grid-template-columns: repeat(6, 1fr); }
+  }
+
+  &__tcard {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4em;
+    padding: 0.4em;
+    border-right: 1px solid $color-border;
+
+    &:last-child { border-right: none; }
+  }
+
+  &__tcard-name {
+    font-family: $font-display;
+    font-weight: 700;
+    font-size: 0.78em;
+    color: $color-white;
+    text-align: center;
+    line-height: 1.1;
+  }
+
+  /* ── TON STYLE (M/L/XL, line 1) ── */
+
+  &__tailles {
+    flex: 1.3;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+
+  &__bcard {
+    display: flex;
+    align-items: center;
+    gap: 1.2em;
+    padding: 0 2em;
+    border-right: 1px solid $color-border;
+    transition: background 1.6s ease;
+
+    &:last-child { border-right: none; }
+
+    &--active {
+      background: $color-white;
+      .m3__taille-letter  { color: $color-price-text; }
+      .m3__taille-viandes { color: rgba(0,0,0,.45); }
+      .m3__bcard-price    { color: $color-price-text; }
+    }
+  }
+
+  &__taille-letter {
+    font-family: $font-display;
+    font-weight: 900;
+    font-size: 5em;
+    color: $color-white;
+    line-height: 0.8;
+    letter-spacing: -0.04em;
+    flex-shrink: 0;
+    transition: color 1.6s ease;
+  }
+
+  &__bcard-text {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__taille-viandes {
+    font-size: 0.85em;
+    color: $color-muted;
+    line-height: 1.2;
+    transition: color 1.6s ease;
+  }
+
+  &__bcard-price {
+    font-family: $font-display;
+    font-weight: 900;
+    font-size: 2.6em;
+    color: $color-white;
+    letter-spacing: -0.02em;
+    line-height: 1;
+    flex-shrink: 0;
+    transform-origin: center;
+    transition: color 1.6s ease;
+  }
+
+  /* ── TA VIANDE (line 2) ── */
+
+  &__viandes {
+    flex: 1;
+    display: flex;
+  }
+
+  /* ── TES SAUCES (line 3) ── */
+
+  &__sauces {
+    flex: 0 0 auto;
+    display: flex;
+  }
+
+  &__sauces-grid {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  &__sauce-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4em;
+    padding: 0.7em 2em;
+    border-right: 1px solid $color-border;
+
+    &:last-child { border-right: none; }
+
+    &--hot .m3__sauce-sub { color: $color-white; }
+  }
+
+  &__sauce-sub {
+    font-family: $font-display;
+    font-weight: 700;
+    font-size: 0.58em;
+    letter-spacing: 0.2em;
+    color: $color-dim;
+  }
+
+  &__sauce-items {
+    font-size: 0.72em;
+    color: $color-muted;
+    line-height: 1.5;
+  }
+
+  /* ── TES EXTRAS (line 4) ── */
+
+  &__extras {
+    flex: 1;
+    display: flex;
+    border-bottom: none;
+  }
+
+}

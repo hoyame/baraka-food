@@ -1,0 +1,259 @@
+@use '../styles/variables' as *;
+
+.m1 {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: $color-bg;
+  overflow: hidden;
+
+  * {
+    text-transform: uppercase;
+    font-weight: 700;
+  }
+
+  /* ── PLACEHOLDERS 1:1 ── */
+
+  &__img {
+    aspect-ratio: 1;
+    background: #1c1c1c;
+    border-radius: 6px;
+    flex-shrink: 0;
+
+    &--lg { height: 11em; }
+    &--md { height: 4.5em; }
+    &--sm { height: 3em; }
+  }
+
+  /* ── HEADER ── */
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.65em 2em;
+    border-bottom: 1px solid $color-border;
+    flex-shrink: 0;
+  }
+
+  &__brand {
+    font-family: $font-display;
+    font-weight: 900;
+    font-size: 1.2em;
+    color: $color-white;
+    display: flex;
+    flex-direction: column;
+    line-height: 0.9;
+    span { display: block; }
+  }
+
+  &__page-title {
+    font-family: $font-display;
+    font-weight: 900;
+    font-size: 2em;
+    color: $color-white;
+    letter-spacing: 0.05em;
+  }
+
+  &__head-right {
+    display: flex;
+    align-items: center;
+    gap: 0.9em;
+  }
+
+  &__menu-note {
+    display: flex;
+    align-items: center;
+    gap: 0.6em;
+    padding: 0.4em 0.9em;
+    background: $color-bg-section;
+    border-radius: 2px;
+
+    span {
+      font-size: 0.6em;
+      letter-spacing: 0.12em;
+      color: $color-muted;
+    }
+    strong {
+      font-family: $font-display;
+      font-weight: 900;
+      font-size: 0.95em;
+      color: $color-white;
+    }
+  }
+
+  &__halal {
+    font-family: $font-display;
+    font-weight: 700;
+    font-size: 0.7em;
+    letter-spacing: 0.22em;
+    color: $color-bg;
+    background: $color-white;
+    padding: 0.35em 1em;
+    border-radius: 2px;
+  }
+
+  /* ── ROW BASE ── */
+
+  &__row {
+    border-bottom: 1px solid $color-border;
+    min-height: 0;
+  }
+
+  &__spine {
+    flex-shrink: 0;
+    width: 2.6em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-right: 1px solid $color-border;
+
+    span {
+      font-family: $font-display;
+      font-weight: 700;
+      font-size: 0.62em;
+      letter-spacing: 0.3em;
+      color: $color-muted;
+      writing-mode: vertical-rl;
+      transform: rotate(180deg);
+      white-space: nowrap;
+    }
+  }
+
+  /* ── BURGERS (line 1, biggest) ── */
+
+  &__burgers {
+    flex: 1.8;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+
+  &__bcard {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 0.7em;
+    padding: 1em 1.6em;
+    border-right: 1px solid $color-border;
+    transition: background 1.6s ease;
+
+    &:last-child { border-right: none; }
+
+    &--active {
+      background: $color-white;
+      .m1__img          { background: #e0e0dc; }
+      .m1__bcard-label  { color: rgba(0,0,0,.3); }
+      .m1__bcard-name   { color: $color-price-text; }
+      .m1__bcard-desc   { color: rgba(0,0,0,.4); }
+      .m1__bcard-price  { color: $color-price-text; }
+    }
+  }
+
+  &__bcard-text {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.2em;
+    min-width: 0;
+  }
+
+  &__bcard-label {
+    font-family: $font-display;
+    font-weight: 600;
+    font-size: 0.55em;
+    letter-spacing: 0.2em;
+    color: $color-dim;
+  }
+
+  &__bcard-name {
+    font-family: $font-display;
+    font-weight: 900;
+    font-size: 1.15em;
+    color: $color-white;
+    line-height: 1.05;
+    transition: color 1.6s ease;
+
+    &--xl { font-size: 1.6em; }
+  }
+
+  &__bcard-desc {
+    font-size: 0.68em;
+    color: $color-muted;
+    line-height: 1.4;
+    transition: color 1.6s ease;
+  }
+
+  &__bcard-price {
+    font-family: $font-display;
+    font-weight: 900;
+    font-size: 2.2em;
+    color: $color-white;
+    letter-spacing: -0.02em;
+    line-height: 1;
+    flex-shrink: 0;
+    transition: color 1.6s ease;
+  }
+
+  /* ── TEXMEX (line 2, medium) ── */
+
+  &__texmex {
+    flex: 1;
+    display: flex;
+  }
+
+  &__texmex-grid {
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    min-height: 0;
+  }
+
+  &__tcard {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35em;
+    padding: 0.4em;
+    border-right: 1px solid $color-border;
+
+    &:last-child { border-right: none; }
+  }
+
+  &__tcard-name {
+    font-family: $font-display;
+    font-weight: 700;
+    font-size: 0.7em;
+    color: $color-white;
+    text-align: center;
+    line-height: 1.1;
+  }
+
+  &__tcard-price {
+    font-family: $font-display;
+    font-weight: 900;
+    font-size: 1.3em;
+    color: $color-white;
+    letter-spacing: -0.02em;
+    line-height: 1;
+    transform-origin: center;
+  }
+
+  /* ── SUPPLÉMENTS (line 3, text) ── */
+
+  &__sups {
+    flex: 1;
+    display: flex;
+    border-bottom: none;
+  }
+
+  &__sups-grid {
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    min-height: 0;
+  }
+}
