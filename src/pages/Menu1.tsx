@@ -1,7 +1,26 @@
 import { motion, useReducedMotion } from 'framer-motion'
 import { burgersData } from '../data/menu'
 import { imgFloat, priceWave, useSpotlight } from '../lib/menuMotion'
+import logo from '../assets/logo.svg'
+import tendersImg from '../assets/tenders.png'
+import nuggetsImg from '../assets/nuggets.png'
+import sticksMozzaImg from '../assets/sticks-mozza.png'
+import camambertImg from '../assets/camambert.png'
+import wingsImg from '../assets/wings.png'
+import jalapenosImg from '../assets/jalapenos.png'
+import fritesImg from '../assets/frites.png'
+import cheddarImg from '../assets/cheddar.png'
+import oeufImg from '../assets/oeuf.png'
+import jambonImg from '../assets/jambon.png'
+import viandeHacheImg from '../assets/viandehache.png'
+import burger1Img from '../assets/burger1.png'
+import burger2Img from '../assets/burger2.png'
+import burger3Img from '../assets/burger3.png'
 import './Menu1.scss'
+
+const TEXMEX_IMAGES = [tendersImg, nuggetsImg, sticksMozzaImg, camambertImg, wingsImg, jalapenosImg]
+const SUPPLEMENT_IMAGES = [fritesImg, cheddarImg, oeufImg, jambonImg, viandeHacheImg]
+const BURGER_IMAGES = [burger1Img, burger2Img]
 
 const BURGER_CARDS = [
   { label: 'LE CLASSIQUE', name: 'Kefta ou Poulet', desc: 'Crudités · Fromage', price: 8.00 },
@@ -13,19 +32,17 @@ const SUPPLEMENTS = [
   ...burgersData.supplements.plus2.map(name => ({ name, price: '+2€' })),
 ]
 
-const BURGER_COUNT = BURGER_CARDS.length + 1
 const SCALE_COUNT = burgersData.texmex.length + SUPPLEMENTS.length
 
 export default function Menu1() {
   const reduced = useReducedMotion()
-  const burgerSpot = useSpotlight(BURGER_COUNT, 9000, reduced)
   const scaleSpot = useSpotlight(SCALE_COUNT, 7000, reduced)
 
   return (
     <div className="m1">
       <header className="m1__header">
-        <div className="m1__brand">BARAKA<span>FOOD</span></div>
-        <h1 className="m1__page-title">LES MEGA CHEESE</h1>
+        <img className="m1__brand" src={logo} alt="Baraka Food" />
+        <h1 className="m1__page-title">NOS BURGERS</h1>
         <div className="m1__head-right">
           <div className="m1__menu-note">
             <span>Menu Frites + Boisson</span>
@@ -40,12 +57,17 @@ export default function Menu1() {
         {BURGER_CARDS.map((item, i) => (
           <motion.div
             key={i}
-            className={`m1__bcard${burgerSpot === i ? ' m1__bcard--active' : ''}`}
+            className="m1__bcard"
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.45, delay: i * 0.08 }}
           >
-            <div className="m1__img m1__img--lg" />
+            <motion.img
+              className="m1__img m1__img--lg m1__img--photo"
+              src={BURGER_IMAGES[i]}
+              alt={item.name}
+              {...imgFloat(i, reduced)}
+            />
             <div className="m1__bcard-text">
               <p className="m1__bcard-label">{item.label}</p>
               <h2 className="m1__bcard-name">{item.name}</h2>
@@ -56,12 +78,17 @@ export default function Menu1() {
         ))}
 
         <motion.div
-          className={`m1__bcard${burgerSpot === 2 ? ' m1__bcard--active' : ''}`}
+          className="m1__bcard"
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.45, delay: 0.18 }}
         >
-          <div className="m1__img m1__img--lg" />
+          <motion.img
+            className="m1__img m1__img--lg m1__img--photo"
+            src={burger3Img}
+            alt="Crunchy"
+            {...imgFloat(2, reduced)}
+          />
           <div className="m1__bcard-text">
             <p className="m1__bcard-label">L'INCONTOURNABLE</p>
             <h2 className="m1__bcard-name m1__bcard-name--xl">Crunchy</h2>
@@ -83,7 +110,12 @@ export default function Menu1() {
               animate={{ opacity: 1, y: 0, scale: scaleSpot === i ? 1.09 : 1 }}
               transition={{ duration: 1.6, delay: 0.1 + i * 0.05 }}
             >
-              <motion.div className="m1__img m1__img--md" {...imgFloat(i, reduced)} />
+              <motion.img
+                className="m1__img m1__img--md m1__img--photo"
+                src={TEXMEX_IMAGES[i]}
+                alt={item.name}
+                {...imgFloat(i, reduced)}
+              />
               <span className="m1__tcard-name">{item.name}</span>
               <motion.span className="m1__tcard-price" {...priceWave(i, reduced)}>
                 {item.price.toFixed(2)}€
@@ -105,7 +137,12 @@ export default function Menu1() {
               animate={{ opacity: 1, y: 0, scale: scaleSpot === burgersData.texmex.length + i ? 1.09 : 1 }}
               transition={{ duration: 1.6, delay: 0.1 + i * 0.05 }}
             >
-              <motion.div className="m1__img m1__img--md" {...imgFloat(i, reduced)} />
+              <motion.img
+                className="m1__img m1__img--md m1__img--photo"
+                src={SUPPLEMENT_IMAGES[i]}
+                alt={item.name}
+                {...imgFloat(i, reduced)}
+              />
               <span className="m1__tcard-name">{item.name}</span>
               <motion.span className="m1__tcard-price" {...priceWave(i, reduced)}>
                 {item.price}

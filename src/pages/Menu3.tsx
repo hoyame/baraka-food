@@ -1,7 +1,25 @@
 import { motion, useReducedMotion } from 'framer-motion'
 import { tacosData } from '../data/menu'
 import { imgFloat, priceWave, useSpotlight } from '../lib/menuMotion'
+import logo from '../assets/logo.svg'
+import tendersImg from '../assets/tenders.png'
+import nuggetsImg from '../assets/nuggets.png'
+import viandeHacheImg from '../assets/viandehache.png'
+import escalopeImg from '../assets/escalope.png'
+import pouletMarineImg from '../assets/poulet-marine.png'
+import cordonBleuImg from '../assets/cordonbleu.png'
+import cheddarImg from '../assets/cheddar.png'
+import emmentalRapeImg from '../assets/emmental-rape.png'
+import chevreImg from '../assets/chevre.png'
+import racletteImg from '../assets/raclette.png'
+import oignonsCrispyImg from '../assets/oignons-crispy.png'
+import jambonImg from '../assets/jambon.png'
 import './Menu3.scss'
+
+// ordre = tacosData.viandes : Kefta, Poulet, Poulet Mariné, Cordon Bleu, Tenders, Nuggets
+const VIANDE_IMAGES = [viandeHacheImg, escalopeImg, pouletMarineImg, cordonBleuImg, tendersImg, nuggetsImg]
+// ordre = tacosData.extras.items : Cheddar, Emmental Râpé, Chèvre, Raclette, Oignons Frits, Jambon
+const EXTRA_IMAGES = [cheddarImg, emmentalRapeImg, chevreImg, racletteImg, oignonsCrispyImg, jambonImg]
 
 const SCALE_COUNT = tacosData.viandes.length + tacosData.extras.items.length
 
@@ -13,7 +31,7 @@ export default function Menu3() {
   return (
     <div className="m3">
       <header className="m3__header">
-        <div className="m3__brand">BARAKA<span>FOOD</span></div>
+        <img className="m3__brand" src={logo} alt="Baraka Food" />
         <h1 className="m3__page-title">COMPOSE TON TACOS</h1>
         <div className="m3__head-right">
           <div className="m3__menu-note">
@@ -57,7 +75,7 @@ export default function Menu3() {
               animate={{ opacity: 1, y: 0, scale: scaleSpot === i ? 1.09 : 1 }}
               transition={{ duration: 1.6, delay: 0.1 + i * 0.05 }}
             >
-              <motion.div className="m3__img m3__img--md" {...imgFloat(i, reduced)} />
+              <motion.img className="m3__img m3__img--md m3__img--photo" src={VIANDE_IMAGES[i]} alt={v.name} {...imgFloat(i, reduced)} />
               <span className="m3__tcard-name">{v.name}</span>
             </motion.div>
           ))}
@@ -81,23 +99,26 @@ export default function Menu3() {
 
       {/* ── TES EXTRAS ── */}
       <section className="m3__row m3__extras">
-        <div className="m3__spine m3__spine--extras">
-          <span>TES EXTRAS</span>
-          <span className="m3__spine-surcharge">{tacosData.extras.surcharge}</span>
+        <div className="m3__extras-main">
+          <div className="m3__spine"><span>TES EXTRAS</span></div>
+          <div className="m3__grid m3__grid--6">
+            {tacosData.extras.items.map((e, i) => (
+              <motion.div
+                key={i}
+                className="m3__tcard"
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0, scale: scaleSpot === tacosData.viandes.length + i ? 1.09 : 1 }}
+                transition={{ duration: 1.6, delay: 0.1 + i * 0.05 }}
+              >
+                <motion.img className="m3__img m3__img--md m3__img--photo" src={EXTRA_IMAGES[i]} alt={e} {...imgFloat(i, reduced)} />
+                <span className="m3__tcard-name">{e}</span>
+              </motion.div>
+            ))}
+          </div>
         </div>
-        <div className="m3__grid m3__grid--6">
-          {tacosData.extras.items.map((e, i) => (
-            <motion.div
-              key={i}
-              className="m3__tcard"
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0, scale: scaleSpot === tacosData.viandes.length + i ? 1.09 : 1 }}
-              transition={{ duration: 1.6, delay: 0.1 + i * 0.05 }}
-            >
-              <motion.div className="m3__img m3__img--md" {...imgFloat(i, reduced)} />
-              <span className="m3__tcard-name">{e}</span>
-            </motion.div>
-          ))}
+        <div className="m3__extras-price">
+          <span>Supplément</span>
+          <strong>{tacosData.extras.surcharge}</strong>
         </div>
       </section>
 

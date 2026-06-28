@@ -1,7 +1,27 @@
 import { motion, useReducedMotion } from 'framer-motion'
 import { sandwichsData, burgersData } from '../data/menu'
 import { imgFloat, priceWave, useSpotlight } from '../lib/menuMotion'
+import logo from '../assets/logo.svg'
+import keftaFromageImg from '../assets/kefta-fromage.png'
+import keftaFritesImg from '../assets/kefta-frites.png'
+import pouletFromageImg from '../assets/poulet-fromage.png'
+import pouletFritesImg from '../assets/poulet-frites.png'
+import pouletMarineFromageImg from '../assets/poulet-marine-fromage.png'
+import pouletMarineFritesImg from '../assets/poulet-marine-frites.png'
+import fritesImg from '../assets/frites.png'
+import cheddarImg from '../assets/cheddar.png'
+import oeufImg from '../assets/oeuf.png'
+import jambonImg from '../assets/jambon.png'
+import viandeHacheImg from '../assets/viandehache.png'
+import crunchyImg from '../assets/cruchy.png'
+import kidsImg from '../assets/kids.png'
 import './Menu2.scss'
+
+const CLASSIQUES_IMAGES = [
+  keftaFromageImg, keftaFritesImg, pouletFromageImg,
+  pouletFritesImg, pouletMarineFromageImg, pouletMarineFritesImg,
+]
+const SUPPLEMENT_IMAGES = [fritesImg, cheddarImg, oeufImg, jambonImg, viandeHacheImg]
 
 const SUPPLEMENTS = [
   ...sandwichsData.supplements.plus1.map(name => ({ name, price: '+1€' })),
@@ -17,7 +37,7 @@ export default function Menu2() {
   return (
     <div className="m2">
       <header className="m2__header">
-        <div className="m2__brand">BARAKA<span>FOOD</span></div>
+        <img className="m2__brand" src={logo} alt="Baraka Food" />
         <h1 className="m2__page-title">LES SANDWICHS</h1>
         <div className="m2__head-right">
           <div className="m2__menu-note">
@@ -40,7 +60,12 @@ export default function Menu2() {
               animate={{ opacity: 1, y: 0, scale: scaleSpot === i ? 1.09 : 1 }}
               transition={{ duration: 1.6, delay: 0.1 + i * 0.05 }}
             >
-              <motion.div className="m2__img m2__img--md" {...imgFloat(i, reduced)} />
+              <motion.img
+                className="m2__img m2__img--md m2__img--photo"
+                src={CLASSIQUES_IMAGES[i]}
+                alt={item.name}
+                {...imgFloat(i, reduced)}
+              />
               <span className="m2__tcard-name">{item.name}</span>
               <motion.span className="m2__tcard-price" {...priceWave(i, reduced)}>
                 {item.price.toFixed(2)}€
@@ -58,7 +83,12 @@ export default function Menu2() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.45, delay: 0.18 }}
         >
-          <motion.div className="m2__img m2__img--lg" {...imgFloat(0, reduced)} />
+          <motion.img
+            className="m2__img m2__img--lg m2__img--photo"
+            src={crunchyImg}
+            alt="Crunchy"
+            {...imgFloat(0, reduced)}
+          />
           <div className="m2__bcard-text">
             <p className="m2__bcard-label">L'INCONTOURNABLE</p>
             <h2 className="m2__bcard-name m2__bcard-name--xl">Crunchy</h2>
@@ -80,7 +110,12 @@ export default function Menu2() {
               animate={{ opacity: 1, y: 0, scale: scaleSpot === sandwichsData.classiques.length + i ? 1.09 : 1 }}
               transition={{ duration: 1.6, delay: 0.1 + i * 0.05 }}
             >
-              <motion.div className="m2__img m2__img--md" {...imgFloat(i, reduced)} />
+              <motion.img
+                className="m2__img m2__img--md m2__img--photo"
+                src={SUPPLEMENT_IMAGES[i]}
+                alt={item.name}
+                {...imgFloat(i, reduced)}
+              />
               <span className="m2__tcard-name">{item.name}</span>
               <motion.span className="m2__tcard-price" {...priceWave(i, reduced)}>
                 {item.price}
@@ -92,10 +127,13 @@ export default function Menu2() {
 
       {/* ── MENUS & PLUS ── */}
       <section className="m2__row m2__bottom">
-        <div className="m2__spine"><span>MENUS &amp; PLUS</span></div>
-
         <div className="m2__menukids">
-          <motion.div className="m2__img m2__img--md" {...imgFloat(0, reduced)} />
+          <motion.img
+            className="m2__img m2__img--md m2__img--photo"
+            src={kidsImg}
+            alt="Menu Kids"
+            {...imgFloat(0, reduced)}
+          />
           <div className="m2__menukids-text">
             <span className="m2__menukids-title">MENU KIDS</span>
             <p className="m2__menukids-desc">{burgersData.menuKids.desc}</p>
@@ -125,6 +163,8 @@ export default function Menu2() {
             ))}
           </div>
         </div>
+
+        <div className="m2__spine m2__spine--right"><span>MENUS &amp; PLUS</span></div>
       </section>
     </div>
   )

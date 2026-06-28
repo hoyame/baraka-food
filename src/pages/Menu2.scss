@@ -24,36 +24,46 @@
     &--lg { height: 7em; }
     &--md { height: 4.5em; }
     &--sm { height: 3em; }
+
+    &--photo {
+      aspect-ratio: auto;
+      background: none;
+      border-radius: 0;
+      width: auto;
+      object-fit: contain;
+      filter: drop-shadow(0 4px 14px rgba(0, 0, 0, 0.6));
+    }
   }
 
   /* ── HEADER ── */
 
   &__header {
+    position: relative;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0.65em 2em;
+    padding: 1.05em 2em;
     border-bottom: 1px solid $color-border;
     flex-shrink: 0;
   }
 
   &__brand {
-    font-family: $font-display;
-    font-weight: 900;
-    font-size: 1.2em;
-    color: $color-white;
-    display: flex;
-    flex-direction: column;
-    line-height: 0.9;
-    span { display: block; }
+    height: 2.6em;
+    width: auto;
+    display: block;
   }
 
   &__page-title {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
     font-family: $font-display;
     font-weight: 900;
     font-size: 2em;
     color: $color-white;
     letter-spacing: 0.05em;
+    white-space: nowrap;
   }
 
   &__head-right {
@@ -119,6 +129,11 @@
       transform: rotate(180deg);
       white-space: nowrap;
     }
+
+    &--right {
+      border-right: none;
+      border-left: 1px solid $color-border;
+    }
   }
 
   /* ── CLASSIQUES (line 1) ── */
@@ -182,7 +197,6 @@
 
     &--featured {
       background: $color-white;
-      .m2__img          { background: #e0e0dc; }
       .m2__bcard-label  { color: rgba(0,0,0,.3); }
       .m2__bcard-name   { color: $color-price-text; }
       .m2__bcard-desc   { color: rgba(0,0,0,.4); }
@@ -262,8 +276,6 @@
     padding: 0.7em 2em;
     background: $color-white;
     border-right: 1px solid $color-border;
-
-    .m2__img { background: #e0e0dc; }
   }
 
   &__menukids-text {
