@@ -1,167 +1,139 @@
 import { motion, useReducedMotion } from 'framer-motion'
-import { sandwichsData, burgersData } from '../data/menu'
-import { imgFloat, priceWave, useSpotlight } from '../lib/menuMotion'
+import { useMenu } from '../hooks/useMenu'
+import { imgUrl } from '../lib/api'
+import { imgFloat, useSpotlight } from '../lib/menuMotion'
 import logo from '../assets/logo.svg'
-import keftaFromageImg from '../assets/kefta-fromage.png'
-import keftaFritesImg from '../assets/kefta-frites.png'
-import pouletFromageImg from '../assets/poulet-fromage.png'
-import pouletFritesImg from '../assets/poulet-frites.png'
-import pouletMarineFromageImg from '../assets/poulet-marine-fromage.png'
-import pouletMarineFritesImg from '../assets/poulet-marine-frites.png'
-import fritesImg from '../assets/frites.png'
-import cheddarImg from '../assets/cheddar.png'
-import oeufImg from '../assets/oeuf.png'
-import jambonImg from '../assets/jambon.png'
-import viandeHacheImg from '../assets/viandehache.png'
-import crunchyImg from '../assets/cruchy.png'
-import kidsImg from '../assets/kids.png'
 import './Menu2.scss'
 
-const CLASSIQUES_IMAGES = [
-  keftaFromageImg, keftaFritesImg, pouletFromageImg,
-  pouletFritesImg, pouletMarineFromageImg, pouletMarineFritesImg,
-]
-const SUPPLEMENT_IMAGES = [fritesImg, cheddarImg, oeufImg, jambonImg, viandeHacheImg]
-
-const SUPPLEMENTS = [
-  ...sandwichsData.supplements.plus1.map(name => ({ name, price: '+1€' })),
-  ...sandwichsData.supplements.plus2.map(name => ({ name, price: '+2€' })),
-]
-
-const SCALE_COUNT = sandwichsData.classiques.length + SUPPLEMENTS.length
-
 export default function Menu2() {
+  const menu = useMenu()
   const reduced = useReducedMotion()
-  const scaleSpot = useSpotlight(SCALE_COUNT, 7000, reduced)
+  const scaleCount = (menu?.page2.classiques.length ?? 0) + (menu?.supplements.length ?? 0)
+  const scaleSpot = useSpotlight(scaleCount, 3200, reduced)
+
+  if (!menu) return null
+
+  const { page2, supplements, note } = menu
 
   return (
     <div className="m2">
       <header className="m2__header">
         <img className="m2__brand" src={logo} alt="Baraka Food" />
-        <h1 className="m2__page-title">LES SANDWICHS</h1>
+        <h1 className="m2__page-title">{page2.title}</h1>
         <div className="m2__head-right">
           <div className="m2__menu-note">
-            <span>Menu Frites + Boisson</span>
-            <strong>+3.50€</strong>
+            <span>{note.label}</span>
+            <strong>{note.price}</strong>
           </div>
           <div className="m2__halal">HALAL</div>
         </div>
       </header>
 
-      {/* ── CLASSIQUES ── */}
       <section className="m2__row m2__classiques">
         <div className="m2__spine"><span>CLASSIQUES</span></div>
         <div className="m2__classiques-grid">
-          {sandwichsData.classiques.map((item, i) => (
+          {page2.classiques.map((item, i) => (
             <motion.div
-              key={i}
-              className="m2__tcard"
+              key={item.id}
+              className={`m2__tcard${item.available ? '' : ' is-off'}`}
               initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0, scale: scaleSpot === i ? 1.09 : 1 }}
-              transition={{ duration: 1.6, delay: 0.1 + i * 0.05 }}
+              animate={{ opacity: 1, y: 0, scale: item.available && scaleSpot === i ? 1.15 : 1 }}
+              transition={{ duration: 0.6, delay: 0.1 + i * 0.05 }}
             >
               <motion.img
                 className="m2__img m2__img--md m2__img--photo"
-                src={CLASSIQUES_IMAGES[i]}
+                src={imgUrl(item.img)}
                 alt={item.name}
                 {...imgFloat(i, reduced)}
               />
               <span className="m2__tcard-name">{item.name}</span>
-              <motion.span className="m2__tcard-price" {...priceWave(i, reduced)}>
-                {item.price.toFixed(2)}€
-              </motion.span>
+              <span className="m2__tcard-price">{item.price.toFixed(2)}€</span>
+              {!item.available && <span className="off-badge">ÉPUISÉ</span>}
             </motion.div>
           ))}
         </div>
       </section>
 
-      {/* ── CRUNCHY (featured) ── */}
       <section className="m2__row m2__featured-row">
         <motion.div
-          className="m2__bcard m2__bcard--featured"
+          className={`m2__bcard m2__bcard--featured${page2.crunchy.available ? '' : ' is-off'}`}
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.45, delay: 0.18 }}
         >
           <motion.img
             className="m2__img m2__img--lg m2__img--photo"
-            src={crunchyImg}
-            alt="Crunchy"
+            src={imgUrl(page2.crunchy.img)}
+            alt={page2.crunchy.name}
             {...imgFloat(0, reduced)}
           />
           <div className="m2__bcard-text">
-            <p className="m2__bcard-label">L'INCONTOURNABLE</p>
-            <h2 className="m2__bcard-name m2__bcard-name--xl">Crunchy</h2>
-            <p className="m2__bcard-desc">{sandwichsData.crunchy.desc}</p>
+            <p className="m2__bcard-label">{page2.crunchy.label}</p>
+            <h2 className="m2__bcard-name m2__bcard-name--xl">{page2.crunchy.name}</h2>
+            <p className="m2__bcard-desc">{page2.crunchy.desc}</p>
           </div>
-          <span className="m2__bcard-price">{sandwichsData.crunchy.price.toFixed(2)}€</span>
+          <span className="m2__bcard-price">{page2.crunchy.price.toFixed(2)}€</span>
+          {!page2.crunchy.available && <span className="off-badge">ÉPUISÉ</span>}
         </motion.div>
       </section>
 
-      {/* ── SUPPLÉMENTS ── */}
       <section className="m2__row m2__sups">
         <div className="m2__spine"><span>SUPPLÉMENTS</span></div>
         <div className="m2__sups-grid">
-          {SUPPLEMENTS.map((item, i) => (
+          {supplements.map((item, i) => (
             <motion.div
-              key={i}
-              className="m2__tcard"
+              key={item.id}
+              className={`m2__tcard${item.available ? '' : ' is-off'}`}
               initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0, scale: scaleSpot === sandwichsData.classiques.length + i ? 1.09 : 1 }}
-              transition={{ duration: 1.6, delay: 0.1 + i * 0.05 }}
+              animate={{ opacity: 1, y: 0, scale: item.available && scaleSpot === page2.classiques.length + i ? 1.15 : 1 }}
+              transition={{ duration: 0.6, delay: 0.1 + i * 0.05 }}
             >
               <motion.img
                 className="m2__img m2__img--md m2__img--photo"
-                src={SUPPLEMENT_IMAGES[i]}
+                src={imgUrl(item.img)}
                 alt={item.name}
                 {...imgFloat(i, reduced)}
               />
               <span className="m2__tcard-name">{item.name}</span>
-              <motion.span className="m2__tcard-price" {...priceWave(i, reduced)}>
-                {item.price}
-              </motion.span>
+              <span className="m2__tcard-price">{item.price}</span>
+              {!item.available && <span className="off-badge">ÉPUISÉ</span>}
             </motion.div>
           ))}
         </div>
       </section>
 
-      {/* ── MENUS & PLUS ── */}
       <section className="m2__row m2__bottom">
-        <div className="m2__menukids">
+        <div className={`m2__menukids${page2.menuKids.available ? '' : ' is-off'}`}>
           <motion.img
             className="m2__img m2__img--md m2__img--photo"
-            src={kidsImg}
-            alt="Menu Kids"
+            src={imgUrl(page2.menuKids.img)}
+            alt={page2.menuKids.name}
             {...imgFloat(0, reduced)}
           />
           <div className="m2__menukids-text">
-            <span className="m2__menukids-title">MENU KIDS</span>
-            <p className="m2__menukids-desc">{burgersData.menuKids.desc}</p>
+            <span className="m2__menukids-title">{page2.menuKids.name}</span>
+            <p className="m2__menukids-desc">{page2.menuKids.desc}</p>
           </div>
-          <motion.span className="m2__menukids-price" {...priceWave(0, reduced)}>
-            {burgersData.menuKids.price.toFixed(2)}€
-          </motion.span>
+          <span className="m2__menukids-price">{page2.menuKids.price.toFixed(2)}€</span>
+          {!page2.menuKids.available && <span className="off-badge">ÉPUISÉ</span>}
         </div>
 
         <div className="m2__plus">
-          <div className="m2__plus-col">
-            <span className="m2__plus-title">FRITES</span>
-            {burgersData.frites.map((it, j) => (
-              <div key={j} className="m2__mini-row"><span>{it.name}</span><span>{it.price.toFixed(2)}€</span></div>
-            ))}
-          </div>
-          <div className="m2__plus-col">
-            <span className="m2__plus-title">DESSERTS</span>
-            {burgersData.desserts.map((it, j) => (
-              <div key={j} className="m2__mini-row"><span>{it.name}</span><span>{it.price.toFixed(2)}€</span></div>
-            ))}
-          </div>
-          <div className="m2__plus-col">
-            <span className="m2__plus-title">BOISSONS</span>
-            {burgersData.boissons.map((it, j) => (
-              <div key={j} className="m2__mini-row"><span>{it.name}</span><span>{it.price.toFixed(2)}€</span></div>
-            ))}
-          </div>
+          {([
+            ['FRITES', page2.frites],
+            ['DESSERTS', page2.desserts],
+            ['BOISSONS', page2.boissons],
+          ] as const).map(([title, items]) => (
+            <div key={title} className="m2__plus-col">
+              <span className="m2__plus-title">{title}</span>
+              {items.map(it => (
+                <div key={it.id} className={`m2__mini-row${it.available ? '' : ' m2__mini-row--off'}`}>
+                  <span>{it.name}</span>
+                  <span>{it.price.toFixed(2)}€</span>
+                </div>
+              ))}
+            </div>
+          ))}
         </div>
 
         <div className="m2__spine m2__spine--right"><span>MENUS &amp; PLUS</span></div>

@@ -3,25 +3,12 @@ import { useEffect, useState } from 'react'
 export function imgFloat(i: number, reduced: boolean | null) {
   if (reduced) return {}
   return {
-    animate: { y: [0, -4, 0] },
+    animate: { y: [0, -9, 0], rotate: [0, -2, 0] },
     transition: {
-      duration: 10,
+      duration: 3.6,
       repeat: Infinity,
       ease: 'easeInOut' as const,
-      delay: (i % 4) * 1,
-    },
-  }
-}
-
-export function priceWave(i: number, reduced: boolean | null) {
-  if (reduced) return {}
-  return {
-    animate: { scale: [1, 1.16, 1] },
-    transition: {
-      duration: 6,
-      repeat: Infinity,
-      ease: 'easeInOut' as const,
-      delay: i * 0.8,
+      delay: (i % 4) * 0.35,
     },
   }
 }

@@ -3,7 +3,7 @@ import { motion } from 'framer-motion'
 import './Index.scss'
 
 const screens = [
-  { path: '/1', label: 'ÉCRAN 1', desc: 'À la une — Mega Cheese' },
+  { path: '/1', label: 'ÉCRAN 1', desc: 'Nos Burgers' },
   { path: '/2', label: 'ÉCRAN 2', desc: 'Les Sandwichs Baguette' },
   { path: '/3', label: 'ÉCRAN 3', desc: 'Compose ton Tacos' },
 ]

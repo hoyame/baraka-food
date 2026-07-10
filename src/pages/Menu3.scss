@@ -13,8 +13,6 @@
     font-weight: 700;
   }
 
-  /* ── PLACEHOLDERS 1:1 ── */
-
   &__img {
     aspect-ratio: 1;
     background: #1c1c1c;
@@ -34,8 +32,6 @@
       filter: drop-shadow(0 4px 14px rgba(0, 0, 0, 0.6));
     }
   }
-
-  /* ── HEADER ── */
 
   &__header {
     position: relative;
@@ -104,8 +100,6 @@
     border-radius: 2px;
   }
 
-  /* ── ROW BASE ── */
-
   &__row {
     border-bottom: 1px solid $color-border;
     min-height: 0;
@@ -132,15 +126,6 @@
       white-space: nowrap;
     }
   }
-
-  &__spine-surcharge {
-    font-weight: 900 !important;
-    font-size: 0.85em !important;
-    letter-spacing: 0.1em !important;
-    color: $color-white !important;
-  }
-
-  /* ── GRID CARDS ── */
 
   &__grid {
     flex: 1;
@@ -171,52 +156,60 @@
     line-height: 1.1;
   }
 
-  /* ── TON STYLE (M/L/XL, line 1) ── */
-
   &__tailles {
-    flex: 0.9;
+    flex: 1.15;
+    display: flex;
+  }
+
+  &__tacos-hero {
+    flex: 0 0 22%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.8em 1.5em;
+    border-right: 1px solid $color-border;
+    overflow: hidden;
+  }
+
+  &__tacos-img {
+    max-height: 100%;
+    max-width: 100%;
+    object-fit: contain;
+    filter: drop-shadow(0 6px 20px rgba(0, 0, 0, 0.6));
+  }
+
+  &__tailles-grid {
+    flex: 1;
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
+    min-width: 0;
   }
 
   &__bcard {
     display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: 1em;
-    padding: 0 1.6em;
+    justify-content: center;
+    gap: 0.3em;
+    padding: 0.8em 1.2em;
     border-right: 1px solid $color-border;
-    transition: background 1.6s ease;
 
     &:last-child { border-right: none; }
-
-    &--active {
-      background: $color-white;
-      .m3__taille-letter  { color: $color-price-text; }
-      .m3__taille-viandes { color: rgba(0,0,0,.45); }
-      .m3__bcard-price    { color: $color-price-text; }
-    }
   }
 
   &__taille-letter {
     font-family: $font-display;
     font-weight: 900;
-    font-size: 4em;
+    font-size: 4.5em;
     color: $color-white;
-    line-height: 0.8;
+    line-height: 0.9;
     letter-spacing: -0.04em;
-    flex-shrink: 0;
     transition: color 1.6s ease;
   }
 
-  &__bcard-text {
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-    min-width: 0;
-  }
-
   &__taille-viandes {
-    font-size: 0.85em;
+    font-size: 0.72em;
+    letter-spacing: 0.14em;
     color: $color-muted;
     line-height: 1.2;
     transition: color 1.6s ease;
@@ -225,23 +218,19 @@
   &__bcard-price {
     font-family: $font-display;
     font-weight: 900;
-    font-size: 2.6em;
+    font-size: 1.8em;
     color: $color-white;
     letter-spacing: -0.02em;
     line-height: 1;
-    flex-shrink: 0;
+    margin-top: 0.2em;
     transform-origin: center;
     transition: color 1.6s ease;
   }
-
-  /* ── TA VIANDE (line 2) ── */
 
   &__viandes {
     flex: 1;
     display: flex;
   }
-
-  /* ── TES SAUCES (line 3) ── */
 
   &__sauces {
     flex: 0 0 auto;
@@ -282,8 +271,6 @@
     color: $color-muted;
     line-height: 1.5;
   }
-
-  /* ── TES EXTRAS (line 4) ── */
 
   &__extras {
     flex: 1;

@@ -13,8 +13,6 @@
     font-weight: 700;
   }
 
-  /* ── PLACEHOLDERS 1:1 ── */
-
   &__img {
     aspect-ratio: 1;
     background: #1c1c1c;
@@ -34,8 +32,6 @@
       filter: drop-shadow(0 4px 14px rgba(0, 0, 0, 0.6));
     }
   }
-
-  /* ── HEADER ── */
 
   &__header {
     position: relative;
@@ -104,8 +100,6 @@
     border-radius: 2px;
   }
 
-  /* ── ROW BASE ── */
-
   &__row {
     border-bottom: 1px solid $color-border;
     min-height: 0;
@@ -135,8 +129,6 @@
       border-left: 1px solid $color-border;
     }
   }
-
-  /* ── CLASSIQUES (line 1) ── */
 
   &__classiques {
     flex: 1.4;
@@ -180,8 +172,6 @@
     line-height: 1;
     transform-origin: center;
   }
-
-  /* ── CRUNCHY featured (line 2) ── */
 
   &__featured-row {
     flex: 1.2;
@@ -246,8 +236,6 @@
     flex-shrink: 0;
   }
 
-  /* ── SUPPLÉMENTS (line 3) ── */
-
   &__sups {
     flex: 1;
     display: flex;
@@ -259,8 +247,6 @@
     grid-template-columns: repeat(5, 1fr);
     min-height: 0;
   }
-
-  /* ── MENUS & PLUS (line 4, disposition spéciale) ── */
 
   &__bottom {
     flex: 0 0 auto;
@@ -351,6 +337,11 @@
     span:last-child {
       font-family: $font-display;
       font-weight: 900;
+    }
+
+    &--off {
+      opacity: 0.25;
+      text-decoration: line-through;
     }
   }
 }

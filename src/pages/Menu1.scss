@@ -13,8 +13,6 @@
     font-weight: 700;
   }
 
-  /* ── PLACEHOLDERS 1:1 ── */
-
   &__img {
     aspect-ratio: 1;
     background: #1c1c1c;
@@ -33,8 +31,6 @@
       filter: drop-shadow(0 4px 14px rgba(0, 0, 0, 0.6));
     }
   }
-
-  /* ── HEADER ── */
 
   &__header {
     position: relative;
@@ -103,8 +99,6 @@
     border-radius: 2px;
   }
 
-  /* ── ROW BASE ── */
-
   &__row {
     border-bottom: 1px solid $color-border;
     min-height: 0;
@@ -129,8 +123,6 @@
       white-space: nowrap;
     }
   }
-
-  /* ── BURGERS (line 1, biggest) ── */
 
   &__burgers {
     flex: 1.8;
@@ -196,8 +188,6 @@
     transition: color 1.6s ease;
   }
 
-  /* ── TEXMEX (line 2, medium) ── */
-
   &__texmex {
     flex: 1;
     display: flex;
@@ -240,8 +230,6 @@
     line-height: 1;
     transform-origin: center;
   }
-
-  /* ── SUPPLÉMENTS (line 3, text) ── */
 
   &__sups {
     flex: 1;
