@@ -1,12 +1,10 @@
+import Image from 'next/image'
 import styles from './Footer.module.scss'
 
 export default function Footer() {
   return (
     <footer className={styles.footer}>
-      <div className={styles.brand}>
-        BARAKA
-        <span>FOOD</span>
-      </div>
+      <Image className={styles.brand} src="/images/logo.svg" alt="Baraka Food" width={160} height={76} />
 
       <div className={styles.grid}>
         <div className={styles.col}>

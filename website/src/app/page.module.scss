@@ -1,325 +1,534 @@
 @use '../styles/variables' as *;
 
 .main {
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+  flex: 1;
+  min-height: 70vh;
+  background: $color-bg;
+
   * {
-    text-transform: none;
+    text-transform: uppercase;
+    font-weight: 700;
   }
 }
 
-.eyebrow {
-  display: block;
-  font-family: $font-display;
-  font-weight: 700;
-  font-size: 0.75rem;
-  letter-spacing: 0.24em;
-  text-transform: uppercase;
-  color: $color-muted;
-  margin-bottom: 1rem;
-}
-
-.hero {
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 3rem;
-  padding: 5rem 5vw 4rem;
-  max-width: 1400px;
-  margin: 0 auto;
-
-  @media (max-width: 900px) {
-    flex-direction: column-reverse;
-    text-align: center;
-    padding: 3rem 6vw;
-  }
-}
-
-.heroText {
-  flex: 1;
-  max-width: 560px;
-}
-
-.heroKicker {
-  font-family: $font-display;
-  font-weight: 600;
-  font-size: 0.85rem;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: $color-muted;
-  margin-bottom: 1.2rem;
-}
-
-.heroTitle {
-  font-family: $font-display;
-  font-weight: 900;
-  font-size: clamp(3rem, 8vw, 5.5rem);
-  text-transform: uppercase;
-  line-height: 0.88;
-  letter-spacing: 0.01em;
-  color: $color-white;
-  margin-bottom: 1.6rem;
-
-  span {
-    display: block;
-    color: $color-muted;
-  }
-}
-
-.heroDesc {
-  font-size: 1.05rem;
-  line-height: 1.6;
-  color: rgba(237, 237, 234, 0.75);
-  margin-bottom: 2.2rem;
-}
-
-.heroActions {
-  display: flex;
-  gap: 1rem;
+  gap: 1.5rem;
+  min-height: 5.5rem;
+  padding: 1rem 2em;
+  margin-bottom: 3rem;
+  background: $color-bg;
   flex-wrap: wrap;
 
-  @media (max-width: 900px) {
+  @media (max-width: 700px) {
     justify-content: center;
+    text-align: center;
   }
 }
 
-.btnPrimary {
+.menuHeader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 2em 1.5rem;
+  text-align: center;
+}
+
+.title {
   font-family: $font-display;
-  font-weight: 800;
-  font-size: 0.85rem;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: $color-price-text;
-  background: $color-white;
-  padding: 1em 2em;
-  border-radius: $radius-sm;
-  transition: transform $transition, opacity $transition;
-  display: inline-block;
+  font-weight: 900;
+  font-size: clamp(1.8rem, 5vw, 2.4rem);
+  color: $color-white;
+  letter-spacing: 0.02em;
+}
 
-  &:hover {
-    transform: translateY(-2px);
-    opacity: 0.9;
+.headerLogo {
+  height: auto;
+  width: 6.5em;
+  flex-shrink: 0;
+}
+
+.note {
+  display: flex;
+  align-items: center;
+  gap: 0.6em;
+  padding: 0.4em 0.9em;
+  background: #1c1c1c;
+  border-radius: 2px;
+  flex-shrink: 0;
+
+  span {
+    font-size: 0.6em;
+    letter-spacing: 0.12em;
+    color: $color-muted;
+  }
+  strong {
+    font-family: $font-display;
+    font-weight: 900;
+    font-size: 0.95em;
+    color: $color-white;
   }
 }
 
-.btnGhost {
+.tabs {
+  display: flex;
+  justify-content: center;
+  gap: 0.6rem;
+  padding: 0 2em 2.5rem;
+  flex-wrap: wrap;
+}
+
+.tab {
   font-family: $font-display;
   font-weight: 700;
   font-size: 0.85rem;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: $color-white;
-  border: 1px solid rgba(237, 237, 234, 0.3);
-  padding: 1em 2em;
+  letter-spacing: 0.14em;
+  color: $color-muted;
+  background: transparent;
+  padding: 0.7em 1.6em;
+  border: none;
   border-radius: $radius-sm;
-  transition: border-color $transition, background $transition;
-  display: inline-block;
+  cursor: pointer;
+  transition: color $transition, background $transition;
 
   &:hover {
-    border-color: $color-white;
-    background: $color-bg-section;
+    color: $color-white;
   }
 }
 
-.heroImg {
-  flex-shrink: 0;
-  width: min(420px, 80vw);
-  aspect-ratio: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.tabActive {
+  color: $color-price-text;
+  background: $color-white;
 
-  img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    filter: drop-shadow(0 20px 50px rgba(0, 0, 0, 0.6));
+  &:hover {
+    color: $color-price-text;
   }
 }
 
-.strip {
-  display: flex;
-  justify-content: center;
-  gap: clamp(1.5rem, 5vw, 5rem);
-  flex-wrap: wrap;
-  background: $color-bg-strip;
-  border-top: 1px solid $color-border;
-  border-bottom: 1px solid $color-border;
-  padding: 1.6rem 5vw;
+.sectionTitle {
+  padding: 3.5rem 2em 1.2rem;
+  text-align: center;
 
   span {
     font-family: $font-display;
-    font-weight: 700;
-    font-size: 0.8rem;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: $color-muted;
-  }
-}
-
-.about {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 6rem 5vw;
-  display: flex;
-  justify-content: center;
-}
-
-.aboutText {
-  max-width: 720px;
-  text-align: center;
-
-  h2 {
-    font-family: $font-display;
     font-weight: 900;
-    font-size: clamp(1.8rem, 4vw, 2.6rem);
+    font-size: clamp(1.3rem, 3vw, 1.8rem);
     color: $color-white;
-    line-height: 1.15;
-    margin-bottom: 1.4rem;
-  }
-
-  p {
-    font-size: 1.05rem;
-    line-height: 1.7;
-    color: rgba(237, 237, 234, 0.75);
+    letter-spacing: 0.04em;
   }
 }
 
-.highlights {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 2rem 5vw 6rem;
-  text-align: center;
-}
-
-.highlightsTitle {
-  font-family: $font-display;
-  font-weight: 900;
-  font-size: clamp(1.8rem, 4vw, 2.6rem);
-  color: $color-white;
-  margin-bottom: 3rem;
-}
-
-.highlightsGrid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 1.5rem;
-
-  @media (max-width: 800px) {
-    grid-template-columns: 1fr;
-  }
-}
-
-.card {
-  background: $color-bg-section;
-  border: 1px solid $color-border;
-  border-radius: $radius-md;
-  padding: 2.2rem 1.6rem;
+.row {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.5rem;
-  transition: border-color $transition;
+  background: $color-bg;
 
-  &:hover {
-    border-color: $color-white;
-  }
-}
-
-.cardImg {
-  width: 140px;
-  height: 140px;
-  margin-bottom: 0.5rem;
-
-  img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    filter: drop-shadow(0 8px 20px rgba(0, 0, 0, 0.6));
-  }
-}
-
-.cardLabel {
-  font-family: $font-display;
-  font-weight: 600;
-  font-size: 0.7rem;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: $color-dim;
-}
-
-.cardName {
-  font-family: $font-display;
-  font-weight: 900;
-  font-size: 1.3rem;
-  text-transform: uppercase;
-  color: $color-white;
-}
-
-.cardDesc {
-  font-size: 0.88rem;
-  color: $color-muted;
-  text-align: center;
-}
-
-.cardPrice {
-  font-family: $font-display;
-  font-weight: 900;
-  font-size: 1.6rem;
-  color: $color-white;
-  margin-top: 0.4rem;
-}
-
-.location {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 2rem 5vw 6rem;
-  display: flex;
-  gap: 3rem;
-  align-items: stretch;
-
-  @media (max-width: 900px) {
+  @media (max-width: 700px) {
     flex-direction: column;
   }
 }
 
-.locationText {
-  flex: 1;
+.rowWhite {
+  background: $color-bg;
+}
+
+.spine {
+  flex-shrink: 0;
+  width: 2.6em;
   display: flex;
-  flex-direction: column;
+  align-items: center;
   justify-content: center;
+  padding: 1.2rem 0;
 
-  h2 {
+  span {
     font-family: $font-display;
-    font-weight: 900;
-    font-size: clamp(1.6rem, 3.5vw, 2.2rem);
-    color: $color-white;
-    margin-bottom: 1rem;
-    text-transform: uppercase;
+    font-weight: 700;
+    font-size: 0.68rem;
+    letter-spacing: 0.3em;
+    color: $color-muted;
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    white-space: nowrap;
   }
 
-  p {
-    font-size: 1rem;
-    color: rgba(237, 237, 234, 0.75);
-    margin-bottom: 0.3rem;
-  }
+  @media (max-width: 700px) {
+    width: auto;
+    padding: 1rem 2em 0;
 
-  .btnPrimary {
-    margin-top: 1.6rem;
-    align-self: flex-start;
+    span {
+      writing-mode: horizontal-tb;
+      transform: none;
+    }
   }
 }
 
-.locationMap {
-  flex: 1;
-  border-radius: $radius-md;
-  overflow: hidden;
-  border: 1px solid $color-border;
-  min-height: 320px;
 
-  iframe {
+.bcard {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.5rem;
+  padding: 2.5rem 1.6rem;
+  position: relative;
+}
+
+.bcardImg {
+  width: 130px;
+  height: 130px;
+  margin-bottom: 0.4rem;
+
+  img {
     width: 100%;
     height: 100%;
-    min-height: 320px;
-    border: 0;
-    filter: grayscale(0.4) invert(0.9) contrast(0.9);
+    object-fit: contain;
+    filter: drop-shadow(0 8px 18px rgba(0, 0, 0, 0.5));
   }
+}
+
+.bcardLabel {
+  font-family: $font-display;
+  font-weight: 600;
+  font-size: 0.65rem;
+  letter-spacing: 0.2em;
+  color: $color-dim;
+}
+
+.bcardName {
+  font-family: $font-display;
+  font-weight: 900;
+  font-size: 1.5rem;
+  color: $color-white;
+}
+
+.bcardNameXl {
+  font-size: 2rem;
+}
+
+.bcardDesc {
+  font-weight: 400 !important;
+  text-transform: none !important;
+  font-size: 0.82rem;
+  color: $color-muted;
+}
+
+.bcardPrice {
+  font-family: $font-display;
+  font-weight: 900;
+  font-size: 1.8rem;
+  color: $color-white;
+  margin-top: 0.2rem;
+}
+
+.tcardGrid {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  justify-items: center;
+
+  @media (max-width: 700px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.tcard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 1.5rem 0.8rem;
+  position: relative;
+}
+
+.tcardImg {
+  width: 90px;
+  height: 90px;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter: drop-shadow(0 4px 14px rgba(0, 0, 0, 0.5));
+  }
+}
+
+.tcardName {
+  font-family: $font-display;
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: $color-white;
+  text-align: center;
+  line-height: 1.1;
+}
+
+.tcardNameDark {
+  font-family: $font-display;
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: $color-white;
+  text-align: center;
+  line-height: 1.1;
+}
+
+.tcardPrice {
+  font-family: $font-display;
+  font-weight: 900;
+  font-size: 1.3rem;
+  color: $color-white;
+}
+
+.tcardPriceDark {
+  font-family: $font-display;
+  font-weight: 900;
+  font-size: 1.3rem;
+  color: $color-white;
+}
+
+.featured {
+  display: flex;
+  align-items: center;
+  gap: 2.5rem;
+  background: $color-bg;
+  padding: 2.5rem 2em;
+  position: relative;
+
+  @media (max-width: 800px) {
+    flex-direction: column;
+    text-align: center;
+  }
+}
+
+.kids {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  background: $color-bg;
+  padding: 2rem 2em;
+  position: relative;
+
+  @media (max-width: 800px) {
+    flex-direction: column;
+    text-align: center;
+  }
+}
+
+.featuredImg {
+  flex-shrink: 0;
+  width: 180px;
+  height: 180px;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter: drop-shadow(0 8px 20px rgba(0, 0, 0, 0.4));
+  }
+}
+
+.featuredText {
+  flex: 1;
+  min-width: 0;
+}
+
+.featuredLabel {
+  font-family: $font-display;
+  font-weight: 600;
+  font-size: 0.65rem;
+  letter-spacing: 0.2em;
+  color: $color-dim;
+  margin-bottom: 0.3rem;
+}
+
+.featuredName {
+  font-family: $font-display;
+  font-weight: 900;
+  font-size: 2rem;
+  color: $color-white;
+  line-height: 1.05;
+  margin-bottom: 0.4rem;
+}
+
+.featuredDesc {
+  font-weight: 400 !important;
+  text-transform: none !important;
+  font-size: 0.85rem;
+  color: $color-muted;
+}
+
+.featuredPrice {
+  font-family: $font-display;
+  font-weight: 900;
+  font-size: 2.6rem;
+  color: $color-white;
+  letter-spacing: -0.02em;
+  flex-shrink: 0;
+}
+
+.plusRow {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  background: $color-bg;
+
+  @media (max-width: 700px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.plusCol {
+  padding: 1.6rem 2em;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.plusTitle {
+  font-family: $font-display;
+  font-weight: 700;
+  font-size: 0.68rem;
+  letter-spacing: 0.2em;
+  color: $color-muted;
+  margin-bottom: 0.6rem;
+}
+
+.miniRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  font-size: 0.85rem;
+  color: $color-white;
+  padding: 0.5rem 0;
+
+  span {
+    font-family: $font-display;
+    font-weight: 900;
+  }
+}
+
+.miniRowOff {
+  opacity: 0.3;
+  text-decoration: line-through;
+}
+
+.tacosGrid {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+
+  @media (max-width: 700px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.tailleCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3rem;
+  padding: 2.5rem 1.2rem;
+  position: relative;
+}
+
+.tailleLetter {
+  font-family: $font-display;
+  font-weight: 900;
+  font-size: 4rem;
+  color: $color-white;
+  line-height: 0.9;
+  letter-spacing: -0.04em;
+}
+
+.tailleViandes {
+  font-weight: 400 !important;
+  text-transform: none !important;
+  font-size: 0.85rem;
+  letter-spacing: 0.02em;
+  color: $color-muted;
+}
+
+.sauces {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  background: $color-bg;
+
+  @media (max-width: 700px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.sauceGroup {
+  padding: 2rem 2em;
+}
+
+.sauceGroupHot {
+  text-align: right;
+
+  @media (max-width: 700px) {
+    text-align: left;
+  }
+}
+
+.sauceItems {
+  font-weight: 400 !important;
+  text-transform: none !important;
+  font-size: 0.95rem;
+  color: $color-muted;
+  line-height: 1.6;
+}
+
+.extrasPrice {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.7em;
+  padding: 1.4rem 2em 4rem;
+  background: $color-bg;
+
+  span {
+    font-family: $font-display;
+    font-weight: 700;
+    font-size: 0.7rem;
+    letter-spacing: 0.24em;
+    color: $color-muted;
+  }
+  strong {
+    font-family: $font-display;
+    font-weight: 900;
+    font-size: 1.2rem;
+    color: $color-white;
+  }
+}
+
+.off {
+  > *:not(.offBadge) {
+    opacity: 0.18;
+    filter: grayscale(1);
+  }
+}
+
+.offBadge {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-8deg);
+  font-family: $font-display;
+  font-weight: 900;
+  font-size: 0.85em;
+  letter-spacing: 0.18em;
+  color: $color-bg;
+  background: $color-white;
+  padding: 0.3em 0.9em;
+  border-radius: 2px;
+  white-space: nowrap;
+  z-index: 2;
 }

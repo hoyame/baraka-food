@@ -1,6 +1,5 @@
 import type { Metadata } from 'next'
 import { Poppins, Inter } from 'next/font/google'
-import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import '../styles/globals.scss'
 
@@ -26,7 +25,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="fr" className={`${poppins.variable} ${inter.variable}`}>
       <body>
-        <Header />
         {children}
         <Footer />
       </body>

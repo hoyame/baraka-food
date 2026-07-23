@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(rm -rf uploads)",
+      "Bash(ln -s ../../server/uploads uploads)",
+      "Bash(tail -60 /tmp/nextdev.log)",
+      "Read(//private/tmp/**)",
+      "Bash(lsof -ti:4020)",
+      "Bash(xargs -I{} ps -p {} -o pid,command)",
+      "Bash(curl -s http://localhost:4020/)",
+      "Bash(curl -s http://localhost:4020/menu -o /tmp/menu.html -w \"%{http_code}\\\\n\")",
+      "Read(//tmp/**)",
+      "Bash(pkill -f \"next dev -p 4020\")",
+      "Bash(rm -rf .next)"
+    ]
+  }
+}

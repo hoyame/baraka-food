@@ -1,26 +1,21 @@
 @use '../styles/variables' as *;
 
 .footer {
-  background: $color-bg-strip;
-  border-top: 1px solid $color-border;
-  padding: 4rem 5vw 2.5rem;
+  background: $color-white;
+  padding: 4rem 2em 2rem;
   display: flex;
   flex-direction: column;
   gap: 3rem;
+
+  * {
+    text-transform: uppercase;
+  }
 }
 
 .brand {
-  font-family: $font-display;
-  font-weight: 900;
-  font-size: 2.2rem;
-  text-transform: uppercase;
-  line-height: 0.9;
-  letter-spacing: 0.02em;
-
-  span {
-    display: block;
-    color: $color-muted;
-  }
+  height: auto;
+  width: 160px;
+  filter: invert(1);
 }
 
 .grid {
@@ -37,23 +32,22 @@
   display: flex;
   flex-direction: column;
   gap: 0.35rem;
-  font-size: 0.95rem;
-  color: $color-white;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: $color-price-text;
 }
 
 .colTitle {
   font-family: $font-display;
   font-weight: 700;
-  font-size: 0.7rem;
+  font-size: 0.65rem;
   letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: $color-muted;
+  color: rgba(13, 13, 13, 0.45);
   margin-bottom: 0.4rem;
 }
 
 .bottom {
-  font-size: 0.78rem;
-  color: $color-dim;
-  border-top: 1px solid $color-border;
-  padding-top: 1.5rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: rgba(13, 13, 13, 0.35);
 }
