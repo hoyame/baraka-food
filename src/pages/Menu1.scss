@@ -20,7 +20,7 @@
     flex-shrink: 0;
 
     &--lg { height: 11em; }
-    &--md { height: 4.5em; }
+    &--md { height: 5.445em; }
     &--sm { height: 3em; }
 
     &--photo {
@@ -191,6 +191,17 @@
   &__texmex {
     flex: 1;
     display: flex;
+    background: $color-white;
+
+    .m1__spine {
+      border-right: none;
+
+      span { color: rgba(0, 0, 0, 0.4); }
+    }
+
+    .m1__tcard {
+      border-right: none;
+    }
   }
 
   &__texmex-grid {
@@ -215,7 +226,7 @@
   &__tcard-name {
     font-family: $font-display;
     font-weight: 700;
-    font-size: 0.7em;
+    font-size: 0.9438em;
     color: $color-white;
     text-align: center;
     line-height: 1.1;
@@ -229,6 +240,11 @@
     letter-spacing: -0.02em;
     line-height: 1;
     transform-origin: center;
+  }
+
+  &__texmex &__tcard-name,
+  &__texmex &__tcard-price {
+    color: $color-price-text;
   }
 
   &__sups {

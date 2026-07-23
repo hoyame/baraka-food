@@ -72,7 +72,6 @@ export default function Menu3() {
       </section>
 
       <section className="m3__row m3__sauces">
-        <div className="m3__spine"><span>TES SAUCES</span></div>
         <div className="m3__sauces-grid">
           <div className="m3__sauce-group">
             <span className="m3__sauce-sub">CLASSIQUES</span>

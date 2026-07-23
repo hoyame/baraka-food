@@ -20,7 +20,7 @@
     flex-shrink: 0;
 
     &--lg { height: 7em; }
-    &--md { height: 4.5em; }
+    &--md { height: 5.445em; }
     &--sm { height: 3em; }
 
     &--photo {
@@ -150,7 +150,7 @@
   &__tcard-name {
     font-family: $font-display;
     font-weight: 700;
-    font-size: 0.78em;
+    font-size: 0.9438em;
     color: $color-white;
     text-align: center;
     line-height: 1.1;
@@ -228,13 +228,29 @@
   }
 
   &__viandes {
-    flex: 1;
+    flex: 0.8;
     display: flex;
+    background: $color-white;
+
+    .m3__spine {
+      border-right: none;
+
+      span { color: rgba(0, 0, 0, 0.4); }
+    }
+
+    .m3__tcard {
+      border-right: none;
+    }
+
+    .m3__tcard-name {
+      color: $color-price-text;
+    }
   }
 
   &__sauces {
     flex: 0 0 auto;
     display: flex;
+    margin-top: 1.2em;
   }
 
   &__sauces-grid {
@@ -261,13 +277,13 @@
   &__sauce-sub {
     font-family: $font-display;
     font-weight: 700;
-    font-size: 0.58em;
+    font-size: 0.638em;
     letter-spacing: 0.2em;
     color: $color-dim;
   }
 
   &__sauce-items {
-    font-size: 0.72em;
+    font-size: 0.792em;
     color: $color-muted;
     line-height: 1.5;
   }

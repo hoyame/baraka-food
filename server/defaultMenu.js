@@ -27,7 +27,6 @@ export const defaultMenu = {
     title: 'LES SANDWICHS',
     classiques: [
       { id: 'cl-1', name: 'Kefta Fromage', price: 6.00, img: '/uploads/kefta-fromage.png', available: true },
-      { id: 'cl-2', name: 'Kefta Frites', price: 6.00, img: '/uploads/kefta-frites.png', available: true },
       { id: 'cl-3', name: 'Dinde Fromage', price: 6.00, img: '/uploads/poulet-fromage.png', available: true },
       { id: 'cl-4', name: 'Dinde Frites', price: 6.00, img: '/uploads/poulet-frites.png', available: true },
       { id: 'cl-5', name: 'Poulet Mariné Fromage', price: 6.50, img: '/uploads/poulet-marine-fromage.png', available: true },

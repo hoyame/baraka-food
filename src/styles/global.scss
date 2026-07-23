@@ -7,7 +7,7 @@
 }
 
 html {
-  font-size: min(1.1vw, 1.956vh);
+  font-size: min(1.206975vw, 2.14643vh);
 }
 
 html, body {
@@ -69,4 +69,12 @@ body:has(.adm) {
   border-radius: 2px;
   white-space: nowrap;
   z-index: 2;
+}
+
+.is-off.m2__bcard--featured .off-badge,
+.is-off.m2__menukids .off-badge,
+.m1__texmex .is-off .off-badge,
+.m3__viandes .is-off .off-badge {
+  color: $color-white;
+  background: $color-bg;
 }

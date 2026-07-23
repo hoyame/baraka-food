@@ -1,0 +1,59 @@
+@use '../styles/variables' as *;
+
+.footer {
+  background: $color-bg-strip;
+  border-top: 1px solid $color-border;
+  padding: 4rem 5vw 2.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+}
+
+.brand {
+  font-family: $font-display;
+  font-weight: 900;
+  font-size: 2.2rem;
+  text-transform: uppercase;
+  line-height: 0.9;
+  letter-spacing: 0.02em;
+
+  span {
+    display: block;
+    color: $color-muted;
+  }
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 2rem;
+
+  @media (max-width: 720px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.col {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  font-size: 0.95rem;
+  color: $color-white;
+}
+
+.colTitle {
+  font-family: $font-display;
+  font-weight: 700;
+  font-size: 0.7rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: $color-muted;
+  margin-bottom: 0.4rem;
+}
+
+.bottom {
+  font-size: 0.78rem;
+  color: $color-dim;
+  border-top: 1px solid $color-border;
+  padding-top: 1.5rem;
+}

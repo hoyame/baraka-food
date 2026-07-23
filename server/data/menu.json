@@ -130,13 +130,6 @@
         "available": true
       },
       {
-        "id": "cl-2",
-        "name": "Kefta Frites",
-        "price": 6,
-        "img": "/uploads/kefta-frites.png",
-        "available": true
-      },
-      {
         "id": "cl-3",
         "name": "Dinde Fromage",
         "price": 6,

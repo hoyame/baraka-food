@@ -62,7 +62,7 @@ function Row({ img, label, name, desc, price, available, onPatch }: RowProps) {
         <input
           className="adm__input adm__input--price"
           type="number"
-          step="0.5"
+          step="0.01"
           value={price}
           onChange={e => onPatch({ price: parseFloat(e.target.value) || 0 })}
         />
@@ -203,7 +203,7 @@ export default function Admin() {
               <input
                 className="adm__input adm__input--price"
                 type="number"
-                step="0.5"
+                step="0.01"
                 value={t.price}
                 onChange={e => update(d => { d.page3.tailles[i].price = parseFloat(e.target.value) || 0 })}
               />

@@ -20,7 +20,7 @@
     flex-shrink: 0;
 
     &--lg { height: 7em; }
-    &--md { height: 4.5em; }
+    &--md { height: 5.445em; }
     &--sm { height: 3em; }
 
     &--photo {
@@ -138,7 +138,7 @@
   &__classiques-grid {
     flex: 1;
     display: grid;
-    grid-template-columns: repeat(6, 1fr);
+    grid-template-columns: repeat(5, 1fr);
     min-height: 0;
   }
 
@@ -157,7 +157,7 @@
   &__tcard-name {
     font-family: $font-display;
     font-weight: 700;
-    font-size: 0.7em;
+    font-size: 0.9438em;
     color: $color-white;
     text-align: center;
     line-height: 1.1;
@@ -174,7 +174,7 @@
   }
 
   &__featured-row {
-    flex: 1.2;
+    flex: 1;
     display: flex;
   }
 
@@ -334,7 +334,7 @@
 
     &:last-child { border-bottom: none; }
 
-    span:last-child {
+    span {
       font-family: $font-display;
       font-weight: 900;
     }

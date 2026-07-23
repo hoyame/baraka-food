@@ -1,0 +1,74 @@
+@use '../styles/variables' as *;
+
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.1rem 5vw;
+  background: rgba(13, 13, 13, 0.85);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid $color-border;
+
+  @media (max-width: 720px) {
+    padding: 1rem 6vw;
+  }
+}
+
+.brand {
+  display: block;
+  height: 2.4rem;
+  width: auto;
+
+  img {
+    height: 100%;
+    width: auto;
+  }
+}
+
+.nav {
+  display: flex;
+  gap: 2.2rem;
+
+  @media (max-width: 560px) {
+    gap: 1.2rem;
+  }
+}
+
+.navLink {
+  font-family: $font-display;
+  font-weight: 700;
+  font-size: 0.85rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: $color-muted;
+  transition: color $transition;
+  padding-bottom: 0.2rem;
+  border-bottom: 2px solid transparent;
+
+  &:hover {
+    color: $color-white;
+  }
+}
+
+.navLinkActive {
+  color: $color-white;
+  border-bottom-color: $color-white;
+}
+
+.halal {
+  font-family: $font-display;
+  font-weight: 700;
+  font-size: 0.7rem;
+  letter-spacing: 0.22em;
+  color: $color-price-text;
+  background: $color-white;
+  padding: 0.4em 1em;
+  border-radius: $radius-sm;
+
+  @media (max-width: 560px) {
+    display: none;
+  }
+}

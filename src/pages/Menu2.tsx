@@ -135,8 +135,6 @@ export default function Menu2() {
             </div>
           ))}
         </div>
-
-        <div className="m2__spine m2__spine--right"><span>MENUS &amp; PLUS</span></div>
       </section>
     </div>
   )
