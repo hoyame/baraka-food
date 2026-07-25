@@ -11,7 +11,20 @@
       "Bash(curl -s http://localhost:4020/menu -o /tmp/menu.html -w \"%{http_code}\\\\n\")",
       "Read(//tmp/**)",
       "Bash(pkill -f \"next dev -p 4020\")",
-      "Bash(rm -rf .next)"
+      "Bash(rm -rf .next)",
+      "Bash(curl -s -X POST http://localhost:4000/api/orders -H \"Content-Type: application/json\" -d '{\"code\":\"A12\"}')",
+      "Bash(curl -s http://localhost:4000/api/orders)",
+      "Bash(curl -s -X PATCH http://localhost:4000/api/orders/A12 -H \"Content-Type: application/json\" -d '{\"status\":\"ready\"}')",
+      "Bash(curl -s http://localhost:4000/suivi/A12 -o /dev/null -w \"%{http_code}\\\\n\")",
+      "Bash(curl -s http://localhost:4000/pager/cuisine.html -o /dev/null -w \"%{http_code}\\\\n\")",
+      "Bash(lsof -ti:4000)",
+      "Bash(xargs kill -9)",
+      "Bash(cat /tmp/server.log)",
+      "Bash(curl -s -X POST http://localhost:4000/api/orders -H \"Content-Type: application/json\" -d '{\"items\":[{\"name\":\"Crunchy\",\"price\":7,\"qty\":2,\"notes\":\"sans oignon\"},{\"name\":\"Frites\",\"price\":1,\"qty\":1,\"notes\":\"\"}]}')",
+      "Bash(curl -s -X PATCH http://localhost:4000/api/orders/C1 -H \"Content-Type: application/json\" -d '{\"status\":\"preparation\"}')",
+      "Bash(curl -s -X PATCH http://localhost:4000/api/orders/C1 -H \"Content-Type: application/json\" -d '{\"status\":\"pret_cuisine\"}')",
+      "Bash(curl -s -X PATCH http://localhost:4000/api/orders/C1 -H \"Content-Type: application/json\" -d '{\"status\":\"disponible\"}')",
+      "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); print\\('burgers:', [b['name'] for b in d['page1']['burgers']]\\)\")"
     ]
   }
 }

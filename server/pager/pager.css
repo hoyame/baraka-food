@@ -1,0 +1,48 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  min-height: 100vh;
+  background: #0d0d0d;
+  color: #ededea;
+  font-family: 'Inter', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+* {
+  text-transform: uppercase;
+}
+
+input::placeholder {
+  text-transform: uppercase;
+}
+
+.brand {
+  padding: 1.6rem 0 0.8rem;
+  text-align: center;
+}
+
+.brand img {
+  height: 2.4rem;
+  width: auto;
+}
+
+.wrap {
+  width: 100%;
+  max-width: 640px;
+  padding: 0 1.5rem 3rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+button {
+  font-family: 'Poppins', sans-serif;
+  cursor: pointer;
+}

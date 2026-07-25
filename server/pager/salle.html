@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Baraka Food — Salle</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800;900&family=Inter:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/pager/pager.css" />
+  <style>
+    .wrap {
+      max-width: 780px;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 1.3fr 1fr;
+      gap: 1.5rem;
+      align-items: start;
+    }
+
+    @media (max-width: 800px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .block-title {
+      font-family: 'Poppins', sans-serif;
+      font-weight: 800;
+      font-size: 0.75rem;
+      letter-spacing: 0.14em;
+      color: #777777;
+      margin-bottom: 0.7rem;
+    }
+
+    .cat-tabs {
+      display: flex;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+      margin-bottom: 0.9rem;
+    }
+
+    .cat-tab {
+      font-family: 'Poppins', sans-serif;
+      font-weight: 700;
+      font-size: 0.7rem;
+      letter-spacing: 0.06em;
+      color: #777777;
+      background: #161616;
+      border: none;
+      border-radius: 4px;
+      padding: 0.55em 0.9em;
+    }
+
+    .cat-tab.is-active {
+      color: #0d0d0d;
+      background: #ededea;
+    }
+
+    .catalog {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .catalog-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.6rem;
+      background: #161616;
+      border: none;
+      border-radius: 5px;
+      padding: 0.75em 0.9em;
+      color: #ededea;
+      text-align: left;
+      font-family: 'Inter', sans-serif;
+      font-weight: 500;
+      font-size: 0.85rem;
+    }
+
+    .catalog-item span:last-child {
+      font-family: 'Poppins', sans-serif;
+      font-weight: 800;
+      color: #777777;
+      flex-shrink: 0;
+    }
+
+    .cart {
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+
+    .cart-empty {
+      color: #333333;
+      font-size: 0.8rem;
+      padding: 1rem 0;
+      text-align: center;
+    }
+
+    .cart-line {
+      background: #161616;
+      border-radius: 5px;
+      padding: 0.7em 0.8em;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .cart-line-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+    }
+
+    .cart-line-name {
+      font-weight: 700;
+      font-size: 0.85rem;
+    }
+
+    .cart-line-remove {
+      background: none;
+      border: none;
+      color: #ff8080;
+      font-size: 0.85rem;
+      font-weight: 700;
+    }
+
+    .cart-line-row {
+      display: flex;
+      gap: 0.4rem;
+    }
+
+    .qty-input {
+      width: 3.2em;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 700;
+      font-size: 0.8rem;
+      text-align: center;
+      background: #0d0d0d;
+      border: none;
+      border-radius: 4px;
+      color: #ededea;
+      padding: 0.4em;
+    }
+
+    .notes-input {
+      flex: 1;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.78rem;
+      background: #0d0d0d;
+      border: none;
+      border-radius: 4px;
+      color: #ededea;
+      padding: 0.4em 0.6em;
+    }
+
+    .notes-input::placeholder {
+      color: #444444;
+    }
+
+    .cart-total {
+      display: flex;
+      justify-content: space-between;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 900;
+      font-size: 1.1rem;
+      padding-top: 0.4rem;
+    }
+
+    .send-btn {
+      font-family: 'Poppins', sans-serif;
+      font-weight: 800;
+      font-size: 0.85rem;
+      letter-spacing: 0.08em;
+      color: #0d0d0d;
+      background: #ededea;
+      border: none;
+      border-radius: 6px;
+      padding: 0.9em;
+    }
+
+    .send-btn:disabled {
+      opacity: 0.3;
+    }
+
+    .confirm {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 0.5rem;
+      background: #ededea;
+      color: #0d0d0d;
+      border-radius: 6px;
+      padding: 1.4rem;
+      text-align: center;
+    }
+
+    .confirm.is-visible {
+      display: flex;
+    }
+
+    .confirm-code {
+      font-family: 'Poppins', sans-serif;
+      font-weight: 900;
+      font-size: 2rem;
+    }
+
+    .tracking {
+      margin-top: 2.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+
+    .track-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.8rem;
+      background: #161616;
+      border-radius: 6px;
+      padding: 0.8em 1em;
+    }
+
+    .track-card.is-alert {
+      background: #ededea;
+      animation: pulse 1s ease infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.015); }
+    }
+
+    .track-code {
+      font-family: 'Poppins', sans-serif;
+      font-weight: 900;
+      font-size: 1.05rem;
+    }
+
+    .is-alert .track-code {
+      color: #0d0d0d;
+    }
+
+    .track-status {
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      color: #777777;
+    }
+
+    .is-alert .track-status {
+      color: #0d0d0d;
+    }
+
+    .track-btn {
+      font-family: 'Poppins', sans-serif;
+      font-weight: 800;
+      font-size: 0.68rem;
+      letter-spacing: 0.05em;
+      border: none;
+      border-radius: 4px;
+      padding: 0.6em 0.8em;
+      background: #0d0d0d;
+      color: #ededea;
+    }
+  </style>
+</head>
+<body>
+  <div class="brand"><img src="/pager/logo.svg" alt="Baraka Food" /></div>
+
+  <div class="wrap">
+    <div class="layout">
+      <div>
+        <p class="block-title">Ajouter au ticket</p>
+        <div class="cat-tabs" id="cat-tabs"></div>
+        <div class="catalog" id="catalog"></div>
+      </div>
+
+      <div>
+        <p class="block-title">Ticket en cours</p>
+        <div class="cart" id="cart"></div>
+        <div class="cart-total" id="cart-total"></div>
+        <button class="send-btn" id="send-btn" disabled>Envoyer en cuisine</button>
+        <div class="confirm" id="confirm">
+          <span>Commande envoyée</span>
+          <span class="confirm-code" id="confirm-code"></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="tracking">
+      <p class="block-title">Commandes en cours</p>
+      <div id="tracking-list"></div>
+    </div>
+  </div>
+
+  <script src="/pager/salle.js"></script>
+</body>
+</html>
