@@ -1,4 +1,4 @@
-export const API_URL = ''
+import { supabase } from './supabase'
 
 export interface Supplement {
   id: string
@@ -86,29 +86,33 @@ export interface MenuData {
 }
 
 export function imgUrl(path: string) {
-  return path.startsWith('http') ? path : `${API_URL}${path}`
+  return path
 }
 
 export async function fetchMenu(): Promise<MenuData> {
-  const res = await fetch(`${API_URL}/api/menu`)
-  if (!res.ok) throw new Error('fetch menu failed')
-  return res.json()
+  const { data, error } = await supabase.from('menu').select('data').eq('id', 1).single()
+  if (error) throw error
+  return data.data as MenuData
 }
 
 export async function saveMenu(menu: MenuData): Promise<void> {
-  const res = await fetch(`${API_URL}/api/menu`, {
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(menu),
-  })
-  if (!res.ok) throw new Error('save menu failed')
+  const { error } = await supabase
+    .from('menu')
+    .update({ data: menu, updated_at: new Date().toISOString() })
+    .eq('id', 1)
+  if (error) throw error
 }
 
 export async function uploadImage(file: File): Promise<string> {
-  const form = new FormData()
-  form.append('image', file)
-  const res = await fetch(`${API_URL}/api/upload`, { method: 'POST', body: form })
-  if (!res.ok) throw new Error('upload failed')
-  const data = await res.json()
-  return data.url
+  const ext = file.name.split('.').pop() || 'png'
+  const filename = `${file.name.replace(/\.[^.]+$/, '').replace(/[^a-z0-9-]/gi, '-').toLowerCase()}-${Date.now()}.${ext}`
+
+  const { error } = await supabase.storage.from('menu-images').upload(filename, file, {
+    upsert: true,
+    cacheControl: '31536000',
+  })
+  if (error) throw error
+
+  const { data } = supabase.storage.from('menu-images').getPublicUrl(filename)
+  return data.publicUrl
 }

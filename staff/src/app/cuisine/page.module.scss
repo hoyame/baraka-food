@@ -1,0 +1,121 @@
+@use '../../styles/variables' as *;
+
+.main {
+  flex: 1;
+  padding: 0 1.5rem 3rem;
+
+  * {
+    text-transform: uppercase;
+  }
+}
+
+.wrap {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.columns {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  align-items: start;
+
+  @media (max-width: 800px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.colTitle {
+  font-family: $font-display;
+  font-weight: 800;
+  font-size: 0.75rem;
+  letter-spacing: 0.14em;
+  color: $color-muted;
+  margin-bottom: 0.7rem;
+}
+
+.colList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+
+.empty {
+  text-align: center;
+  color: #333333;
+  font-size: 0.8rem;
+  padding: 1rem 0;
+}
+
+.card {
+  background: $color-bg-section;
+  border-radius: 0;
+  padding: 0.9rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.cardHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.code {
+  font-family: $font-display;
+  font-weight: 900;
+  font-size: 1.15rem;
+}
+
+.time {
+  font-size: 0.7rem;
+  color: $color-dim;
+}
+
+.items {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.itemBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.itemLine {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: $color-white;
+}
+
+.itemRemoved {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #ff5a5a;
+}
+
+.itemAdded {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #7fc97f;
+}
+
+.itemNotes {
+  font-size: 0.72rem;
+  color: #b98b52;
+  font-weight: 500;
+}
+
+.btn {
+  font-weight: 800;
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  border: none;
+  border-radius: 0;
+  padding: 0.7em 0.9em;
+  background: $color-white;
+  color: $color-price-text;
+}

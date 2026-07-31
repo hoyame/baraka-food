@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
 import { useMenu } from '../hooks/useMenu'
 import { imgUrl } from '../lib/api'
@@ -11,6 +12,9 @@ export default function Menu3() {
   const reduced = useReducedMotion()
   const scaleCount = (menu?.page3.viandes.length ?? 0) + (menu?.page3.extras.items.length ?? 0)
   const scaleSpot = useSpotlight(scaleCount, 3200, reduced)
+  const hasEntered = useRef(false)
+  useEffect(() => { if (menu) hasEntered.current = true }, [menu])
+  const entrance = <T,>(initial: T) => (hasEntered.current ? false : initial)
 
   if (!menu) return null
 
@@ -39,7 +43,7 @@ export default function Menu3() {
             <motion.div
               key={t.id}
               className={`m3__bcard${t.available ? '' : ' is-off'}`}
-              initial={{ opacity: 0, y: 16 }}
+              initial={entrance({ opacity: 0, y: 16 })}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.45, delay: i * 0.08 }}
             >
@@ -59,7 +63,7 @@ export default function Menu3() {
             <motion.div
               key={v.id}
               className={`m3__tcard${v.available ? '' : ' is-off'}`}
-              initial={{ opacity: 0, y: 12 }}
+              initial={entrance({ opacity: 0, y: 12 })}
               animate={{ opacity: 1, y: 0, scale: v.available && scaleSpot === i ? 1.15 : 1 }}
               transition={{ duration: 0.6, delay: 0.1 + i * 0.05 }}
             >
@@ -92,7 +96,7 @@ export default function Menu3() {
               <motion.div
                 key={e.id}
                 className={`m3__tcard${e.available ? '' : ' is-off'}`}
-                initial={{ opacity: 0, y: 12 }}
+                initial={entrance({ opacity: 0, y: 12 })}
                 animate={{ opacity: 1, y: 0, scale: e.available && scaleSpot === page3.viandes.length + i ? 1.15 : 1 }}
                 transition={{ duration: 0.6, delay: 0.1 + i * 0.05 }}
               >

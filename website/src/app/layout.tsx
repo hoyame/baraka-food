@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Poppins, Inter } from 'next/font/google'
 import Footer from '@/components/Footer'
+import RefreshOnFocus from '@/components/RefreshOnFocus'
 import '../styles/globals.scss'
 
 const poppins = Poppins({
@@ -25,6 +26,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="fr" className={`${poppins.variable} ${inter.variable}`}>
       <body>
+        <RefreshOnFocus />
         {children}
         <Footer />
       </body>

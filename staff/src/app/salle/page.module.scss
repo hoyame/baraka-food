@@ -1,0 +1,304 @@
+@use '../../styles/variables' as *;
+
+.main {
+  flex: 1;
+  padding: 0 1.5rem 3rem;
+
+  * {
+    text-transform: uppercase;
+  }
+}
+
+.wrap {
+  max-width: 780px;
+  margin: 0 auto;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr;
+  gap: 1.5rem;
+  align-items: start;
+
+  @media (max-width: 800px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.blockTitle {
+  font-family: $font-display;
+  font-weight: 800;
+  font-size: 0.75rem;
+  letter-spacing: 0.14em;
+  color: $color-muted;
+  margin-bottom: 0.7rem;
+}
+
+.catTabs {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.9rem;
+}
+
+.catTab {
+  font-family: $font-display;
+  font-weight: 700;
+  font-size: 0.7rem;
+  letter-spacing: 0.06em;
+  color: $color-muted;
+  background: $color-bg-section;
+  border: none;
+  border-radius: 0;
+  padding: 0.55em 0.9em;
+}
+
+.catTabActive {
+  color: $color-price-text;
+  background: $color-white;
+}
+
+.catalog {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.catalogItem {
+  display: block;
+  background: $color-bg-section;
+  border: none;
+  border-radius: 0;
+  padding: 0.75em 0.9em;
+  color: $color-white;
+  text-align: left;
+  font-family: $font-body;
+  font-weight: 500;
+  font-size: 0.85rem;
+}
+
+.cart {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.cartEmpty {
+  color: #333333;
+  font-size: 0.8rem;
+  padding: 1rem 0;
+  text-align: center;
+}
+
+.cartLine {
+  background: $color-bg-section;
+  border-radius: 0;
+  padding: 0.7em 0.8em;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.cartLineWarn {
+  background: rgba(255, 90, 90, 0.12);
+  outline: 1px solid rgba(255, 90, 90, 0.5);
+}
+
+.cartLineWarnText {
+  font-family: $font-display;
+  font-weight: 800;
+  font-size: 0.7rem;
+  letter-spacing: 0.04em;
+  color: #ff5a5a;
+}
+
+.cartLineHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.cartLineName {
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+
+.cartLineRemove {
+  background: none;
+  border: none;
+  color: #ff8080;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.cartLineRow {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.qtyInput {
+  width: 3.2em;
+  font-family: $font-display;
+  font-weight: 700;
+  font-size: 0.8rem;
+  text-align: center;
+  background: $color-bg;
+  border: none;
+  border-radius: 0;
+  color: $color-white;
+  padding: 0.4em;
+}
+
+.notesInput {
+  flex: 1;
+  font-family: $font-body;
+  font-weight: 500;
+  font-size: 0.78rem;
+  background: $color-bg;
+  border: none;
+  border-radius: 0;
+  color: $color-white;
+  padding: 0.4em 0.6em;
+
+  &::placeholder {
+    color: $color-dim;
+  }
+}
+
+.chipRow {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.chipGroupLabel {
+  font-family: $font-display;
+  font-weight: 700;
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
+  color: $color-dim;
+  margin-right: 0.2rem;
+  flex-basis: 100%;
+}
+
+.chip {
+  font-family: $font-body;
+  font-weight: 500;
+  font-size: 0.72rem;
+  color: $color-muted;
+  background: $color-bg;
+  border: 1px solid transparent;
+  border-radius: 0;
+  padding: 0.35em 0.75em;
+}
+
+.chipOn {
+  color: $color-white;
+}
+
+.chipOff {
+  color: #ff5a5a;
+  text-decoration: line-through;
+}
+
+.chipAdd {
+  color: $color-price-text;
+  background: $color-white;
+  font-weight: 700;
+}
+
+.sendBtn {
+  width: 100%;
+  font-weight: 800;
+  font-size: 0.85rem;
+  letter-spacing: 0.08em;
+  color: $color-price-text;
+  background: $color-white;
+  border: none;
+  border-radius: 0;
+  padding: 0.9em;
+  margin-top: 0.6rem;
+
+  &:disabled {
+    opacity: 0.3;
+  }
+}
+
+.confirm {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 0.5rem;
+  background: $color-white;
+  color: $color-price-text;
+  border-radius: 0;
+  padding: 1.4rem;
+  text-align: center;
+  margin-top: 0.8rem;
+}
+
+.confirmCode {
+  font-family: $font-display;
+  font-weight: 900;
+  font-size: 2rem;
+}
+
+.tracking {
+  margin-top: 2.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.trackCard {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.8rem;
+  background: $color-bg-section;
+  border-radius: 0;
+  padding: 0.8em 1em;
+}
+
+.trackCardAlert {
+  background: $color-white;
+  animation: pulse 1s ease infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.015); }
+}
+
+.trackCode {
+  font-family: $font-display;
+  font-weight: 900;
+  font-size: 1.05rem;
+}
+
+.trackCardAlert .trackCode,
+.trackCardAlert .trackStatus {
+  color: $color-price-text;
+}
+
+.trackStatus {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: $color-muted;
+}
+
+.trackBtn {
+  font-family: $font-display;
+  font-weight: 800;
+  font-size: 0.68rem;
+  letter-spacing: 0.05em;
+  border: none;
+  border-radius: 0;
+  padding: 0.6em 0.8em;
+  background: $color-bg;
+  color: $color-white;
+}

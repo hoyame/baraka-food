@@ -1,7 +1,4 @@
-import fs from 'fs/promises'
-import path from 'path'
-
-const MENU_FILE = path.join(process.cwd(), '..', 'server', 'data', 'menu.json')
+import { supabase } from './supabase'
 
 export interface Supplement {
   id: string
@@ -89,10 +86,7 @@ export interface MenuData {
 }
 
 export async function getMenu(): Promise<MenuData> {
-  const raw = await fs.readFile(MENU_FILE, 'utf-8')
-  return JSON.parse(raw)
-}
-
-export function img(src: string) {
-  return src
+  const { data, error } = await supabase.from('menu').select('data').eq('id', 1).single()
+  if (error) throw error
+  return data.data as MenuData
 }

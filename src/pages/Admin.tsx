@@ -35,6 +35,44 @@ function ImgPicker({ img, onPick }: { img?: string; onPick: (url: string) => voi
   )
 }
 
+function IngredientEditor({ value, onChange }: { value: string; onChange: (v: string) => void }) {
+  const ingredients = value ? value.split(' · ').filter(Boolean) : []
+  const [draft, setDraft] = useState('')
+
+  const commit = (list: string[]) => onChange(list.join(' · '))
+
+  const addIngredient = () => {
+    const v = draft.trim()
+    if (!v) return
+    commit([...ingredients, v])
+    setDraft('')
+  }
+
+  return (
+    <div className="adm__ingredients">
+      {ingredients.map((ing, i) => (
+        <span key={i} className="adm__ingredient-chip">
+          {ing}
+          <button type="button" onClick={() => commit(ingredients.filter((_, j) => j !== i))}>×</button>
+        </span>
+      ))}
+      <input
+        className="adm__ingredient-input"
+        value={draft}
+        placeholder="+ Ingrédient"
+        onChange={e => setDraft(e.target.value)}
+        onKeyDown={e => {
+          if (e.key === 'Enter') {
+            e.preventDefault()
+            addIngredient()
+          }
+        }}
+        onBlur={addIngredient}
+      />
+    </div>
+  )
+}
+
 interface RowProps {
   img?: string
   label?: string
@@ -55,7 +93,7 @@ function Row({ img, label, name, desc, price, available, onPatch }: RowProps) {
         )}
         <input className="adm__input adm__input--name" value={name} onChange={e => onPatch({ name: e.target.value })} placeholder="Nom" />
         {desc !== undefined && (
-          <input className="adm__input adm__input--desc" value={desc} onChange={e => onPatch({ desc: e.target.value })} placeholder="Description" />
+          <IngredientEditor value={desc} onChange={v => onPatch({ desc: v })} />
         )}
       </div>
       {typeof price === 'number' && (

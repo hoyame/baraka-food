@@ -10,6 +10,10 @@
   color: $color-white;
   font-family: $font-body;
 
+  * {
+    text-transform: uppercase;
+  }
+
   &--loading {
     align-items: center;
     justify-content: center;
@@ -63,7 +67,7 @@
     background: $color-white;
     border: none;
     padding: 0.9em 1.3em;
-    border-radius: 8px;
+    border-radius: 0;
     cursor: pointer;
     flex-shrink: 0;
 
@@ -125,7 +129,7 @@
     gap: 0.7em;
     padding: 0.8em;
     background: #161616;
-    border-radius: 10px;
+    border-radius: 0;
 
     &--off {
       background: #1c1212;
@@ -149,7 +153,7 @@
   &__input {
     background: #1f1f1f;
     border: 1px solid #2c2c2c;
-    border-radius: 8px;
+    border-radius: 0;
     color: $color-white;
     font-family: $font-body;
     font-size: 16px;
@@ -197,10 +201,59 @@
     }
   }
 
+  &__ingredients {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4em;
+  }
+
+  &__ingredient-chip {
+    display: flex;
+    align-items: center;
+    gap: 0.35em;
+    background: #1f1f1f;
+    border: 1px solid #2c2c2c;
+    border-radius: 0;
+    padding: 0.3em 0.3em 0.3em 0.7em;
+    font-size: 13px;
+    color: $color-white;
+
+    button {
+      background: none;
+      border: none;
+      color: $color-muted;
+      font-size: 1.1em;
+      line-height: 1;
+      padding: 0.1em 0.3em;
+      cursor: pointer;
+
+      &:hover {
+        color: #e07070;
+      }
+    }
+  }
+
+  &__ingredient-input {
+    background: transparent;
+    border: 1px dashed #2c2c2c;
+    border-radius: 0;
+    color: $color-white;
+    font-size: 13px;
+    padding: 0.35em 0.8em;
+    min-width: 7em;
+    flex: 1;
+
+    &:focus {
+      outline: none;
+      border-color: #555;
+    }
+  }
+
   &__textarea {
     background: #1f1f1f;
     border: 1px solid #2c2c2c;
-    border-radius: 8px;
+    border-radius: 0;
     color: $color-white;
     font-family: $font-body;
     font-size: 16px;
@@ -222,7 +275,7 @@
     flex-shrink: 0;
     background: #1f1f1f;
     border: 1px solid #2c2c2c;
-    border-radius: 10px;
+    border-radius: 0;
     cursor: pointer;
     padding: 0;
     overflow: hidden;
@@ -255,7 +308,7 @@
     font-size: 0.7em;
     letter-spacing: 0.1em;
     padding: 1em 1.2em;
-    border-radius: 8px;
+    border-radius: 0;
     border: 1px solid #3a2020;
     background: #2a1515;
     color: #e07070;

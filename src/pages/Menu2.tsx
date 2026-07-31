@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
 import { useMenu } from '../hooks/useMenu'
 import { imgUrl } from '../lib/api'
@@ -10,6 +11,9 @@ export default function Menu2() {
   const reduced = useReducedMotion()
   const scaleCount = (menu?.page2.classiques.length ?? 0) + (menu?.supplements.length ?? 0)
   const scaleSpot = useSpotlight(scaleCount, 3200, reduced)
+  const hasEntered = useRef(false)
+  useEffect(() => { if (menu) hasEntered.current = true }, [menu])
+  const entrance = <T,>(initial: T) => (hasEntered.current ? false : initial)
 
   if (!menu) return null
 
@@ -36,7 +40,7 @@ export default function Menu2() {
             <motion.div
               key={item.id}
               className={`m2__tcard${item.available ? '' : ' is-off'}`}
-              initial={{ opacity: 0, y: 12 }}
+              initial={entrance({ opacity: 0, y: 12 })}
               animate={{ opacity: 1, y: 0, scale: item.available && scaleSpot === i ? 1.15 : 1 }}
               transition={{ duration: 0.6, delay: 0.1 + i * 0.05 }}
             >
@@ -57,7 +61,7 @@ export default function Menu2() {
       <section className="m2__row m2__featured-row">
         <motion.div
           className={`m2__bcard m2__bcard--featured${page2.crunchy.available ? '' : ' is-off'}`}
-          initial={{ opacity: 0, y: 16 }}
+          initial={entrance({ opacity: 0, y: 16 })}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.45, delay: 0.18 }}
         >
@@ -84,7 +88,7 @@ export default function Menu2() {
             <motion.div
               key={item.id}
               className={`m2__tcard${item.available ? '' : ' is-off'}`}
-              initial={{ opacity: 0, y: 12 }}
+              initial={entrance({ opacity: 0, y: 12 })}
               animate={{ opacity: 1, y: 0, scale: item.available && scaleSpot === page2.classiques.length + i ? 1.15 : 1 }}
               transition={{ duration: 0.6, delay: 0.1 + i * 0.05 }}
             >

@@ -1,7 +1,9 @@
+import { useEffect, useRef } from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
 import { useMenu } from '../hooks/useMenu'
 import { imgUrl } from '../lib/api'
 import { imgFloat, useSpotlight } from '../lib/menuMotion'
+import ReadyOrdersBanner from '../components/ReadyOrdersBanner'
 import logo from '../assets/logo.svg'
 import './Menu1.scss'
 
@@ -10,6 +12,9 @@ export default function Menu1() {
   const reduced = useReducedMotion()
   const scaleCount = (menu?.page1.texmex.length ?? 0) + (menu?.supplements.length ?? 0)
   const scaleSpot = useSpotlight(scaleCount, 3200, reduced)
+  const hasEntered = useRef(false)
+  useEffect(() => { if (menu) hasEntered.current = true }, [menu])
+  const entrance = <T,>(initial: T) => (hasEntered.current ? false : initial)
 
   if (!menu) return null
 
@@ -34,7 +39,7 @@ export default function Menu1() {
           <motion.div
             key={item.id}
             className={`m1__bcard${item.available ? '' : ' is-off'}`}
-            initial={{ opacity: 0, y: 16 }}
+            initial={entrance({ opacity: 0, y: 16 })}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.45, delay: i * 0.08 }}
           >
@@ -62,7 +67,7 @@ export default function Menu1() {
             <motion.div
               key={item.id}
               className={`m1__tcard${item.available ? '' : ' is-off'}`}
-              initial={{ opacity: 0, y: 12 }}
+              initial={entrance({ opacity: 0, y: 12 })}
               animate={{ opacity: 1, y: 0, scale: item.available && scaleSpot === i ? 1.15 : 1 }}
               transition={{ duration: 0.6, delay: 0.1 + i * 0.05 }}
             >
@@ -87,7 +92,7 @@ export default function Menu1() {
             <motion.div
               key={item.id}
               className={`m1__tcard${item.available ? '' : ' is-off'}`}
-              initial={{ opacity: 0, y: 12 }}
+              initial={entrance({ opacity: 0, y: 12 })}
               animate={{ opacity: 1, y: 0, scale: item.available && scaleSpot === page1.texmex.length + i ? 1.15 : 1 }}
               transition={{ duration: 0.6, delay: 0.1 + i * 0.05 }}
             >
@@ -104,6 +109,8 @@ export default function Menu1() {
           ))}
         </div>
       </section>
+
+      <ReadyOrdersBanner />
     </div>
   )
 }

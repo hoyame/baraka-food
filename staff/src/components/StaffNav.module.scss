@@ -1,0 +1,27 @@
+@use '../styles/variables' as *;
+
+.nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 1.2rem;
+}
+
+.link {
+  font-family: $font-display;
+  font-weight: 700;
+  font-size: 0.78rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: $color-muted;
+  background: $color-bg-section;
+  padding: 0.6em 1.4em;
+  border-radius: $radius-sm;
+  transition: color $transition, background $transition;
+}
+
+.linkActive {
+  color: $color-price-text;
+  background: $color-white;
+}
