@@ -31,6 +31,14 @@ export interface SimpleItem {
   id: string
   name: string
   price: number
+  img?: string
+  available: boolean
+}
+
+export interface SandwichConfig {
+  img: string
+  prixSimple: number
+  prixDouble: number
   available: boolean
 }
 
@@ -70,9 +78,12 @@ export interface MenuData {
   page2: {
     title: string
     classiques: PricedItem[]
+    sandwich: SandwichConfig
+    garnitures: ImgItem[]
     crunchy: FeaturedItem
     menuKids: FeaturedItem
     frites: SimpleItem[]
+    friteSupplements: { id: string; name: string; available: boolean }[]
     desserts: SimpleItem[]
     boissons: SimpleItem[]
   }
@@ -89,10 +100,36 @@ export function imgUrl(path: string) {
   return path
 }
 
+export function normalizeMenu(menu: MenuData): MenuData {
+  if (!menu.page2.sandwich) {
+    menu.page2.sandwich = {
+      img: menu.page2.classiques?.[0]?.img ?? '',
+      prixSimple: 6.5,
+      prixDouble: 8,
+      available: true,
+    }
+  }
+  if (!menu.page2.friteSupplements) {
+    menu.page2.friteSupplements = [
+      { id: 'fritesup-0', name: 'Fromage', available: true },
+      { id: 'fritesup-1', name: 'Lardons', available: true },
+    ]
+  }
+  if (!menu.page2.garnitures) {
+    menu.page2.garnitures = ['Salade', 'Tomate', 'Oignons', 'Fromage', 'Maïs', 'Olives'].map((name, i) => ({
+      id: `garniture-${i}`,
+      name,
+      img: '',
+      available: true,
+    }))
+  }
+  return menu
+}
+
 export async function fetchMenu(): Promise<MenuData> {
   const { data, error } = await supabase.from('menu').select('data').eq('id', 1).single()
   if (error) throw error
-  return data.data as MenuData
+  return normalizeMenu(data.data as MenuData)
 }
 
 export async function saveMenu(menu: MenuData): Promise<void> {

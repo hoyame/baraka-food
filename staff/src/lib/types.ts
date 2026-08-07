@@ -13,6 +13,9 @@ export interface MenuData {
   }
   page2: {
     classiques: { id: string; name: string; desc?: string; price: number; available: boolean }[]
+    sandwich?: { img: string; prixSimple: number; prixDouble: number; available: boolean }
+    garnitures?: { id: string; name: string; available: boolean }[]
+    friteSupplements?: { id: string; name: string; available: boolean }[]
     crunchy: { id: string; name: string; desc?: string; price: number; available: boolean }
     menuKids: { id: string; name: string; desc?: string; price: number; available: boolean }
     frites: { id: string; name: string; price: number; available: boolean }[]

@@ -24,6 +24,7 @@ call npm --prefix staff run build
 echo Demarrage de Baraka Food...
 start "BarakaFood-Ecrans" /min node server\index.js
 start "BarakaFood-Staff" /min cmd /k "npm --prefix staff run start"
+start "BarakaFood-Imprimante" /min cmd /k "node server\print-listener.js"
 
 timeout /t 3 /nobreak >nul
 

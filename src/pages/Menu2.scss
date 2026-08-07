@@ -130,15 +130,112 @@
     }
   }
 
-  &__classiques {
-    flex: 1.4;
+  &__compose {
+    flex: 1.15;
     display: flex;
   }
 
-  &__classiques-grid {
+  &__sandwich-hero {
+    flex: 0 0 34%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.8em 1.5em;
+    border-right: 1px solid $color-border;
+    overflow: hidden;
+  }
+
+  &__sandwich-img {
+    height: 100%;
+    max-height: 100%;
+    max-width: 100%;
+    object-fit: contain;
+    filter: drop-shadow(0 6px 20px rgba(0, 0, 0, 0.6));
+  }
+
+  &__formules {
     flex: 1;
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: 1fr 1fr;
+    min-width: 0;
+  }
+
+  &__fcard {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.3em;
+    padding: 0.8em 1.2em;
+    border-right: 1px solid $color-border;
+
+    &:last-child { border-right: none; }
+  }
+
+  &__fcard-count {
+    font-family: $font-display;
+    font-weight: 900;
+    font-size: 4.5em;
+    color: $color-white;
+    line-height: 0.9;
+    letter-spacing: -0.04em;
+  }
+
+  &__fcard-label {
+    font-size: 0.72em;
+    letter-spacing: 0.14em;
+    color: $color-muted;
+    line-height: 1.2;
+  }
+
+  &__fcard-price {
+    font-family: $font-display;
+    font-weight: 900;
+    font-size: 1.8em;
+    color: $color-white;
+    letter-spacing: -0.02em;
+    line-height: 1;
+    margin-top: 0.2em;
+  }
+
+  &__viandes {
+    flex: 1;
+    display: flex;
+    background: $color-white;
+
+    .m2__spine {
+      border-right: none;
+
+      span { color: rgba(0, 0, 0, 0.4); }
+    }
+
+    .m2__tcard {
+      border-right: none;
+    }
+
+    .m2__tcard-name {
+      color: $color-price-text;
+    }
+  }
+
+  &__viandes-grid {
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    min-height: 0;
+  }
+
+  &__desserts {
+    flex: 1;
+    display: flex;
+  }
+
+  &__desserts-grid {
+    flex: 1;
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: 1fr;
     min-height: 0;
   }
 
@@ -171,81 +268,6 @@
     letter-spacing: -0.02em;
     line-height: 1;
     transform-origin: center;
-  }
-
-  &__featured-row {
-    flex: 1;
-    display: flex;
-  }
-
-  &__bcard {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    gap: 1.6em;
-    padding: 0 2.5em;
-
-    &--featured {
-      background: $color-white;
-      .m2__bcard-label  { color: rgba(0,0,0,.3); }
-      .m2__bcard-name   { color: $color-price-text; }
-      .m2__bcard-desc   { color: rgba(0,0,0,.4); }
-      .m2__bcard-price  { color: $color-price-text; }
-    }
-  }
-
-  &__bcard-text {
-    display: flex;
-    flex-direction: column;
-    gap: 0.2em;
-    flex: 1;
-    min-width: 0;
-  }
-
-  &__bcard-label {
-    font-family: $font-display;
-    font-weight: 600;
-    font-size: 0.55em;
-    letter-spacing: 0.2em;
-    color: $color-dim;
-  }
-
-  &__bcard-name {
-    font-family: $font-display;
-    font-weight: 900;
-    font-size: 1.15em;
-    color: $color-white;
-    line-height: 1.05;
-
-    &--xl { font-size: 2.2em; }
-  }
-
-  &__bcard-desc {
-    font-size: 0.72em;
-    color: $color-muted;
-    line-height: 1.4;
-  }
-
-  &__bcard-price {
-    font-family: $font-display;
-    font-weight: 900;
-    font-size: 3em;
-    color: $color-white;
-    letter-spacing: -0.02em;
-    line-height: 1;
-    flex-shrink: 0;
-  }
-
-  &__sups {
-    flex: 1;
-    display: flex;
-  }
-
-  &__sups-grid {
-    flex: 1;
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    min-height: 0;
   }
 
   &__bottom {
@@ -300,7 +322,7 @@
   &__plus {
     flex: 1;
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
   }
 
   &__plus-col {
@@ -322,11 +344,24 @@
     margin-bottom: 0.3em;
   }
 
+  &__mini-img {
+    height: 1.8em;
+    width: 1.8em;
+    object-fit: contain;
+    flex-shrink: 0;
+    filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.5));
+  }
+
+  &__mini-name {
+    flex: 1;
+    min-width: 0;
+  }
+
   &__mini-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 1em;
+    gap: 0.6em;
     font-size: 0.78em;
     color: $color-white;
     border-bottom: 1px solid $color-border;

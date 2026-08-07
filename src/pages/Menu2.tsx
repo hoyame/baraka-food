@@ -9,7 +9,7 @@ import './Menu2.scss'
 export default function Menu2() {
   const menu = useMenu()
   const reduced = useReducedMotion()
-  const scaleCount = (menu?.page2.classiques.length ?? 0) + (menu?.supplements.length ?? 0)
+  const scaleCount = (menu?.page3.viandes.length ?? 0) + (menu?.page2.garnitures.length ?? 0)
   const scaleSpot = useSpotlight(scaleCount, 3200, reduced)
   const hasEntered = useRef(false)
   useEffect(() => { if (menu) hasEntered.current = true }, [menu])
@@ -17,7 +17,9 @@ export default function Menu2() {
 
   if (!menu) return null
 
-  const { page2, supplements, note } = menu
+  const { page2, page3, note } = menu
+  const { sandwich } = page2
+  const viandes = page3.viandes
 
   return (
     <div className="m2">
@@ -33,73 +35,85 @@ export default function Menu2() {
         </div>
       </header>
 
-      <section className="m2__row m2__classiques">
-        <div className="m2__spine"><span>CLASSIQUES</span></div>
-        <div className="m2__classiques-grid">
-          {page2.classiques.map((item, i) => (
+      <section className="m2__row m2__compose">
+        <div className="m2__sandwich-hero">
+          <motion.img
+            className="m2__sandwich-img"
+            src={imgUrl(sandwich.img)}
+            alt="Sandwich"
+            {...imgFloat(0, reduced)}
+          />
+        </div>
+        <div className="m2__formules">
+          <motion.div
+            className={`m2__fcard${sandwich.available ? '' : ' is-off'}`}
+            initial={entrance({ opacity: 0, y: 16 })}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.45 }}
+          >
+            <span className="m2__fcard-count">1</span>
+            <span className="m2__fcard-label">VIANDE AU CHOIX</span>
+            <span className="m2__fcard-price">{sandwich.prixSimple.toFixed(2)}€</span>
+            {!sandwich.available && <span className="off-badge">ÉPUISÉ</span>}
+          </motion.div>
+          <motion.div
+            className={`m2__fcard${sandwich.available ? '' : ' is-off'}`}
+            initial={entrance({ opacity: 0, y: 16 })}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.45, delay: 0.08 }}
+          >
+            <span className="m2__fcard-count">2</span>
+            <span className="m2__fcard-label">DOUBLE VIANDE</span>
+            <span className="m2__fcard-price">{sandwich.prixDouble.toFixed(2)}€</span>
+            {!sandwich.available && <span className="off-badge">ÉPUISÉ</span>}
+          </motion.div>
+        </div>
+      </section>
+
+      <section className="m2__row m2__viandes">
+        <div className="m2__spine"><span>TA VIANDE</span></div>
+        <div className="m2__viandes-grid">
+          {viandes.map((v, i) => (
             <motion.div
-              key={item.id}
-              className={`m2__tcard${item.available ? '' : ' is-off'}`}
+              key={v.id}
+              className={`m2__tcard${v.available ? '' : ' is-off'}`}
               initial={entrance({ opacity: 0, y: 12 })}
-              animate={{ opacity: 1, y: 0, scale: item.available && scaleSpot === i ? 1.15 : 1 }}
+              animate={{ opacity: 1, y: 0, scale: v.available && scaleSpot === i ? 1.15 : 1 }}
               transition={{ duration: 0.6, delay: 0.1 + i * 0.05 }}
             >
               <motion.img
                 className="m2__img m2__img--md m2__img--photo"
-                src={imgUrl(item.img)}
-                alt={item.name}
+                src={imgUrl(v.img)}
+                alt={v.name}
                 {...imgFloat(i, reduced)}
               />
-              <span className="m2__tcard-name">{item.name}</span>
-              <span className="m2__tcard-price">{item.price.toFixed(2)}€</span>
-              {!item.available && <span className="off-badge">ÉPUISÉ</span>}
+              <span className="m2__tcard-name">{v.name}</span>
+              {!v.available && <span className="off-badge">ÉPUISÉ</span>}
             </motion.div>
           ))}
         </div>
       </section>
 
-      <section className="m2__row m2__featured-row">
-        <motion.div
-          className={`m2__bcard m2__bcard--featured${page2.crunchy.available ? '' : ' is-off'}`}
-          initial={entrance({ opacity: 0, y: 16 })}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.45, delay: 0.18 }}
-        >
-          <motion.img
-            className="m2__img m2__img--lg m2__img--photo"
-            src={imgUrl(page2.crunchy.img)}
-            alt={page2.crunchy.name}
-            {...imgFloat(0, reduced)}
-          />
-          <div className="m2__bcard-text">
-            <p className="m2__bcard-label">{page2.crunchy.label}</p>
-            <h2 className="m2__bcard-name m2__bcard-name--xl">{page2.crunchy.name}</h2>
-            <p className="m2__bcard-desc">{page2.crunchy.desc}</p>
-          </div>
-          <span className="m2__bcard-price">{page2.crunchy.price.toFixed(2)}€</span>
-          {!page2.crunchy.available && <span className="off-badge">ÉPUISÉ</span>}
-        </motion.div>
-      </section>
-
-      <section className="m2__row m2__sups">
-        <div className="m2__spine"><span>SUPPLÉMENTS</span></div>
-        <div className="m2__sups-grid">
-          {supplements.map((item, i) => (
+      <section className="m2__row m2__desserts">
+        <div className="m2__spine"><span>GARNITURES</span></div>
+        <div className="m2__desserts-grid">
+          {page2.garnitures.map((item, i) => (
             <motion.div
               key={item.id}
               className={`m2__tcard${item.available ? '' : ' is-off'}`}
               initial={entrance({ opacity: 0, y: 12 })}
-              animate={{ opacity: 1, y: 0, scale: item.available && scaleSpot === page2.classiques.length + i ? 1.15 : 1 }}
+              animate={{ opacity: 1, y: 0, scale: item.available && scaleSpot === viandes.length + i ? 1.15 : 1 }}
               transition={{ duration: 0.6, delay: 0.1 + i * 0.05 }}
             >
-              <motion.img
-                className="m2__img m2__img--md m2__img--photo"
-                src={imgUrl(item.img)}
-                alt={item.name}
-                {...imgFloat(i, reduced)}
-              />
+              {item.img && (
+                <motion.img
+                  className="m2__img m2__img--md m2__img--photo"
+                  src={imgUrl(item.img)}
+                  alt={item.name}
+                  {...imgFloat(i, reduced)}
+                />
+              )}
               <span className="m2__tcard-name">{item.name}</span>
-              <span className="m2__tcard-price">{item.price}</span>
               {!item.available && <span className="off-badge">ÉPUISÉ</span>}
             </motion.div>
           ))}
@@ -125,14 +139,14 @@ export default function Menu2() {
         <div className="m2__plus">
           {([
             ['FRITES', page2.frites],
-            ['DESSERTS', page2.desserts],
             ['BOISSONS', page2.boissons],
           ] as const).map(([title, items]) => (
             <div key={title} className="m2__plus-col">
               <span className="m2__plus-title">{title}</span>
               {items.map(it => (
                 <div key={it.id} className={`m2__mini-row${it.available ? '' : ' m2__mini-row--off'}`}>
-                  <span>{it.name}</span>
+                  {it.img && <img className="m2__mini-img" src={imgUrl(it.img)} alt={it.name} />}
+                  <span className="m2__mini-name">{it.name}</span>
                   <span>{it.price.toFixed(2)}€</span>
                 </div>
               ))}

@@ -81,11 +81,18 @@ interface RowProps {
   price?: number | string
   available: boolean
   onPatch: (p: Record<string, unknown>) => void
+  onMove?: (dir: -1 | 1) => void
 }
 
-function Row({ img, label, name, desc, price, available, onPatch }: RowProps) {
+function Row({ img, label, name, desc, price, available, onPatch, onMove }: RowProps) {
   return (
     <div className={`adm__row${available ? '' : ' adm__row--off'}`}>
+      {onMove && (
+        <div className="adm__move">
+          <button type="button" onClick={() => onMove(-1)}>▲</button>
+          <button type="button" onClick={() => onMove(1)}>▼</button>
+        </div>
+      )}
       <ImgPicker img={img} onPick={url => onPatch({ img: url })} />
       <div className="adm__fields">
         {label !== undefined && (
@@ -141,6 +148,12 @@ export default function Admin() {
     setDirty(true)
   }
 
+  const moveItem = (arr: unknown[], i: number, dir: -1 | 1) => {
+    const j = i + dir
+    if (j < 0 || j >= arr.length) return
+    ;[arr[i], arr[j]] = [arr[j], arr[i]]
+  }
+
   const save = async () => {
     if (!menu) return
     setStatus('Enregistrement...')
@@ -182,49 +195,106 @@ export default function Admin() {
 
           <h3>Burgers</h3>
           {menu.page1.burgers.map((item, i) => (
-            <Row key={item.id} {...item} onPatch={p => update(d => Object.assign(d.page1.burgers[i], p))} />
+            <Row key={item.id} {...item} onPatch={p => update(d => Object.assign(d.page1.burgers[i], p))} onMove={dir => update(d => moveItem(d.page1.burgers, i, dir))} />
           ))}
 
           <h3>Texmex</h3>
           {menu.page1.texmex.map((item, i) => (
-            <Row key={item.id} {...item} onPatch={p => update(d => Object.assign(d.page1.texmex[i], p))} />
-          ))}
-        </section>
-
-        <section className="adm__section">
-          <h2>SUPPLÉMENTS (pages 1 &amp; 2)</h2>
-          {menu.supplements.map((item, i) => (
-            <Row key={item.id} {...item} onPatch={p => update(d => Object.assign(d.supplements[i], p))} />
+            <Row key={item.id} {...item} onPatch={p => update(d => Object.assign(d.page1.texmex[i], p))} onMove={dir => update(d => moveItem(d.page1.texmex, i, dir))} />
           ))}
         </section>
 
         <section className="adm__section">
           <h2>PAGE 2 — <input className="adm__input adm__input--title" value={menu.page2.title} onChange={e => update(d => { d.page2.title = e.target.value })} /></h2>
 
-          <h3>Classiques</h3>
-          {menu.page2.classiques.map((item, i) => (
-            <Row key={item.id} {...item} onPatch={p => update(d => Object.assign(d.page2.classiques[i], p))} />
-          ))}
+          <h3>Sandwich composé</h3>
+          <div className={`adm__row${menu.page2.sandwich.available ? '' : ' adm__row--off'}`}>
+            <ImgPicker img={menu.page2.sandwich.img} onPick={url => update(d => { d.page2.sandwich.img = url })} />
+            <div className="adm__fields adm__fields--inline">
+              <label className="adm__inline-label">1 viande</label>
+              <input
+                className="adm__input adm__input--price"
+                type="number"
+                step="0.01"
+                value={menu.page2.sandwich.prixSimple}
+                onChange={e => update(d => { d.page2.sandwich.prixSimple = parseFloat(e.target.value) || 0 })}
+              />
+              <label className="adm__inline-label">Double viande</label>
+              <input
+                className="adm__input adm__input--price"
+                type="number"
+                step="0.01"
+                value={menu.page2.sandwich.prixDouble}
+                onChange={e => update(d => { d.page2.sandwich.prixDouble = parseFloat(e.target.value) || 0 })}
+              />
+            </div>
+            <button
+              className={`adm__toggle${menu.page2.sandwich.available ? ' adm__toggle--on' : ''}`}
+              onClick={() => update(d => { d.page2.sandwich.available = !d.page2.sandwich.available })}
+            >
+              {menu.page2.sandwich.available ? 'DISPO' : 'ÉPUISÉ'}
+            </button>
+          </div>
+          <p className="adm__hint">Les viandes proposées sont celles de la section "Viandes" de la page 3.</p>
 
-          <h3>Crunchy</h3>
-          <Row {...menu.page2.crunchy} onPatch={p => update(d => Object.assign(d.page2.crunchy, p))} />
+          <h3>Garnitures</h3>
+          {menu.page2.garnitures.map((item, i) => (
+            <Row key={item.id} {...item} onPatch={p => update(d => Object.assign(d.page2.garnitures[i], p))} onMove={dir => update(d => moveItem(d.page2.garnitures, i, dir))} />
+          ))}
 
           <h3>Menu Kids</h3>
           <Row {...menu.page2.menuKids} onPatch={p => update(d => Object.assign(d.page2.menuKids, p))} />
 
           <h3>Frites</h3>
           {menu.page2.frites.map((item, i) => (
-            <Row key={item.id} {...item} onPatch={p => update(d => Object.assign(d.page2.frites[i], p))} />
+            <Row key={item.id} {...item} img={item.img ?? ''} onPatch={p => update(d => Object.assign(d.page2.frites[i], p))} onMove={dir => update(d => moveItem(d.page2.frites, i, dir))} />
           ))}
+
+          <h3>Suppléments frites</h3>
+          {menu.page2.friteSupplements.map((item, i) => (
+            <div key={item.id} className="adm__deletable">
+              <Row {...item} onPatch={p => update(d => Object.assign(d.page2.friteSupplements[i], p))} onMove={dir => update(d => moveItem(d.page2.friteSupplements, i, dir))} />
+              <button
+                className="adm__delete"
+                onClick={() => update(d => { d.page2.friteSupplements.splice(i, 1) })}
+              >
+                ×
+              </button>
+            </div>
+          ))}
+          <button
+            className="adm__add"
+            onClick={() => update(d => {
+              d.page2.friteSupplements.push({ id: `fritesup-${Date.now()}`, name: '', available: true })
+            })}
+          >
+            + AJOUTER UN SUPPLÉMENT FRITES
+          </button>
 
           <h3>Desserts</h3>
           {menu.page2.desserts.map((item, i) => (
-            <Row key={item.id} {...item} onPatch={p => update(d => Object.assign(d.page2.desserts[i], p))} />
+            <div key={item.id} className="adm__deletable">
+              <Row {...item} img={item.img ?? ''} onPatch={p => update(d => Object.assign(d.page2.desserts[i], p))} onMove={dir => update(d => moveItem(d.page2.desserts, i, dir))} />
+              <button
+                className="adm__delete"
+                onClick={() => update(d => { d.page2.desserts.splice(i, 1) })}
+              >
+                ×
+              </button>
+            </div>
           ))}
+          <button
+            className="adm__add"
+            onClick={() => update(d => {
+              d.page2.desserts.push({ id: `dessert-${Date.now()}`, name: '', price: 0, img: '', available: true })
+            })}
+          >
+            + AJOUTER UN DESSERT
+          </button>
 
           <h3>Boissons</h3>
           {menu.page2.boissons.map((item, i) => (
-            <Row key={item.id} {...item} onPatch={p => update(d => Object.assign(d.page2.boissons[i], p))} />
+            <Row key={item.id} {...item} img={item.img ?? ''} onPatch={p => update(d => Object.assign(d.page2.boissons[i], p))} onMove={dir => update(d => moveItem(d.page2.boissons, i, dir))} />
           ))}
         </section>
 
@@ -256,7 +326,7 @@ export default function Admin() {
 
           <h3>Viandes</h3>
           {menu.page3.viandes.map((item, i) => (
-            <Row key={item.id} {...item} onPatch={p => update(d => Object.assign(d.page3.viandes[i], p))} />
+            <Row key={item.id} {...item} onPatch={p => update(d => Object.assign(d.page3.viandes[i], p))} onMove={dir => update(d => moveItem(d.page3.viandes, i, dir))} />
           ))}
 
           <h3>Sauces classiques</h3>
@@ -281,7 +351,7 @@ export default function Admin() {
             />
           </h3>
           {menu.page3.extras.items.map((item, i) => (
-            <Row key={item.id} {...item} onPatch={p => update(d => Object.assign(d.page3.extras.items[i], p))} />
+            <Row key={item.id} {...item} onPatch={p => update(d => Object.assign(d.page3.extras.items[i], p))} onMove={dir => update(d => moveItem(d.page3.extras.items, i, dir))} />
           ))}
         </section>
       </div>

@@ -10,7 +10,7 @@ import './Menu1.scss'
 export default function Menu1() {
   const menu = useMenu()
   const reduced = useReducedMotion()
-  const scaleCount = (menu?.page1.texmex.length ?? 0) + (menu?.supplements.length ?? 0)
+  const scaleCount = (menu?.page1.texmex.length ?? 0) + (menu?.page2.desserts.length ?? 0)
   const scaleSpot = useSpotlight(scaleCount, 3200, reduced)
   const hasEntered = useRef(false)
   useEffect(() => { if (menu) hasEntered.current = true }, [menu])
@@ -18,7 +18,7 @@ export default function Menu1() {
 
   if (!menu) return null
 
-  const { page1, supplements, note } = menu
+  const { page1, page2, note } = menu
 
   return (
     <div className="m1">
@@ -86,9 +86,9 @@ export default function Menu1() {
       </section>
 
       <section className="m1__row m1__sups">
-        <div className="m1__spine"><span>SUPPLÉMENTS</span></div>
+        <div className="m1__spine"><span>DESSERTS</span></div>
         <div className="m1__sups-grid">
-          {supplements.map((item, i) => (
+          {page2.desserts.map((item, i) => (
             <motion.div
               key={item.id}
               className={`m1__tcard${item.available ? '' : ' is-off'}`}
@@ -96,14 +96,16 @@ export default function Menu1() {
               animate={{ opacity: 1, y: 0, scale: item.available && scaleSpot === page1.texmex.length + i ? 1.15 : 1 }}
               transition={{ duration: 0.6, delay: 0.1 + i * 0.05 }}
             >
-              <motion.img
-                className="m1__img m1__img--md m1__img--photo"
-                src={imgUrl(item.img)}
-                alt={item.name}
-                {...imgFloat(i, reduced)}
-              />
+              {item.img && (
+                <motion.img
+                  className="m1__img m1__img--md m1__img--photo"
+                  src={imgUrl(item.img)}
+                  alt={item.name}
+                  {...imgFloat(i, reduced)}
+                />
+              )}
               <span className="m1__tcard-name">{item.name}</span>
-              <span className="m1__tcard-price">{item.price}</span>
+              <span className="m1__tcard-price">{item.price.toFixed(2)}€</span>
               {!item.available && <span className="off-badge">ÉPUISÉ</span>}
             </motion.div>
           ))}

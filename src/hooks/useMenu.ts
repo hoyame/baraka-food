@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { fetchMenu } from '../lib/api'
+import { fetchMenu, normalizeMenu } from '../lib/api'
 import type { MenuData } from '../lib/api'
 import { supabase } from '../lib/supabase'
 
@@ -8,7 +8,7 @@ const CACHE_KEY = 'baraka-menu-cache'
 function readCache(): MenuData | null {
   try {
     const raw = localStorage.getItem(CACHE_KEY)
-    return raw ? JSON.parse(raw) : null
+    return raw ? normalizeMenu(JSON.parse(raw)) : null
   } catch {
     return null
   }

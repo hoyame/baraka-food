@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import StaffNav from '@/components/StaffNav'
+import { Toast, useToast } from '@/components/Toast'
 import { supabase } from '@/lib/supabase'
 import type { MenuData, Order, OrderStatus } from '@/lib/types'
 import styles from './page.module.scss'
@@ -15,6 +16,9 @@ interface ItemMeta {
   ingredients: string[]
   isTacos: boolean
   viandeCount: number
+  canMenu?: boolean
+  kidsChoices?: string[]
+  isFrites?: boolean
 }
 
 interface CartLine {
@@ -27,8 +31,14 @@ interface CartLine {
   isTacos: boolean
   viandeCount: number
   selectedViandes: string[]
-  selectedSauce: string | null
+  selectedSauces: string[]
   selectedExtras: string[]
+  canMenu: boolean
+  isMenu: boolean
+  selectedBoisson: string | null
+  kidsChoices: string[]
+  selectedKids: string | null
+  isFrites: boolean
   notes: string
 }
 
@@ -49,14 +59,16 @@ export default function SallePage() {
   const [activeCat, setActiveCat] = useState(0)
   const [itemMeta, setItemMeta] = useState<Record<string, ItemMeta>>({})
   const [unavailableNames, setUnavailableNames] = useState<Set<string>>(new Set())
-  const [supplementOptions, setSupplementOptions] = useState<string[]>([])
   const [viandeOptions, setViandeOptions] = useState<string[]>([])
   const [sauceOptions, setSauceOptions] = useState<string[]>([])
   const [extraOptions, setExtraOptions] = useState<string[]>([])
+  const [boissonOptions, setBoissonOptions] = useState<string[]>([])
+  const [friteSupOptions, setFriteSupOptions] = useState<string[]>([])
   const [cart, setCart] = useState<CartLine[]>([])
   const [sending, setSending] = useState(false)
   const [confirmCode, setConfirmCode] = useState<string | null>(null)
   const [orders, setOrders] = useState<Order[]>([])
+  const { toast, show } = useToast()
 
   useEffect(() => {
     async function loadCatalog() {
@@ -68,14 +80,11 @@ export default function SallePage() {
 
       const rawCats: { label: string; items: { name: string; available?: boolean }[] }[] = [
         { label: 'Burgers', items: menu.page1.burgers },
-        { label: 'Tex-Mex', items: menu.page1.texmex },
-        { label: 'Sandwichs', items: [...menu.page2.classiques, menu.page2.crunchy, menu.page2.menuKids] },
         {
-          label: 'Accompagnements',
+          label: 'Sandwichs',
           items: [
-            ...menu.page2.frites.map((f) => ({ ...f, name: `Frites ${f.name}` })),
-            ...menu.page2.desserts,
-            ...menu.page2.boissons.map((b) => ({ ...b, name: `Boisson ${b.name}` })),
+            { name: 'Sandwich 1 viande', available: menu.page2.sandwich?.available !== false },
+            { name: 'Sandwich 2 viandes', available: menu.page2.sandwich?.available !== false },
           ],
         },
         {
@@ -85,7 +94,17 @@ export default function SallePage() {
             available: t.available,
           })),
         },
-        { label: 'Suppléments', items: menu.supplements },
+        { label: 'Menu Kids', items: [menu.page2.menuKids] },
+        { label: 'Tex-Mex', items: menu.page1.texmex },
+        {
+          label: 'Accompagnements',
+          items: menu.page2.frites.map((f) => ({ ...f, name: `Frites ${f.name}` })),
+        },
+        { label: 'Desserts', items: menu.page2.desserts },
+        {
+          label: 'Boissons',
+          items: menu.page2.boissons.map((b) => ({ ...b, name: `Boisson ${b.name}` })),
+        },
       ]
 
       const unavailable = new Set<string>()
@@ -114,10 +133,12 @@ export default function SallePage() {
       setCategories(cats)
 
       const meta: Record<string, ItemMeta> = {}
-      for (const b of menu.page1.burgers) meta[b.name] = { ...emptyMeta, ingredients: splitDesc(b.desc) }
-      for (const c of [...menu.page2.classiques, menu.page2.crunchy, menu.page2.menuKids]) {
-        meta[c.name] = { ...emptyMeta, ingredients: splitDesc(c.desc) }
-      }
+      for (const b of menu.page1.burgers) meta[b.name] = { ...emptyMeta, ingredients: splitDesc(b.desc), canMenu: true }
+      meta[menu.page2.menuKids.name] = { ...emptyMeta, kidsChoices: ['Cheese Burger', 'Mini Tacos'] }
+      const garnitures = (menu.page2.garnitures ?? []).filter((g) => g.available !== false).map((g) => g.name)
+      meta['Sandwich 1 viande'] = { ingredients: garnitures, isTacos: true, viandeCount: 1 }
+      meta['Sandwich 2 viandes'] = { ingredients: garnitures, isTacos: true, viandeCount: 2 }
+      for (const f of menu.page2.frites) meta[`Frites ${f.name}`] = { ...emptyMeta, isFrites: true }
       for (const t of menu.page3.tailles) {
         meta[`Tacos ${t.size} (${t.viandes})`] = {
           ...emptyMeta,
@@ -127,10 +148,11 @@ export default function SallePage() {
       }
       setItemMeta(meta)
 
-      setSupplementOptions(menu.supplements.filter((s) => s.available !== false).map((s) => s.name))
       setViandeOptions(menu.page3.viandes.filter((v) => v.available !== false).map((v) => v.name))
       setSauceOptions([...menu.page3.sauces.classiques, ...menu.page3.sauces.piquantes])
       setExtraOptions(menu.page3.extras.items.filter((e) => e.available !== false).map((e) => e.name))
+      setBoissonOptions(menu.page2.boissons.filter((b) => b.available !== false).map((b) => b.name))
+      setFriteSupOptions((menu.page2.friteSupplements ?? []).filter((f) => f.available !== false).map((f) => f.name))
     }
     loadCatalog()
 
@@ -163,6 +185,7 @@ export default function SallePage() {
 
   function addToCart(name: string) {
     const meta = itemMeta[name] || emptyMeta
+    show(`Ajouté : ${name}`)
     setCart((c) => [
       ...c,
       {
@@ -175,8 +198,14 @@ export default function SallePage() {
         isTacos: meta.isTacos,
         viandeCount: meta.viandeCount,
         selectedViandes: [],
-        selectedSauce: null,
+        selectedSauces: [],
         selectedExtras: [],
+        canMenu: meta.canMenu === true,
+        isMenu: false,
+        selectedBoisson: null,
+        kidsChoices: meta.kidsChoices ?? [],
+        selectedKids: null,
+        isFrites: meta.isFrites === true,
         notes: '',
       },
     ])
@@ -197,13 +226,6 @@ export default function SallePage() {
     updateLine(line.id, { removedIngredients: removed })
   }
 
-  function toggleSupplement(line: CartLine, name: string) {
-    const supplements = line.supplements.includes(name)
-      ? line.supplements.filter((s) => s !== name)
-      : [...line.supplements, name]
-    updateLine(line.id, { supplements })
-  }
-
   function toggleViande(line: CartLine, name: string) {
     const already = line.selectedViandes.includes(name)
     if (!already && line.selectedViandes.length >= line.viandeCount) return
@@ -222,6 +244,11 @@ export default function SallePage() {
 
   async function sendOrder() {
     if (cart.length === 0) return
+    const incomplete = cart.find((l) => l.viandeCount > 0 && l.selectedViandes.length < l.viandeCount)
+    if (incomplete) {
+      show(`Choisis la viande pour : ${incomplete.name}`)
+      return
+    }
     setSending(true)
 
     const items = cart.map((l) => ({
@@ -231,8 +258,10 @@ export default function SallePage() {
       added: [
         ...l.supplements,
         ...l.selectedViandes,
-        ...(l.selectedSauce ? [l.selectedSauce] : []),
+        ...l.selectedSauces,
         ...l.selectedExtras,
+        ...(l.isMenu ? [`MENU frites${l.selectedBoisson ? ' + boisson ' + l.selectedBoisson : ''}`] : []),
+        ...(l.selectedKids ? [l.selectedKids] : []),
       ],
       notes: l.notes,
     }))
@@ -271,17 +300,23 @@ export default function SallePage() {
         <div className={styles.layout}>
           <div>
             <p className={styles.blockTitle}>Ajouter au ticket</p>
-            <div className={styles.catTabs}>
-              {categories.map((cat, i) => (
-                <button
-                  key={cat.label}
-                  className={`${styles.catTab}${i === activeCat ? ` ${styles.catTabActive}` : ''}`}
-                  onClick={() => setActiveCat(i)}
-                >
-                  {cat.label}
-                </button>
-              ))}
-            </div>
+            {[['Burgers', 'Sandwichs', 'Tacos', 'Menu Kids'], ['Tex-Mex', 'Accompagnements', 'Desserts', 'Boissons']].map((row, r) => (
+              <div key={r} className={styles.catTabs}>
+                {row.map((label) => {
+                  const i = categories.findIndex((c) => c.label === label)
+                  if (i === -1) return null
+                  return (
+                    <button
+                      key={label}
+                      className={`${styles.catTab}${i === activeCat ? ` ${styles.catTabActive}` : ''}`}
+                      onClick={() => setActiveCat(i)}
+                    >
+                      {label}
+                    </button>
+                  )
+                })}
+              </div>
+            ))}
             <div className={styles.catalog}>
               {(categories[activeCat]?.items || []).map((name) => (
                 <button key={name} className={styles.catalogItem} onClick={() => addToCart(name)}>
@@ -322,20 +357,6 @@ export default function SallePage() {
                       </div>
                     )}
 
-                    {supplementOptions.length > 0 && (
-                      <div className={styles.chipRow}>
-                        {supplementOptions.map((name) => (
-                          <button
-                            key={name}
-                            className={`${styles.chip}${line.supplements.includes(name) ? ` ${styles.chipAdd}` : ''}`}
-                            onClick={() => toggleSupplement(line, name)}
-                          >
-                            + {name}
-                          </button>
-                        ))}
-                      </div>
-                    )}
-
                     {line.isTacos && (
                       <>
                         <div className={styles.chipRow}>
@@ -350,31 +371,86 @@ export default function SallePage() {
                             </button>
                           ))}
                         </div>
-                        <div className={styles.chipRow}>
-                          <span className={styles.chipGroupLabel}>Sauce</span>
-                          {sauceOptions.map((name) => (
-                            <button
-                              key={name}
-                              className={`${styles.chip}${line.selectedSauce === name ? ` ${styles.chipAdd}` : ''}`}
-                              onClick={() => updateLine(line.id, { selectedSauce: line.selectedSauce === name ? null : name })}
-                            >
-                              {name}
-                            </button>
-                          ))}
-                        </div>
-                        <div className={styles.chipRow}>
-                          <span className={styles.chipGroupLabel}>Extras</span>
-                          {extraOptions.map((name) => (
-                            <button
-                              key={name}
-                              className={`${styles.chip}${line.selectedExtras.includes(name) ? ` ${styles.chipAdd}` : ''}`}
-                              onClick={() => toggleExtra(line, name)}
-                            >
-                              {name}
-                            </button>
-                          ))}
-                        </div>
                       </>
+                    )}
+
+                    {line.isFrites && friteSupOptions.length > 0 && (
+                      <div className={styles.chipRow}>
+                        <span className={styles.chipGroupLabel}>Suppléments</span>
+                        {friteSupOptions.map((name) => (
+                          <button
+                            key={name}
+                            className={`${styles.chip}${line.supplements.includes(name) ? ` ${styles.chipAdd}` : ''}`}
+                            onClick={() => updateLine(line.id, { supplements: line.supplements.includes(name) ? line.supplements.filter((sp) => sp !== name) : [...line.supplements, name] })}
+                          >
+                            + {name}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+
+                    <div className={styles.chipRow}>
+                      <span className={styles.chipGroupLabel}>Sauces</span>
+                      {sauceOptions.map((name) => (
+                        <button
+                          key={name}
+                          className={`${styles.chip}${line.selectedSauces.includes(name) ? ` ${styles.chipAdd}` : ''}`}
+                          onClick={() => updateLine(line.id, { selectedSauces: line.selectedSauces.includes(name) ? line.selectedSauces.filter((sc) => sc !== name) : [...line.selectedSauces, name] })}
+                        >
+                          {name}
+                        </button>
+                      ))}
+                    </div>
+
+                    {(line.isTacos || line.canMenu) && (
+                      <div className={styles.chipRow}>
+                        <span className={styles.chipGroupLabel}>Extras</span>
+                        {extraOptions.map((name) => (
+                          <button
+                            key={name}
+                            className={`${styles.chip}${line.selectedExtras.includes(name) ? ` ${styles.chipAdd}` : ''}`}
+                            onClick={() => toggleExtra(line, name)}
+                          >
+                            {name}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+
+                    {line.kidsChoices.length > 0 && (
+                      <div className={styles.chipRow}>
+                        <span className={styles.chipGroupLabel}>Choix</span>
+                        {line.kidsChoices.map((name) => (
+                          <button
+                            key={name}
+                            className={`${styles.chip}${line.selectedKids === name ? ` ${styles.chipAdd}` : ''}`}
+                            onClick={() => updateLine(line.id, { selectedKids: line.selectedKids === name ? null : name })}
+                          >
+                            {name}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+
+                    {line.canMenu && (
+                      <div className={styles.chipRow}>
+                        <span className={styles.chipGroupLabel}>Formule</span>
+                        <button
+                          className={`${styles.chip}${line.isMenu ? ` ${styles.chipAdd}` : ''}`}
+                          onClick={() => updateLine(line.id, { isMenu: !line.isMenu, selectedBoisson: line.isMenu ? null : line.selectedBoisson })}
+                        >
+                          MENU (frites + boisson)
+                        </button>
+                        {line.isMenu && boissonOptions.map((name) => (
+                          <button
+                            key={name}
+                            className={`${styles.chip}${line.selectedBoisson === name ? ` ${styles.chipAdd}` : ''}`}
+                            onClick={() => updateLine(line.id, { selectedBoisson: line.selectedBoisson === name ? null : name })}
+                          >
+                            Boisson {name}
+                          </button>
+                        ))}
+                      </div>
                     )}
 
                     <div className={styles.cartLineRow}>
@@ -434,6 +510,7 @@ export default function SallePage() {
           })}
         </div>
       </div>
+      <Toast toast={toast} />
     </main>
   )
 }

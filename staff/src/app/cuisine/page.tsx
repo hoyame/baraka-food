@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import StaffNav from '@/components/StaffNav'
+import { Toast, useToast } from '@/components/Toast'
 import { supabase } from '@/lib/supabase'
 import type { Order, OrderStatus } from '@/lib/types'
 import styles from './page.module.scss'
@@ -22,8 +23,14 @@ const nextLabel: Partial<Record<OrderStatus, string>> = {
   preparation: 'Prêt',
 }
 
+const trackLabelToast: Partial<Record<OrderStatus, string>> = {
+  preparation: 'En préparation',
+  pret_cuisine: 'Prêt en cuisine',
+}
+
 export default function CuisinePage() {
   const [orders, setOrders] = useState<Order[]>([])
+  const { toast, show } = useToast()
 
   useEffect(() => {
     async function load() {
@@ -43,6 +50,7 @@ export default function CuisinePage() {
   }, [])
 
   async function advance(code: string, status: OrderStatus) {
+    show(`${code} → ${trackLabelToast[status]}`)
     await supabase.from('orders').update({ status, updated_at: new Date().toISOString() }).eq('code', code)
   }
 
@@ -96,6 +104,7 @@ export default function CuisinePage() {
           })}
         </div>
       </div>
+      <Toast toast={toast} />
     </main>
   )
 }
