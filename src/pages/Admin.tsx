@@ -21,9 +21,9 @@ function ImgPicker({ img, onPick }: { img?: string; onPick: (url: string) => voi
   }
 
   return (
-    <button className="adm__thumb" onClick={() => inputRef.current?.click()} disabled={busy}>
-      <img src={imgUrl(img)} alt="" />
-      <span>{busy ? '...' : '↻'}</span>
+    <button className={`adm__thumb${img ? '' : ' adm__thumb--empty'}`} onClick={() => inputRef.current?.click()} disabled={busy}>
+      {img && <img src={imgUrl(img)} alt="" />}
+      <span>{busy ? '...' : img ? '↻' : '+'}</span>
       <input
         ref={inputRef}
         type="file"

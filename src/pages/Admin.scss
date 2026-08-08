@@ -298,6 +298,21 @@
     &--none {
       display: none;
     }
+
+    &--empty {
+      border-style: dashed;
+      border-color: #3a3a3a;
+
+      span {
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2em;
+        background: none;
+        color: #666;
+      }
+    }
   }
 
   &__toggle {

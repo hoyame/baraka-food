@@ -75,7 +75,8 @@
       "Bash(node supabase/test-realtime-delete.mjs)",
       "Bash(PGPASSWORD=BqpDEuEjPkJX3Ozp psql \"postgresql://postgres.dunywwhlojoeeuvxbqtn:BqpDEuEjPkJX3Ozp@aws-0-eu-west-1.pooler.supabase.com:6543/postgres\" -c \"select relname, case relreplident when 'd' then 'default' when 'f' then 'full' when 'n' then 'nothing' when 'i' then 'index' end from pg_class where relname='orders';\")",
       "Bash(node /Users/hoyame/Env/baraka-food/supabase/test-realtime-delete.mjs)",
-      "Bash(node /Users/hoyame/Env/baraka-food/supabase/test-realtime-delete2.mjs)"
+      "Bash(node /Users/hoyame/Env/baraka-food/supabase/test-realtime-delete2.mjs)",
+      "Bash(node -e ' *)"
     ],
     "additionalDirectories": [
       "/Users/hoyame/Env/baraka-food/client/src/app",
