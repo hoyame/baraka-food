@@ -1,7 +1,6 @@
 #!/bin/bash
 set -e
 
-PROD_REPO="${PROD_REPO:-https://github.com/hoyame/baraka-food-prod.git}"
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 FORPROD="$ROOT/forprod"
 
@@ -42,16 +41,10 @@ EOF
 cp "$ROOT/scripts/prod/demarrer.bat" "$FORPROD/demarrer.bat"
 cp "$ROOT/scripts/prod/installer.bat" "$FORPROD/installer.bat"
 
-cat > "$FORPROD/.gitignore" <<'EOF'
-node_modules
-EOF
-
-echo "== Publication vers $PROD_REPO =="
-cd "$FORPROD"
-git init -q -b main 2>/dev/null || true
-git add -A
-git -c user.name="Baraka Deploy" -c user.email="deploy@barakafood.local" commit -q -m "release $(date '+%Y-%m-%d %H:%M')" || true
-git push --force "$PROD_REPO" main
+echo "== Archive =="
+cd "$ROOT"
+rm -f forprod.zip
+zip -qr forprod.zip forprod
 
 echo ""
-echo "Publie. Sur le PC client, demarrer.bat recuperera la mise a jour au prochain lancement."
+echo "forprod.zip pret. A copier sur le PC client, dezipper, puis lancer installer.bat (1ere fois) ou demarrer.bat."

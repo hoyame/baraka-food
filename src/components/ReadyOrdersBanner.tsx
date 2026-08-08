@@ -5,40 +5,29 @@ import './ReadyOrdersBanner.scss'
 
 const DISPLAY_MS = 15000
 
-let audioCtx: AudioContext | null = null
-
-function chime() {
+function annonce(code: string) {
   try {
-    if (!audioCtx) {
-      const Ctor = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext
-      audioCtx = new Ctor()
-    }
-    const ctx = audioCtx
-
-    const play = () => {
-      const notes = [660, 880]
-      notes.forEach((freq, i) => {
-        const osc = ctx.createOscillator()
-        const gain = ctx.createGain()
-        osc.connect(gain)
-        gain.connect(ctx.destination)
-        osc.frequency.value = freq
-        const start = ctx.currentTime + i * 0.18
-        gain.gain.setValueAtTime(0, start)
-        gain.gain.linearRampToValueAtTime(0.22, start + 0.02)
-        gain.gain.linearRampToValueAtTime(0, start + 0.35)
-        osc.start(start)
-        osc.stop(start + 0.4)
-      })
-    }
-
-    if (ctx.state === 'suspended') {
-      ctx.resume().then(play).catch(() => {})
-    } else {
-      play()
-    }
+    const synth = window.speechSynthesis
+    if (!synth) return
+    const spelled = code.replace(/([A-Za-z])(\d+)/, '$1 $2')
+    const utter = new SpeechSynthesisUtterance(`Commande ${spelled}, prête`)
+    utter.lang = 'fr-FR'
+    utter.rate = 0.92
+    utter.volume = 1
+    const voices = synth.getVoices()
+    const fr = voices.find(v => v.lang.startsWith('fr'))
+    if (fr) utter.voice = fr
+    synth.cancel()
+    synth.speak(utter)
+    setTimeout(() => {
+      const again = new SpeechSynthesisUtterance(`Commande ${spelled}, prête`)
+      again.lang = 'fr-FR'
+      again.rate = 0.92
+      again.volume = 1
+      if (fr) again.voice = fr
+      synth.speak(again)
+    }, 4000)
   } catch {
-    // audio non disponible
   }
 }
 
@@ -59,7 +48,7 @@ export default function ReadyOrdersBanner() {
         return
       }
       setCurrent(next)
-      chime()
+      annonce(next)
       timerRef.current = setTimeout(() => {
         timerRef.current = null
         playNext()
