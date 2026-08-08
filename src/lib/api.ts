@@ -39,6 +39,7 @@ export interface SandwichConfig {
   img: string
   prixSimple: number
   prixDouble: number
+  inclus: string
   available: boolean
 }
 
@@ -79,11 +80,12 @@ export interface MenuData {
     title: string
     classiques: PricedItem[]
     sandwich: SandwichConfig
-    garnitures: ImgItem[]
     crunchy: FeaturedItem
     menuKids: FeaturedItem
     frites: SimpleItem[]
+    fritesImg: string
     friteSupplements: { id: string; name: string; available: boolean }[]
+    friteSupplementsPrice: string
     desserts: SimpleItem[]
     boissons: SimpleItem[]
   }
@@ -92,6 +94,10 @@ export interface MenuData {
     tailles: Taille[]
     viandes: ImgItem[]
     sauces: { classiques: string[]; piquantes: string[] }
+    saucesImg: string
+    gratinage: { id: string; name: string; available: boolean }[]
+    gratinagePrice: string
+    gratinageImg: string
     extras: { surcharge: string; items: ImgItem[] }
   }
 }
@@ -106,20 +112,27 @@ export function normalizeMenu(menu: MenuData): MenuData {
       img: menu.page2.classiques?.[0]?.img ?? '',
       prixSimple: 6.5,
       prixDouble: 8,
+      inclus: 'Salade · Tomate · Oignons',
       available: true,
     }
   }
-  if (!menu.page2.friteSupplements) {
-    menu.page2.friteSupplements = [
-      { id: 'fritesup-0', name: 'Fromage', available: true },
-      { id: 'fritesup-1', name: 'Lardons', available: true },
-    ]
-  }
-  if (!menu.page2.garnitures) {
-    menu.page2.garnitures = ['Salade', 'Tomate', 'Oignons', 'Fromage', 'Maïs', 'Olives'].map((name, i) => ({
-      id: `garniture-${i}`,
+  if (menu.page2.sandwich.inclus === undefined) menu.page2.sandwich.inclus = 'Salade · Tomate · Oignons' 
+  if (menu.page3.gratinagePrice === undefined) menu.page3.gratinagePrice = '+2.00€'
+  if (menu.page3.gratinageImg === undefined) menu.page3.gratinageImg = ''
+  if (menu.page3.saucesImg === undefined) menu.page3.saucesImg = ''
+  if (!menu.page3.gratinage) {
+    menu.page3.gratinage = ['Emmental', 'Mozzarella', 'Cheddar'].map((name, i) => ({
+      id: `gratinage-${i}`,
       name,
-      img: '',
+      available: true,
+    }))
+  }
+  if (menu.page2.fritesImg === undefined) menu.page2.fritesImg = ''
+  if (menu.page2.friteSupplementsPrice === undefined) menu.page2.friteSupplementsPrice = '1,50€'
+  if (!menu.page2.friteSupplements) {
+    menu.page2.friteSupplements = ['Fromage', 'Oignons Crispy', 'Lardons'].map((name, i) => ({
+      id: `fritesup-${i}`,
+      name,
       available: true,
     }))
   }

@@ -1,15 +1,16 @@
-import { useEffect, useRef } from 'react'
+import { Fragment, useEffect, useRef } from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
 import { useMenu } from '../hooks/useMenu'
 import { imgUrl } from '../lib/api'
 import { imgFloat, useSpotlight } from '../lib/menuMotion'
+import ReadyAnnouncer from '../components/ReadyAnnouncer'
 import logo from '../assets/logo.svg'
 import './Menu2.scss'
 
 export default function Menu2() {
   const menu = useMenu()
   const reduced = useReducedMotion()
-  const scaleCount = (menu?.page3.viandes.length ?? 0) + (menu?.page2.garnitures.length ?? 0)
+  const scaleCount = (menu?.page3.viandes.length ?? 0) + (menu?.page3.extras.items.length ?? 0) + (menu?.page1.texmex.length ?? 0)
   const scaleSpot = useSpotlight(scaleCount, 3200, reduced)
   const hasEntered = useRef(false)
   useEffect(() => { if (menu) hasEntered.current = true }, [menu])
@@ -17,9 +18,10 @@ export default function Menu2() {
 
   if (!menu) return null
 
-  const { page2, page3, note } = menu
+  const { page1, page2, page3, note } = menu
   const { sandwich } = page2
   const viandes = page3.viandes
+  const inclus = sandwich.inclus
 
   return (
     <div className="m2">
@@ -53,6 +55,7 @@ export default function Menu2() {
           >
             <span className="m2__fcard-count">1</span>
             <span className="m2__fcard-label">VIANDE AU CHOIX</span>
+            {inclus && <span className="m2__fcard-inclus">{inclus} inclus</span>}
             <span className="m2__fcard-price">{sandwich.prixSimple.toFixed(2)}€</span>
             {!sandwich.available && <span className="off-badge">ÉPUISÉ</span>}
           </motion.div>
@@ -64,6 +67,7 @@ export default function Menu2() {
           >
             <span className="m2__fcard-count">2</span>
             <span className="m2__fcard-label">DOUBLE VIANDE</span>
+            {inclus && <span className="m2__fcard-inclus">{inclus} inclus</span>}
             <span className="m2__fcard-price">{sandwich.prixDouble.toFixed(2)}€</span>
             {!sandwich.available && <span className="off-badge">ÉPUISÉ</span>}
           </motion.div>
@@ -94,66 +98,94 @@ export default function Menu2() {
         </div>
       </section>
 
-      <section className="m2__row m2__desserts">
-        <div className="m2__spine"><span>GARNITURES</span></div>
-        <div className="m2__desserts-grid">
-          {page2.garnitures.map((item, i) => (
+      <section className="m2__row m2__extras">
+        <div className="m2__spine"><span>TES EXTRAS</span></div>
+        <div className="m2__extras-grid">
+          {page3.extras.items.map((e, i) => (
             <motion.div
-              key={item.id}
-              className={`m2__tcard${item.available ? '' : ' is-off'}`}
+              key={e.id}
+              className={`m2__tcard${e.available ? '' : ' is-off'}`}
               initial={entrance({ opacity: 0, y: 12 })}
-              animate={{ opacity: 1, y: 0, scale: item.available && scaleSpot === viandes.length + i ? 1.15 : 1 }}
+              animate={{ opacity: 1, y: 0, scale: e.available && scaleSpot === viandes.length + i ? 1.15 : 1 }}
               transition={{ duration: 0.6, delay: 0.1 + i * 0.05 }}
             >
-              {item.img && (
-                <motion.img
-                  className="m2__img m2__img--md m2__img--photo"
-                  src={imgUrl(item.img)}
-                  alt={item.name}
-                  {...imgFloat(i, reduced)}
-                />
-              )}
-              <span className="m2__tcard-name">{item.name}</span>
-              {!item.available && <span className="off-badge">ÉPUISÉ</span>}
+              <motion.img
+                className="m2__img m2__img--md m2__img--photo"
+                src={imgUrl(e.img)}
+                alt={e.name}
+                {...imgFloat(i, reduced)}
+              />
+              <span className="m2__tcard-name">{e.name}</span>
+              <span className="m2__tcard-price m2__tcard-price--sm">{page3.extras.surcharge}</span>
+              {!e.available && <span className="off-badge">ÉPUISÉ</span>}
             </motion.div>
           ))}
         </div>
       </section>
 
       <section className="m2__row m2__bottom">
-        <div className={`m2__menukids${page2.menuKids.available ? '' : ' is-off'}`}>
-          <motion.img
-            className="m2__img m2__img--md m2__img--photo"
-            src={imgUrl(page2.menuKids.img)}
-            alt={page2.menuKids.name}
-            {...imgFloat(0, reduced)}
-          />
-          <div className="m2__menukids-text">
-            <span className="m2__menukids-title">{page2.menuKids.name}</span>
-            <p className="m2__menukids-desc">{page2.menuKids.desc}</p>
+        <div className="m2__frites">
+          <div className="m2__spine"><span>FRITES</span></div>
+          {page2.fritesImg && (
+            <div className="m2__frites-hero">
+              <motion.img
+                className="m2__frites-img"
+                src={imgUrl(page2.fritesImg)}
+                alt="Frites"
+                {...imgFloat(0, reduced)}
+              />
+            </div>
+          )}
+          <div className="m2__frites-sizes">
+            {page2.frites.map(it => (
+              <div key={it.id} className={`m2__fsize${it.available ? '' : ' is-off'}`}>
+                <span className="m2__fsize-name">{it.name}</span>
+                <span className="m2__fsize-price">{it.price.toFixed(2)}€</span>
+              </div>
+            ))}
           </div>
-          <span className="m2__menukids-price">{page2.menuKids.price.toFixed(2)}€</span>
-          {!page2.menuKids.available && <span className="off-badge">ÉPUISÉ</span>}
+          {page2.friteSupplements.length > 0 && (
+            <div className="m2__frites-sups">
+              <span className="m2__frites-sups-label">SUPPLÉMENT</span>
+              <strong className="m2__frites-sups-price">{page2.friteSupplementsPrice}</strong>
+              <span className="m2__frites-sups-items">
+                {page2.friteSupplements.map((sup, i) => (
+                  <Fragment key={sup.id}>
+                    {i > 0 && ' · '}
+                    <span className={sup.available ? undefined : 'm2__frites-sup--off'}>{sup.name}</span>
+                  </Fragment>
+                ))}
+              </span>
+            </div>
+          )}
         </div>
 
-        <div className="m2__plus">
-          {([
-            ['FRITES', page2.frites],
-            ['BOISSONS', page2.boissons],
-          ] as const).map(([title, items]) => (
-            <div key={title} className="m2__plus-col">
-              <span className="m2__plus-title">{title}</span>
-              {items.map(it => (
-                <div key={it.id} className={`m2__mini-row${it.available ? '' : ' m2__mini-row--off'}`}>
-                  {it.img && <img className="m2__mini-img" src={imgUrl(it.img)} alt={it.name} />}
-                  <span className="m2__mini-name">{it.name}</span>
-                  <span>{it.price.toFixed(2)}€</span>
-                </div>
-              ))}
-            </div>
-          ))}
+        <div className="m2__texmex">
+          <div className="m2__spine"><span>TEX-MEX</span></div>
+          <div className="m2__texmex-grid">
+            {page1.texmex.map((item, i) => (
+              <motion.div
+                key={item.id}
+                className={`m2__tcard${item.available ? '' : ' is-off'}`}
+                initial={entrance({ opacity: 0, y: 12 })}
+                animate={{ opacity: 1, y: 0, scale: item.available && scaleSpot === viandes.length + page3.extras.items.length + i ? 1.15 : 1 }}
+                transition={{ duration: 0.6, delay: 0.1 + i * 0.05 }}
+              >
+                <motion.img
+                  className="m2__img m2__img--md m2__img--photo"
+                  src={imgUrl(item.img)}
+                  alt={item.name}
+                  {...imgFloat(i, reduced)}
+                />
+                <span className="m2__tcard-name">{item.name}</span>
+                <span className="m2__tcard-price">{item.price.toFixed(2)}€</span>
+                {!item.available && <span className="off-badge">ÉPUISÉ</span>}
+              </motion.div>
+            ))}
+          </div>
         </div>
       </section>
+      <ReadyAnnouncer />
     </div>
   )
 }

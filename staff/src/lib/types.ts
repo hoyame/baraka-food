@@ -13,8 +13,7 @@ export interface MenuData {
   }
   page2: {
     classiques: { id: string; name: string; desc?: string; price: number; available: boolean }[]
-    sandwich?: { img: string; prixSimple: number; prixDouble: number; available: boolean }
-    garnitures?: { id: string; name: string; available: boolean }[]
+    sandwich?: { img: string; prixSimple: number; prixDouble: number; inclus?: string; available: boolean }
     friteSupplements?: { id: string; name: string; available: boolean }[]
     crunchy: { id: string; name: string; desc?: string; price: number; available: boolean }
     menuKids: { id: string; name: string; desc?: string; price: number; available: boolean }
@@ -26,6 +25,7 @@ export interface MenuData {
     tailles: { id: string; size: string; viandes: string; price: number; available: boolean }[]
     viandes: { id: string; name: string; available: boolean }[]
     sauces: { classiques: string[]; piquantes: string[] }
+    gratinage?: { id: string; name: string; available: boolean }[]
     extras: { surcharge: string; items: { id: string; name: string; available: boolean }[] }
   }
 }

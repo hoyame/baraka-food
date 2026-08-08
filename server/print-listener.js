@@ -18,6 +18,9 @@ const STAFF_EMAIL = 'staff@barakafood.local'
 const STAFF_PASSWORD = 'BarakaStaff2026!'
 const PRINTER_IP = process.env.PRINTER_IP || '192.168.1.100'
 const PRINTER_PORT = Number(process.env.PRINTER_PORT || 9100)
+const CAISSE_HOST = process.env.CAISSE_HOST || '192.168.1.81'
+const CAISSE_PORT = Number(process.env.CAISSE_PORT || 515)
+const CAISSE_QUEUE = process.env.CAISSE_QUEUE || 'TP85'
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
 
@@ -97,6 +100,80 @@ function printOrder(order, attempt = 1) {
   })
 }
 
+function buildNumberTicket(order) {
+  let t = ''
+  t += ESC + '@'
+  t += ESC + 'a' + '\x01'
+  t += GS + '!' + '\x55'
+  t += clean(order.code) + '\n'
+  t += GS + '!' + '\x00'
+  t += '\n\n\n\n'
+  t += GS + 'V' + '\x41' + '\x00'
+  return t
+}
+
+let lpdJob = 0
+
+function sendLpd(host, port, queue, payload) {
+  return new Promise((resolve, reject) => {
+    const hostname = 'barakafood'
+    const jid = String((lpdJob = (lpdJob + 1) % 1000)).padStart(3, '0')
+    const dfName = `dfA${jid}${hostname}`
+    const cfName = `cfA${jid}${hostname}`
+    const control = Buffer.from(`H${hostname}\nPbaraka\nl${dfName}\nU${dfName}\nN${dfName}\n`, 'binary')
+
+    const steps = [
+      Buffer.from(`\x02${queue}\n`, 'binary'),
+      Buffer.from(`\x02${control.length} ${cfName}\n`, 'binary'),
+      Buffer.concat([control, Buffer.from([0])]),
+      Buffer.from(`\x03${payload.length} ${dfName}\n`, 'binary'),
+      Buffer.concat([payload, Buffer.from([0])]),
+    ]
+
+    let step = 0
+    let done = false
+    const socket = net.createConnection({ host, port, timeout: 8000 })
+
+    const fail = (err) => {
+      if (done) return
+      done = true
+      socket.destroy()
+      reject(err)
+    }
+
+    socket.on('connect', () => socket.write(steps[step]))
+
+    socket.on('data', (chunk) => {
+      if (done) return
+      if (chunk[0] !== 0) return fail(new Error(`refus LPD a l etape ${step + 1} (code ${chunk[0]})`))
+      step += 1
+      if (step < steps.length) {
+        socket.write(steps[step])
+      } else {
+        done = true
+        socket.end()
+        resolve()
+      }
+    })
+
+    socket.on('timeout', () => fail(new Error('timeout')))
+    socket.on('error', fail)
+    socket.on('close', () => {
+      if (!done) fail(new Error(`connexion fermee a l etape ${step + 1}`))
+    })
+  })
+}
+
+function printNumberCaisse(order, attempt = 1) {
+  const payload = Buffer.from(buildNumberTicket(order), 'binary')
+  sendLpd(CAISSE_HOST, CAISSE_PORT, CAISSE_QUEUE, payload)
+    .then(() => console.log('[caisse] numero imprime', order.code))
+    .catch((err) => {
+      console.error('[caisse] echec impression', order.code, err.message)
+      if (attempt < 3) setTimeout(() => printNumberCaisse(order, attempt + 1), 3000)
+    })
+}
+
 const printed = new Set()
 
 async function main() {
@@ -110,10 +187,13 @@ async function main() {
       if (printed.has(order.code)) return
       printed.add(order.code)
       printOrder(order)
+      printNumberCaisse(order)
     })
     .subscribe((status) => console.log('[print] realtime:', status))
 
-  console.log('[print] en ecoute des nouvelles commandes, imprimante:', PRINTER_IP + ':' + PRINTER_PORT)
+  console.log('[print] en ecoute des nouvelles commandes')
+  console.log('[print] cuisine (raw 9100) :', PRINTER_IP + ':' + PRINTER_PORT)
+  console.log('[caisse] TP85 (LPD 515)   :', CAISSE_HOST + ':' + CAISSE_PORT + ' file ' + CAISSE_QUEUE)
 }
 
 main()

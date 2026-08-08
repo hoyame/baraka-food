@@ -64,7 +64,7 @@
 
   &__head-right {
     display: flex;
-    align-items: center;
+    align-items: stretch;
     gap: 0.9em;
   }
 
@@ -77,23 +77,25 @@
     border-radius: 0;
 
     span {
-      font-size: 0.6em;
+      font-size: 0.72em;
       letter-spacing: 0.12em;
       color: $color-muted;
     }
     strong {
       font-family: $font-display;
       font-weight: 900;
-      font-size: 0.95em;
+      font-size: 1.14em;
       color: $color-white;
     }
   }
 
   &__halal {
+    display: flex;
+    align-items: center;
     font-family: $font-display;
-    font-weight: 700;
+    font-weight: 900;
     font-size: 0.7em;
-    letter-spacing: 0.22em;
+    letter-spacing: 0.08em;
     color: $color-bg;
     background: $color-white;
     padding: 0.35em 1em;
@@ -189,27 +191,57 @@
     transition: color 1.6s ease;
   }
 
-  &__texmex {
+  &__menukids-row {
+    flex: 0.72;
+    display: flex;
+    padding: 1.15em 0;
+  }
+
+  &__menukids {
+    position: relative;
     flex: 1;
     display: flex;
+    align-items: center;
+    gap: 1.8em;
+    padding: 0.5em 2.5em;
     background: $color-white;
 
-    .m1__spine {
-      border-right: none;
-
-      span { color: rgba(0, 0, 0, 0.4); }
-    }
-
-    .m1__tcard {
-      border-right: none;
+    .m1__img--lg {
+      height: 6.4em;
+      max-height: 100%;
     }
   }
 
-  &__texmex-grid {
+  &__menukids-text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25em;
     flex: 1;
-    display: grid;
-    grid-template-columns: repeat(6, 1fr);
-    min-height: 0;
+    min-width: 0;
+  }
+
+  &__menukids-title {
+    font-family: $font-display;
+    font-weight: 900;
+    font-size: 1.8em;
+    color: $color-price-text;
+    line-height: 1;
+  }
+
+  &__menukids-desc {
+    font-size: 0.8em;
+    color: rgba(0, 0, 0, 0.45);
+    line-height: 1.4;
+  }
+
+  &__menukids-price {
+    font-family: $font-display;
+    font-weight: 900;
+    font-size: 2.4em;
+    color: $color-price-text;
+    letter-spacing: -0.02em;
+    line-height: 1;
+    flex-shrink: 0;
   }
 
   &__tcard {
@@ -241,11 +273,6 @@
     letter-spacing: -0.02em;
     line-height: 1;
     transform-origin: center;
-  }
-
-  &__texmex &__tcard-name,
-  &__texmex &__tcard-price {
-    color: $color-price-text;
   }
 
   &__sups {

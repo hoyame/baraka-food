@@ -1,7 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { AnimatePresence, motion } from 'framer-motion'
 import { supabase } from '../lib/supabase'
-import './ReadyOrdersBanner.scss'
 
 const DISPLAY_MS = 15000
 
@@ -10,28 +8,25 @@ function annonce(code: string) {
     const synth = window.speechSynthesis
     if (!synth) return
     const spelled = code.replace(/([A-Za-z])(\d+)/, '$1 $2')
-    const utter = new SpeechSynthesisUtterance(`Commande ${spelled}, prête`)
-    utter.lang = 'fr-FR'
-    utter.rate = 0.92
-    utter.volume = 1
-    const voices = synth.getVoices()
-    const fr = voices.find(v => v.lang.startsWith('fr'))
-    if (fr) utter.voice = fr
+    const say = (voice: SpeechSynthesisVoice | undefined) => {
+      const utter = new SpeechSynthesisUtterance(`Commande ${spelled}, prête`)
+      utter.lang = 'fr-FR'
+      utter.rate = 0.92
+      utter.volume = 1
+      if (voice) utter.voice = voice
+      synth.speak(utter)
+    }
+    const fr = synth.getVoices().find(v => v.lang.startsWith('fr'))
     synth.cancel()
-    synth.speak(utter)
-    setTimeout(() => {
-      const again = new SpeechSynthesisUtterance(`Commande ${spelled}, prête`)
-      again.lang = 'fr-FR'
-      again.rate = 0.92
-      again.volume = 1
-      if (fr) again.voice = fr
-      synth.speak(again)
-    }, 4000)
+    say(fr)
+    setTimeout(() => say(fr), 4000)
   } catch {
+    // synthese vocale indisponible
   }
 }
 
-export default function ReadyOrdersBanner() {
+export function useReadyOrders(options: { announce?: boolean } = {}) {
+  const { announce = true } = options
   const [current, setCurrent] = useState<string | null>(null)
   const knownStatus = useRef<Record<string, string>>({})
   const queue = useRef<string[]>([])
@@ -48,7 +43,7 @@ export default function ReadyOrdersBanner() {
         return
       }
       setCurrent(next)
-      annonce(next)
+      if (announce) annonce(next)
       timerRef.current = setTimeout(() => {
         timerRef.current = null
         playNext()
@@ -64,7 +59,7 @@ export default function ReadyOrdersBanner() {
 
     const channel = supabase
       .channel('orders-ready-banner')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'orders' }, (payload) => {
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'orders' }, payload => {
         const row = payload.new as { code?: string; status?: string } | undefined
         if (!row?.code) return
         const wasDisponible = knownStatus.current[row.code] === 'disponible'
@@ -81,23 +76,7 @@ export default function ReadyOrdersBanner() {
       supabase.removeChannel(channel)
       if (timerRef.current) clearTimeout(timerRef.current)
     }
-  }, [])
+  }, [announce])
 
-  return (
-    <AnimatePresence>
-      {current && (
-        <motion.div
-          key={current}
-          className="ready-banner"
-          initial={{ y: '-100%', opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          exit={{ y: '-100%', opacity: 0 }}
-          transition={{ duration: 0.45, ease: 'easeOut' }}
-        >
-          <span className="ready-banner__label">Commande prête</span>
-          <span className="ready-banner__code">{current}</span>
-        </motion.div>
-      )}
-    </AnimatePresence>
-  )
+  return current
 }

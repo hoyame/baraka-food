@@ -33,6 +33,7 @@ interface CartLine {
   selectedViandes: string[]
   selectedSauces: string[]
   selectedExtras: string[]
+  selectedGratinage: string[]
   canMenu: boolean
   isMenu: boolean
   selectedBoisson: string | null
@@ -64,6 +65,7 @@ export default function SallePage() {
   const [extraOptions, setExtraOptions] = useState<string[]>([])
   const [boissonOptions, setBoissonOptions] = useState<string[]>([])
   const [friteSupOptions, setFriteSupOptions] = useState<string[]>([])
+  const [gratinageOptions, setGratinageOptions] = useState<string[]>([])
   const [cart, setCart] = useState<CartLine[]>([])
   const [sending, setSending] = useState(false)
   const [confirmCode, setConfirmCode] = useState<string | null>(null)
@@ -135,7 +137,7 @@ export default function SallePage() {
       const meta: Record<string, ItemMeta> = {}
       for (const b of menu.page1.burgers) meta[b.name] = { ...emptyMeta, ingredients: splitDesc(b.desc), canMenu: true }
       meta[menu.page2.menuKids.name] = { ...emptyMeta, kidsChoices: ['Cheese Burger', 'Mini Tacos'] }
-      const garnitures = (menu.page2.garnitures ?? []).filter((g) => g.available !== false).map((g) => g.name)
+      const garnitures = (menu.page2.sandwich?.inclus ?? '').split('·').map((g) => g.trim()).filter(Boolean)
       meta['Sandwich 1 viande'] = { ingredients: garnitures, isTacos: true, viandeCount: 1 }
       meta['Sandwich 2 viandes'] = { ingredients: garnitures, isTacos: true, viandeCount: 2 }
       for (const f of menu.page2.frites) meta[`Frites ${f.name}`] = { ...emptyMeta, isFrites: true }
@@ -149,10 +151,11 @@ export default function SallePage() {
       setItemMeta(meta)
 
       setViandeOptions(menu.page3.viandes.filter((v) => v.available !== false).map((v) => v.name))
-      setSauceOptions([...menu.page3.sauces.classiques, ...menu.page3.sauces.piquantes])
+      setSauceOptions(menu.page3.sauces.classiques)
       setExtraOptions(menu.page3.extras.items.filter((e) => e.available !== false).map((e) => e.name))
       setBoissonOptions(menu.page2.boissons.filter((b) => b.available !== false).map((b) => b.name))
       setFriteSupOptions((menu.page2.friteSupplements ?? []).filter((f) => f.available !== false).map((f) => f.name))
+      setGratinageOptions((menu.page3.gratinage ?? []).filter((g) => g.available !== false).map((g) => g.name))
     }
     loadCatalog()
 
@@ -200,6 +203,7 @@ export default function SallePage() {
         selectedViandes: [],
         selectedSauces: [],
         selectedExtras: [],
+        selectedGratinage: [],
         canMenu: meta.canMenu === true,
         isMenu: false,
         selectedBoisson: null,
@@ -260,6 +264,7 @@ export default function SallePage() {
         ...l.selectedViandes,
         ...l.selectedSauces,
         ...l.selectedExtras,
+        ...l.selectedGratinage.map((g) => `Gratine ${g}`),
         ...(l.isMenu ? [`MENU frites${l.selectedBoisson ? ' + boisson ' + l.selectedBoisson : ''}`] : []),
         ...(l.selectedKids ? [l.selectedKids] : []),
       ],
@@ -425,6 +430,21 @@ export default function SallePage() {
                             key={name}
                             className={`${styles.chip}${line.selectedKids === name ? ` ${styles.chipAdd}` : ''}`}
                             onClick={() => updateLine(line.id, { selectedKids: line.selectedKids === name ? null : name })}
+                          >
+                            {name}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+
+                    {line.isTacos && gratinageOptions.length > 0 && (
+                      <div className={styles.chipRow}>
+                        <span className={styles.chipGroupLabel}>Gratinage</span>
+                        {gratinageOptions.map((name) => (
+                          <button
+                            key={name}
+                            className={`${styles.chip}${line.selectedGratinage.includes(name) ? ` ${styles.chipAdd}` : ''}`}
+                            onClick={() => updateLine(line.id, { selectedGratinage: line.selectedGratinage.includes(name) ? line.selectedGratinage.filter((g) => g !== name) : [...line.selectedGratinage, name] })}
                           >
                             {name}
                           </button>

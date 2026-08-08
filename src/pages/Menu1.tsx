@@ -3,14 +3,14 @@ import { motion, useReducedMotion } from 'framer-motion'
 import { useMenu } from '../hooks/useMenu'
 import { imgUrl } from '../lib/api'
 import { imgFloat, useSpotlight } from '../lib/menuMotion'
-import ReadyOrdersBanner from '../components/ReadyOrdersBanner'
+import ReadyAnnouncer from '../components/ReadyAnnouncer'
 import logo from '../assets/logo.svg'
 import './Menu1.scss'
 
 export default function Menu1() {
   const menu = useMenu()
   const reduced = useReducedMotion()
-  const scaleCount = (menu?.page1.texmex.length ?? 0) + (menu?.page2.desserts.length ?? 0)
+  const scaleCount = menu?.page2.desserts.length ?? 0
   const scaleSpot = useSpotlight(scaleCount, 3200, reduced)
   const hasEntered = useRef(false)
   useEffect(() => { if (menu) hasEntered.current = true }, [menu])
@@ -51,7 +51,7 @@ export default function Menu1() {
             />
             <div className="m1__bcard-text">
               <p className="m1__bcard-label">{item.label}</p>
-              <h2 className={`m1__bcard-name${item.featured ? ' m1__bcard-name--xl' : ''}`}>{item.name}</h2>
+              <h2 className="m1__bcard-name m1__bcard-name--xl">{item.name}</h2>
               <p className="m1__bcard-desc">{item.desc}</p>
             </div>
             <span className="m1__bcard-price">{item.price.toFixed(2)}€</span>
@@ -60,28 +60,20 @@ export default function Menu1() {
         ))}
       </section>
 
-      <section className="m1__row m1__texmex">
-        <div className="m1__spine"><span>TEXMEX</span></div>
-        <div className="m1__texmex-grid">
-          {page1.texmex.map((item, i) => (
-            <motion.div
-              key={item.id}
-              className={`m1__tcard${item.available ? '' : ' is-off'}`}
-              initial={entrance({ opacity: 0, y: 12 })}
-              animate={{ opacity: 1, y: 0, scale: item.available && scaleSpot === i ? 1.15 : 1 }}
-              transition={{ duration: 0.6, delay: 0.1 + i * 0.05 }}
-            >
-              <motion.img
-                className="m1__img m1__img--md m1__img--photo"
-                src={imgUrl(item.img)}
-                alt={item.name}
-                {...imgFloat(i, reduced)}
-              />
-              <span className="m1__tcard-name">{item.name}</span>
-              <span className="m1__tcard-price">{item.price.toFixed(2)}€</span>
-              {!item.available && <span className="off-badge">ÉPUISÉ</span>}
-            </motion.div>
-          ))}
+      <section className="m1__row m1__menukids-row">
+        <div className={`m1__menukids${page2.menuKids.available ? '' : ' is-off'}`}>
+          <motion.img
+            className="m1__img m1__img--lg m1__img--photo"
+            src={imgUrl(page2.menuKids.img)}
+            alt={page2.menuKids.name}
+            {...imgFloat(0, reduced)}
+          />
+          <div className="m1__menukids-text">
+            <span className="m1__menukids-title">{page2.menuKids.name}</span>
+            <p className="m1__menukids-desc">{page2.menuKids.desc}</p>
+          </div>
+          <span className="m1__menukids-price">{page2.menuKids.price.toFixed(2)}€</span>
+          {!page2.menuKids.available && <span className="off-badge">ÉPUISÉ</span>}
         </div>
       </section>
 
@@ -93,7 +85,7 @@ export default function Menu1() {
               key={item.id}
               className={`m1__tcard${item.available ? '' : ' is-off'}`}
               initial={entrance({ opacity: 0, y: 12 })}
-              animate={{ opacity: 1, y: 0, scale: item.available && scaleSpot === page1.texmex.length + i ? 1.15 : 1 }}
+              animate={{ opacity: 1, y: 0, scale: item.available && scaleSpot === i ? 1.15 : 1 }}
               transition={{ duration: 0.6, delay: 0.1 + i * 0.05 }}
             >
               {item.img && (
@@ -112,7 +104,7 @@ export default function Menu1() {
         </div>
       </section>
 
-      <ReadyOrdersBanner />
+      <ReadyAnnouncer />
     </div>
   )
 }

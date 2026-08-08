@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import FullscreenButton from './FullscreenButton'
 import styles from './StaffNav.module.scss'
 
 const links = [
@@ -23,6 +24,7 @@ export default function StaffNav() {
           {link.label}
         </Link>
       ))}
+      <FullscreenButton />
     </nav>
   )
 }
