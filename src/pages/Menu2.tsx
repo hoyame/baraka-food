@@ -3,7 +3,6 @@ import { motion, useReducedMotion } from 'framer-motion'
 import { useMenu } from '../hooks/useMenu'
 import { imgUrl } from '../lib/api'
 import { imgFloat, useSpotlight } from '../lib/menuMotion'
-import ReadyAnnouncer from '../components/ReadyAnnouncer'
 import logo from '../assets/logo.svg'
 import './Menu2.scss'
 
@@ -185,7 +184,6 @@ export default function Menu2() {
           </div>
         </div>
       </section>
-      <ReadyAnnouncer />
     </div>
   )
 }

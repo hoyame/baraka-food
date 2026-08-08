@@ -21,7 +21,7 @@ const sections: { key: string; label: string; statuses: OrderStatus[] }[] = [
 
 export default function Orders() {
   const [orders, setOrders] = useState<Order[]>([])
-  const readyCode = useReadyOrders({ announce: true })
+  const readyCode = useReadyOrders({ announce: false })
 
   useEffect(() => {
     let alive = true
