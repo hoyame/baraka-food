@@ -46,11 +46,12 @@ export default function Countdown() {
 
       <motion.p
         className="cd__label"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, delay: 0.15 }}
       >
-        OUVERTURE
+        OUVERTURE LE
+        <span className="cd__label-date">18/08/2026</span>
       </motion.p>
 
       {opened ? (

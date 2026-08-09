@@ -28,5 +28,6 @@ export const authReady: Promise<void> = (async () => {
 })()
 
 supabase.auth.onAuthStateChange((event, session) => {
+  if (session?.access_token) supabase.realtime.setAuth(session.access_token)
   if (!session && event !== 'INITIAL_SESSION') signIn().catch(() => {})
 })

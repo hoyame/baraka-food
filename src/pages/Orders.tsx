@@ -1,7 +1,10 @@
 import { useEffect, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { authReady, supabase } from '../lib/supabase'
+import { supabase } from '../lib/supabase'
+import { watchTable } from '../lib/realtime'
+import type { LinkStatus } from '../lib/realtime'
 import { useReadyOrders } from '../hooks/useReadyOrders'
+import LinkIndicator from '../components/LinkIndicator'
 import logo from '../assets/logo.svg'
 import './Orders.scss'
 
@@ -22,10 +25,10 @@ const sections: { key: string; label: string; statuses: OrderStatus[] }[] = [
 export default function Orders() {
   const [orders, setOrders] = useState<Order[]>([])
   const readyCode = useReadyOrders({ announce: false })
+  const [link, setLink] = useState<LinkStatus>('reconnecting')
 
   useEffect(() => {
     let alive = true
-    let channel: ReturnType<typeof supabase.channel> | null = null
 
     const load = async () => {
       const { data } = await supabase
@@ -36,22 +39,11 @@ export default function Orders() {
     }
 
     load()
-
-    authReady.then(() => {
-      if (!alive) return
-      load()
-      channel = supabase
-        .channel('orders-board')
-        .on('postgres_changes', { event: '*', schema: 'public', table: 'orders' }, load)
-        .subscribe()
-    })
-
-    const fallback = setInterval(load, 15000)
+    const stop = watchTable('orders-board', 'orders', load, { onStatus: setLink })
 
     return () => {
       alive = false
-      clearInterval(fallback)
-      if (channel) supabase.removeChannel(channel)
+      stop()
     }
   }, [])
 
@@ -84,6 +76,8 @@ export default function Orders() {
             />
           )}
         </AnimatePresence>
+
+        <LinkIndicator status={link} />
       </header>
 
       <div className="ord__body">
@@ -108,10 +102,16 @@ export default function Orders() {
                     key={order.code}
                     className="ord__code"
                     layout
-                    initial={{ opacity: 0, scale: 0.7 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.7 }}
-                    transition={{ duration: 0.35 }}
+                    initial={{ opacity: 0, scale: 0.55, y: -18, filter: 'blur(6px)' }}
+                    animate={{ opacity: 1, scale: 1, y: 0, filter: 'blur(0px)' }}
+                    exit={{ opacity: 0, scale: 0.75, y: 14, filter: 'blur(4px)' }}
+                    transition={{
+                      type: 'spring',
+                      stiffness: 420,
+                      damping: 26,
+                      mass: 0.7,
+                      filter: { duration: 0.25 },
+                    }}
                   >
                     {order.code}
                   </motion.div>

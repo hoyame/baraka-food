@@ -26,6 +26,30 @@
         "x-next-revalidate-tag-token"
       ]
     },
+    "/salle": {
+      "experimentalBypassFor": [
+        {
+          "type": "header",
+          "key": "next-action"
+        },
+        {
+          "type": "header",
+          "key": "content-type",
+          "value": "multipart/form-data;.*"
+        }
+      ],
+      "initialRevalidateSeconds": false,
+      "srcRoute": "/salle",
+      "dataRoute": "/salle.rsc",
+      "allowHeader": [
+        "host",
+        "x-matched-path",
+        "x-prerender-revalidate",
+        "x-prerender-revalidate-if-generated",
+        "x-next-revalidated-tags",
+        "x-next-revalidate-tag-token"
+      ]
+    },
     "/": {
       "experimentalBypassFor": [
         {
@@ -73,37 +97,13 @@
         "x-next-revalidated-tags",
         "x-next-revalidate-tag-token"
       ]
-    },
-    "/salle": {
-      "experimentalBypassFor": [
-        {
-          "type": "header",
-          "key": "next-action"
-        },
-        {
-          "type": "header",
-          "key": "content-type",
-          "value": "multipart/form-data;.*"
-        }
-      ],
-      "initialRevalidateSeconds": false,
-      "srcRoute": "/salle",
-      "dataRoute": "/salle.rsc",
-      "allowHeader": [
-        "host",
-        "x-matched-path",
-        "x-prerender-revalidate",
-        "x-prerender-revalidate-if-generated",
-        "x-next-revalidated-tags",
-        "x-next-revalidate-tag-token"
-      ]
     }
   },
   "dynamicRoutes": {},
   "notFoundRoutes": [],
   "preview": {
-    "previewModeId": "3e1b903f2c5cec53a25c70ed535e5e01",
-    "previewModeSigningKey": "8de04e43274296ad53f61614c3cc528e5b928c4091f80ad359ee93cf7eb6e0a5",
-    "previewModeEncryptionKey": "d7ff1b80f681ba2537b0ce6d7ded769c0aa5f64d043547200f47c40ec9997e18"
+    "previewModeId": "ba3c3e5e75d7c84357b5fe9696dc9e02",
+    "previewModeSigningKey": "32f517dd55bce3e60eb0a7faab358274946375742bdb362865974764aff76be2",
+    "previewModeEncryptionKey": "69434880d24bb6237b73ee5aece020206293d77d138b08d1cd53ebb6d9893024"
   }
 }

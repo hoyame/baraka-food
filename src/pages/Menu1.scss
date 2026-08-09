@@ -57,40 +57,50 @@
     font-weight: 900;
     font-size: 2em;
     color: $color-white;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.06em;
     white-space: nowrap;
   }
 
   &__head-right {
+    position: relative;
     display: flex;
-    align-items: stretch;
+    align-items: center;
     gap: 0.9em;
   }
 
   &__menu-note {
+    position: relative;
+    z-index: 2;
     display: flex;
     align-items: center;
     gap: 0.6em;
-    padding: 0.4em 0.9em;
+    padding: 0.6em;
     background: $color-white;
     border-radius: 0;
+    line-height: 1;
 
     span,
     strong {
       font-family: $font-display;
       font-weight: 900;
-      font-size: 1.03em;
+      font-size: 1.24em;
+      line-height: 1;
       color: $color-price-text;
     }
   }
 
   &__note-img {
-    height: 100%;
+    position: relative;
+    z-index: 1;
+    height: auto;
     width: auto;
-    max-height: 3.2em;
+    max-height: 2.6em;
     object-fit: contain;
     display: block;
-    align-self: center;
+    margin-left: -1.91em;
+    transform: translateY(-0.5em) rotate(40deg);
+    transform-origin: center;
+    filter: drop-shadow(0 3px 10px rgba(0, 0, 0, 0.5));
   }
 
   &__row {
@@ -110,7 +120,7 @@
       font-family: $font-display;
       font-weight: 700;
       font-size: 0.62em;
-      letter-spacing: 0.3em;
+      letter-spacing: 0.06em;
       color: $color-muted;
       writing-mode: vertical-rl;
       transform: rotate(180deg);
@@ -149,7 +159,7 @@
     font-family: $font-display;
     font-weight: 600;
     font-size: 0.55em;
-    letter-spacing: 0.2em;
+    letter-spacing: 0.06em;
     color: $color-dim;
   }
 

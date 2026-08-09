@@ -62,7 +62,7 @@
     font-family: $font-display;
     font-weight: 900;
     font-size: 0.75em;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.06em;
     color: $color-bg;
     background: $color-white;
     border: none;
@@ -97,7 +97,7 @@
       font-family: $font-display;
       font-weight: 900;
       font-size: 0.85em;
-      letter-spacing: 0.08em;
+      letter-spacing: 0.06em;
       border-bottom: 1px solid #2a2a2a;
       padding-bottom: 0.5em;
       margin-bottom: 0.4em;
@@ -111,7 +111,7 @@
       font-family: $font-display;
       font-weight: 700;
       font-size: 0.68em;
-      letter-spacing: 0.16em;
+      letter-spacing: 0.06em;
       color: $color-muted;
       text-transform: uppercase;
       margin-top: 0.8em;
@@ -197,7 +197,7 @@
       min-width: 10em;
       font-family: $font-display;
       font-weight: 900;
-      letter-spacing: 0.04em;
+      letter-spacing: 0.06em;
     }
   }
 
@@ -321,7 +321,7 @@
     font-family: $font-display;
     font-weight: 900;
     font-size: 0.7em;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.06em;
     padding: 1em 1.2em;
     border-radius: 0;
     border: 1px solid #3a2020;
@@ -382,7 +382,7 @@
     font-family: $font-display;
     font-weight: 900;
     font-size: 0.7em;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.06em;
     padding: 1em 1.4em;
     border: 1px dashed #444;
     background: none;
@@ -404,7 +404,7 @@
   &__inline-label {
     font-size: 0.7em;
     color: #999;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.06em;
     text-transform: uppercase;
     white-space: nowrap;
   }

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
-import { authReady, supabase } from '../lib/supabase'
+import { supabase } from '../lib/supabase'
+import { watchTable } from '../lib/realtime'
 
 const DISPLAY_MS = 15000
 
@@ -50,40 +51,25 @@ export function useReadyOrders(options: { announce?: boolean } = {}) {
       }, DISPLAY_MS)
     }
 
-    let channel: ReturnType<typeof supabase.channel> | null = null
-
-    async function init() {
+    async function sync() {
       const { data } = await supabase.from('orders').select('code, status')
       if (!alive || !data) return
-      for (const o of data) knownStatus.current[o.code] = o.status
-    }
-
-    authReady.then(async () => {
-      if (!alive) return
-      await init()
-      if (!alive) return
-      channel = subscribe()
-    })
-
-    function subscribe() {
-      return supabase
-      .channel('orders-ready-banner')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'orders' }, payload => {
-        const row = payload.new as { code?: string; status?: string } | undefined
-        if (!row?.code) return
-        const wasDisponible = knownStatus.current[row.code] === 'disponible'
-        knownStatus.current[row.code] = row.status || knownStatus.current[row.code]
-        if (row.status === 'disponible' && !wasDisponible) {
-          queue.current.push(row.code)
+      for (const o of data) {
+        const wasDisponible = knownStatus.current[o.code] === 'disponible'
+        const first = knownStatus.current[o.code] === undefined
+        knownStatus.current[o.code] = o.status
+        if (o.status === 'disponible' && !wasDisponible && !first) {
+          queue.current.push(o.code)
           playNext()
         }
-      })
-      .subscribe()
+      }
     }
+
+    const stop = watchTable('orders-ready', 'orders', () => { sync() })
 
     return () => {
       alive = false
-      if (channel) supabase.removeChannel(channel)
+      stop()
       if (timerRef.current) clearTimeout(timerRef.current)
     }
   }, [announce])

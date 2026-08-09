@@ -3,7 +3,8 @@
 import { useEffect, useState } from 'react'
 import StaffNav from '@/components/StaffNav'
 import { Toast, useToast } from '@/components/Toast'
-import { authReady, supabase } from '@/lib/supabase'
+import { supabase } from '@/lib/supabase'
+import { watchTable } from '@/lib/realtime'
 import type { MenuData, Order, OrderStatus } from '@/lib/types'
 import styles from './page.module.scss'
 
@@ -158,19 +159,7 @@ export default function SallePage() {
       setFriteSupOptions((menu.page2.friteSupplements ?? []).filter((f) => f.available !== false).map((f) => f.name))
       setGratinageOptions((menu.page3.gratinage ?? []).filter((g) => g.available !== false).map((g) => g.name))
     }
-    let channel: ReturnType<typeof supabase.channel> | null = null
-
-    authReady.then(() => {
-      loadCatalog()
-      channel = supabase
-        .channel('menu-salle')
-        .on('postgres_changes', { event: '*', schema: 'public', table: 'menu' }, loadCatalog)
-        .subscribe()
-    })
-
-    return () => {
-      if (channel) supabase.removeChannel(channel)
-    }
+    return watchTable('menu-salle', 'menu', loadCatalog, { pollMs: 30000 })
   }, [])
 
   useEffect(() => {
@@ -178,22 +167,7 @@ export default function SallePage() {
       const { data } = await supabase.from('orders').select('*')
       setOrders((data as Order[]) || [])
     }
-    let channel: ReturnType<typeof supabase.channel> | null = null
-
-    authReady.then(() => {
-      loadTracking()
-      channel = supabase
-        .channel('orders-salle')
-        .on('postgres_changes', { event: '*', schema: 'public', table: 'orders' }, loadTracking)
-        .subscribe()
-    })
-
-    const fallback = setInterval(loadTracking, 15000)
-
-    return () => {
-      clearInterval(fallback)
-      if (channel) supabase.removeChannel(channel)
-    }
+    return watchTable('orders-salle', 'orders', loadTracking)
   }, [])
 
   function addToCart(name: string) {

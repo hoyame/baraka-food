@@ -52,7 +52,7 @@ function buildTicket(order) {
   t += jour + '  ' + heure + '\n'
   t += line('=')
   t += GS + '!' + '\x33'
-  t += 'CMD ' + clean(order.code) + '\n'
+  t += clean(order.code) + '\n'
   t += GS + '!' + '\x00'
   t += line('=')
   t += ESC + 'a' + '\x00'

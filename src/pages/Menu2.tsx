@@ -3,11 +3,12 @@ import { motion, useReducedMotion } from 'framer-motion'
 import { useMenu } from '../hooks/useMenu'
 import { imgUrl } from '../lib/api'
 import { imgFloat, useSpotlight } from '../lib/menuMotion'
+import LinkIndicator from '../components/LinkIndicator'
 import logo from '../assets/logo.svg'
 import './Menu2.scss'
 
 export default function Menu2() {
-  const menu = useMenu()
+  const { menu, link } = useMenu()
   const reduced = useReducedMotion()
   const scaleCount = (menu?.page3.viandes.length ?? 0) + (menu?.page3.extras.items.length ?? 0) + (menu?.page1.texmex.length ?? 0)
   const scaleSpot = useSpotlight(scaleCount, 3200, reduced)
@@ -25,6 +26,7 @@ export default function Menu2() {
   return (
     <div className="m2">
       <header className="m2__header">
+        <LinkIndicator status={link} />
         <img className="m2__brand" src={logo} alt="Baraka Food" />
         <h1 className="m2__page-title">{page2.title}</h1>
         <div className="m2__head-right">

@@ -3,7 +3,8 @@
 import { useEffect, useState } from 'react'
 import StaffNav from '@/components/StaffNav'
 import { Toast, useToast } from '@/components/Toast'
-import { authReady, supabase } from '@/lib/supabase'
+import { supabase } from '@/lib/supabase'
+import { watchTable } from '@/lib/realtime'
 import type { Order, OrderStatus } from '@/lib/types'
 import styles from './page.module.scss'
 
@@ -37,24 +38,9 @@ export default function CuisinePage() {
       const { data } = await supabase.from('orders').select('*').not('status', 'in', '(disponible,recuperee)')
       setOrders((data as Order[]) || [])
     }
-    let channel: ReturnType<typeof supabase.channel> | null = null
-
     load()
 
-    authReady.then(() => {
-      load()
-      channel = supabase
-        .channel('orders-cuisine')
-        .on('postgres_changes', { event: '*', schema: 'public', table: 'orders' }, load)
-        .subscribe()
-    })
-
-    const fallback = setInterval(load, 15000)
-
-    return () => {
-      clearInterval(fallback)
-      if (channel) supabase.removeChannel(channel)
-    }
+    return watchTable('orders-cuisine', 'orders', load)
   }, [])
 
   async function advance(code: string, status: OrderStatus) {

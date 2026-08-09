@@ -1,0 +1,48 @@
+@use '../styles/variables' as *;
+
+.link-ind {
+  position: absolute;
+  top: 0.6em;
+  right: 0.8em;
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  pointer-events: none;
+
+  &__dot {
+    width: 0.55em;
+    height: 0.55em;
+    border-radius: 50%;
+    flex-shrink: 0;
+    animation: link-ind-pulse 1.2s ease-in-out infinite;
+  }
+
+  &__text {
+    font-family: $font-display;
+    font-weight: 700;
+    font-size: 0.62em;
+    letter-spacing: 0.06em;
+    white-space: nowrap;
+    text-transform: uppercase;
+  }
+
+  &--reconnecting {
+    .link-ind__dot { background: #f0b46a; }
+    .link-ind__text { color: #f0b46a; }
+  }
+
+  &--offline {
+    .link-ind__dot { background: #ff1744; }
+    .link-ind__text { color: #ff1744; }
+  }
+}
+
+@keyframes link-ind-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.25; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .link-ind__dot { animation: none; }
+}

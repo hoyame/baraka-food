@@ -7,7 +7,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 0.9em;
+  gap: 3.4em;
   background: $color-bg;
   overflow: hidden;
   text-align: center;
@@ -20,16 +20,24 @@
     height: 5.4em;
     width: auto;
     display: block;
-    margin-bottom: 0.5em;
+    margin-bottom: 1.4em;
   }
 
   &__label {
     font-family: $font-display;
-    font-weight: 700;
-    font-size: 1.1em;
-    letter-spacing: 0.26em;
-    text-indent: 0.26em;
-    color: $color-muted;
+    font-weight: 900;
+    font-size: 2.4em;
+    line-height: 1.08;
+    letter-spacing: -0.01em;
+    color: $color-white;
+  }
+
+  &__label-date {
+    display: block;
+    font-size: 1.5em;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    margin-top: 0.5em;
   }
 
   &__timer {
@@ -37,7 +45,7 @@
     align-items: flex-start;
     justify-content: center;
     gap: 0.5em;
-    margin-top: 0.7em;
+    margin-top: 3em;
     max-width: 100%;
   }
 
@@ -63,8 +71,8 @@
     font-family: $font-display;
     font-weight: 700;
     font-size: 0.62em;
-    letter-spacing: 0.26em;
-    text-indent: 0.26em;
+    letter-spacing: 0.06em;
+    text-indent: 0.06em;
     color: $color-muted;
   }
 

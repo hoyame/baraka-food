@@ -4,11 +4,12 @@ import { useMenu } from '../hooks/useMenu'
 import { imgUrl } from '../lib/api'
 import { imgFloat, useSpotlight } from '../lib/menuMotion'
 import ReadyAnnouncer from '../components/ReadyAnnouncer'
+import LinkIndicator from '../components/LinkIndicator'
 import logo from '../assets/logo.svg'
 import './Menu1.scss'
 
 export default function Menu1() {
-  const menu = useMenu()
+  const { menu, link } = useMenu()
   const reduced = useReducedMotion()
   const scaleCount = menu?.page2.desserts.length ?? 0
   const scaleSpot = useSpotlight(scaleCount, 3200, reduced)
@@ -23,6 +24,7 @@ export default function Menu1() {
   return (
     <div className="m1">
       <header className="m1__header">
+        <LinkIndicator status={link} />
         <img className="m1__brand" src={logo} alt="Baraka Food" />
         <h1 className="m1__page-title">{page1.title}</h1>
         <div className="m1__head-right">

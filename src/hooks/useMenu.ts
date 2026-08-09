@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
 import { fetchMenu, normalizeMenu } from '../lib/api'
 import type { MenuData } from '../lib/api'
-import { authReady, supabase } from '../lib/supabase'
+import { watchTable } from '../lib/realtime'
+import type { LinkStatus } from '../lib/realtime'
 
 const CACHE_KEY = 'baraka-menu-cache'
 
@@ -16,6 +17,7 @@ function readCache(): MenuData | null {
 
 export function useMenu() {
   const [menu, setMenu] = useState<MenuData | null>(readCache)
+  const [link, setLink] = useState<LinkStatus>('reconnecting')
 
   useEffect(() => {
     let alive = true
@@ -28,25 +30,14 @@ export function useMenu() {
         localStorage.setItem(CACHE_KEY, JSON.stringify(data))
       } catch {}
     }
-    let channel: ReturnType<typeof supabase.channel> | null = null
-
-    authReady.then(() => {
-      if (!alive) return
-      load()
-      channel = supabase
-        .channel('menu-changes')
-        .on('postgres_changes', { event: '*', schema: 'public', table: 'menu' }, load)
-        .subscribe()
-    })
-
-    const fallback = setInterval(load, 30000)
+    load()
+    const stop = watchTable('menu-changes', 'menu', load, { pollMs: 30000, onStatus: setLink })
 
     return () => {
       alive = false
-      clearInterval(fallback)
-      if (channel) supabase.removeChannel(channel)
+      stop()
     }
   }, [])
 
-  return menu
+  return { menu, link }
 }
