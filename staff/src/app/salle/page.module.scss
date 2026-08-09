@@ -41,7 +41,7 @@
   flex-wrap: wrap;
   margin-bottom: 0.7rem;
 
-  &:last-of-type { margin-bottom: 1.6rem; }
+  &:last-of-type { margin-bottom: 3.2rem; }
 }
 
 .catTab {
@@ -218,13 +218,17 @@
 }
 
 .chipOff {
-  color: #ff5a5a;
+  color: #ff8080;
+  background: rgba(255, 60, 60, 0.16);
+  border-color: rgba(255, 60, 60, 0.5);
   text-decoration: line-through;
+  font-weight: 700;
 }
 
 .chipAdd {
-  color: $color-price-text;
-  background: $color-white;
+  color: #a8f0b4;
+  background: rgba(60, 220, 110, 0.18);
+  border-color: rgba(60, 220, 110, 0.55);
   font-weight: 700;
 }
 

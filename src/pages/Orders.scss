@@ -39,10 +39,10 @@
 
   &__ready-label {
     font-family: $font-display;
-    font-weight: 700;
+    font-weight: 900;
     font-size: 1em;
     letter-spacing: 0.06em;
-    color: rgba(0, 0, 0, 0.4);
+    color: $color-price-text;
   }
 
   &__ready-code {

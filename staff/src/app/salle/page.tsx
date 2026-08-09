@@ -238,7 +238,11 @@ export default function SallePage() {
   const total = cart.reduce((sum, l) => sum + lineTotal(l), 0)
 
   function removeLine(id: number) {
-    setCart((c) => c.filter((l) => l.id !== id))
+    setCart((c) => {
+      const line = c.find((l) => l.id === id)
+      if (line) show(`Retiré : ${line.name}`)
+      return c.filter((l) => l.id !== id)
+    })
   }
 
   function updateLine(id: number, patch: Partial<CartLine>) {
