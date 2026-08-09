@@ -32,7 +32,9 @@ export default function Menu2() {
             <span>{note.label}</span>
             <strong>{note.price}</strong>
           </div>
-          <div className="m2__halal">HALAL</div>
+          {note.img && (
+            <img className="m2__note-img" src={imgUrl(note.img)} alt="" />
+          )}
         </div>
       </header>
 

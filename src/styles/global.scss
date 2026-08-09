@@ -35,21 +35,25 @@ body {
   position: relative;
 }
 
-html:has(.ord) {
+html:has(.ord),
+html:has(.cd) {
   font-size: min(2.14643vw, 1.206975vh);
 }
 
-body:has(.ord) #root {
+body:has(.ord) #root,
+body:has(.cd) #root {
   width: min(100vw, calc(100vh * 9 / 16));
   height: min(100vh, calc(100vw * 16 / 9));
 }
 
 @media (orientation: landscape) {
-  html:has(.ord) {
+  html:has(.ord),
+html:has(.cd) {
     font-size: min(1.206975vw, 2.14643vh);
   }
 
-  body:has(.ord) #root {
+  body:has(.ord) #root,
+body:has(.cd) #root {
     width: min(100vw, calc(100vh * 16 / 9));
     height: min(100vh, calc(100vw * 9 / 16));
   }

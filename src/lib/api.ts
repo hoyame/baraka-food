@@ -68,8 +68,22 @@ export interface FeaturedItem {
   available: boolean
 }
 
+export interface Horaire {
+  jour: string
+  ferme: boolean
+  creneaux: string
+}
+
+export interface Infos {
+  email: string
+  telephone: string
+  adresse: string
+  horaires: Horaire[]
+}
+
 export interface MenuData {
-  note: { label: string; price: string }
+  note: { label: string; price: string; img: string }
+  infos: Infos
   supplements: Supplement[]
   page1: {
     title: string
@@ -107,6 +121,22 @@ export function imgUrl(path: string) {
 }
 
 export function normalizeMenu(menu: MenuData): MenuData {
+  if (menu.note.img === undefined) menu.note.img = ''
+  if (!menu.infos) {
+    menu.infos = {
+      email: 'contact@barakafood.fr',
+      telephone: '04 79 00 00 00',
+      adresse: 'Place Clemenceau\n73100 Aix-les-Bains',
+      horaires: [],
+    }
+  }
+  if (!menu.infos.horaires?.length) {
+    menu.infos.horaires = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'].map(jour => ({
+      jour,
+      ferme: false,
+      creneaux: '11h30 – 22h30',
+    }))
+  }
   if (!menu.page2.sandwich) {
     menu.page2.sandwich = {
       img: menu.page2.classiques?.[0]?.img ?? '',

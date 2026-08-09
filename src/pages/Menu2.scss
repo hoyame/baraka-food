@@ -29,7 +29,6 @@
       border-radius: 0;
       width: auto;
       object-fit: contain;
-      filter: drop-shadow(0 4px 14px rgba(0, 0, 0, 0.6));
     }
   }
 
@@ -73,33 +72,25 @@
     align-items: center;
     gap: 0.6em;
     padding: 0.4em 0.9em;
-    background: $color-bg-section;
+    background: $color-white;
     border-radius: 0;
 
-    span {
-      font-size: 0.72em;
-      letter-spacing: 0.12em;
-      color: $color-muted;
-    }
+    span,
     strong {
       font-family: $font-display;
       font-weight: 900;
-      font-size: 1.14em;
-      color: $color-white;
+      font-size: 1.03em;
+      color: $color-price-text;
     }
   }
 
-  &__halal {
-    display: flex;
-    align-items: center;
-    font-family: $font-display;
-    font-weight: 900;
-    font-size: 0.7em;
-    letter-spacing: 0.08em;
-    color: $color-bg;
-    background: $color-white;
-    padding: 0.35em 1em;
-    border-radius: 0;
+  &__note-img {
+    height: 100%;
+    width: auto;
+    max-height: 3.2em;
+    object-fit: contain;
+    display: block;
+    align-self: center;
   }
 
   &__row {
@@ -152,7 +143,6 @@
     max-height: 100%;
     max-width: 100%;
     object-fit: contain;
-    filter: drop-shadow(0 6px 20px rgba(0, 0, 0, 0.6));
   }
 
   &__formules {
@@ -227,6 +217,10 @@
 
     .m2__tcard-name {
       color: $color-price-text;
+    }
+
+    .m2__img--photo {
+      filter: drop-shadow(0 4px 14px rgba(0, 0, 0, 0.45));
     }
   }
 
@@ -319,6 +313,10 @@
       font-size: 1em;
       color: $color-price-text;
     }
+
+    .m2__img--photo {
+      filter: drop-shadow(0 3px 10px rgba(0, 0, 0, 0.4));
+    }
   }
 
   &__texmex-grid {
@@ -349,7 +347,6 @@
     max-height: 100%;
     max-width: 100%;
     object-fit: contain;
-    filter: drop-shadow(0 5px 16px rgba(0, 0, 0, 0.6));
   }
 
   &__frites-sizes {
@@ -427,39 +424,4 @@
     opacity: 0.35;
   }
 
-  &__mini-img {
-    height: 1.8em;
-    width: 1.8em;
-    object-fit: contain;
-    flex-shrink: 0;
-    filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.5));
-  }
-
-  &__mini-name {
-    flex: 1;
-    min-width: 0;
-  }
-
-  &__mini-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 0.6em;
-    font-size: 0.78em;
-    color: $color-white;
-    border-bottom: 1px solid $color-border;
-    padding: 0.3em 0;
-
-    &:last-child { border-bottom: none; }
-
-    span {
-      font-family: $font-display;
-      font-weight: 900;
-    }
-
-    &--off {
-      opacity: 0.25;
-      text-decoration: line-through;
-    }
-  }
 }

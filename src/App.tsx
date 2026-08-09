@@ -5,6 +5,7 @@ import Menu2 from './pages/Menu2'
 import Menu3 from './pages/Menu3'
 import Admin from './pages/Admin'
 import Orders from './pages/Orders'
+import Countdown from './pages/Countdown'
 import './styles/global.scss'
 
 export default function App() {
@@ -16,6 +17,7 @@ export default function App() {
         <Route path="/2" element={<Menu2 />} />
         <Route path="/3" element={<Menu3 />} />
         <Route path="/orders" element={<Orders />} />
+        <Route path="/colldown" element={<Countdown />} />
         <Route path="/admin" element={<Admin />} />
       </Routes>
     </BrowserRouter>

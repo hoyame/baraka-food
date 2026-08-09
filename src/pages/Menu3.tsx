@@ -30,7 +30,9 @@ export default function Menu3() {
             <span>{note.label}</span>
             <strong>{note.price}</strong>
           </div>
-          <div className="m3__halal">HALAL</div>
+          {note.img && (
+            <img className="m3__note-img" src={imgUrl(note.img)} alt="" />
+          )}
         </div>
       </header>
 

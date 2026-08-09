@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { supabase } from '../lib/supabase'
+import { authReady, supabase } from '../lib/supabase'
 import { useReadyOrders } from '../hooks/useReadyOrders'
 import logo from '../assets/logo.svg'
 import './Orders.scss'
@@ -25,6 +25,7 @@ export default function Orders() {
 
   useEffect(() => {
     let alive = true
+    let channel: ReturnType<typeof supabase.channel> | null = null
 
     const load = async () => {
       const { data } = await supabase
@@ -33,16 +34,24 @@ export default function Orders() {
         .neq('status', 'recuperee')
       if (alive && data) setOrders(data as Order[])
     }
+
     load()
 
-    const channel = supabase
-      .channel('orders-board')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'orders' }, load)
-      .subscribe()
+    authReady.then(() => {
+      if (!alive) return
+      load()
+      channel = supabase
+        .channel('orders-board')
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'orders' }, load)
+        .subscribe()
+    })
+
+    const fallback = setInterval(load, 15000)
 
     return () => {
       alive = false
-      supabase.removeChannel(channel)
+      clearInterval(fallback)
+      if (channel) supabase.removeChannel(channel)
     }
   }, [])
 

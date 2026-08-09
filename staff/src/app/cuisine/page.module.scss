@@ -10,7 +10,7 @@
 }
 
 .wrap {
-  max-width: 900px;
+  max-width: 1400px;
   margin: 0 auto;
 }
 
@@ -27,36 +27,39 @@
 
 .colTitle {
   font-family: $font-display;
-  font-weight: 800;
-  font-size: 0.75rem;
-  letter-spacing: 0.14em;
-  color: $color-muted;
-  margin-bottom: 0.7rem;
+  font-weight: 900;
+  font-size: 1.15rem;
+  letter-spacing: 0.1em;
+  color: $color-white;
+  margin-bottom: 1rem;
 }
 
 .colList {
   display: flex;
   flex-direction: column;
-  gap: 0.7rem;
+  gap: 1.4rem;
 }
 
 .empty {
   text-align: center;
-  color: #333333;
-  font-size: 0.8rem;
+  color: #4a4a4a;
+  font-size: 1rem;
   padding: 1rem 0;
 }
 
 .card {
   background: $color-bg-section;
   border-radius: 0;
-  padding: 0.9rem 1rem;
+  border-left: 4px solid $color-white;
+  padding: 0.9rem 1rem 1rem;
   display: flex;
   flex-direction: column;
-  gap: 0.6rem;
+  gap: 0.7rem;
 }
 
 .cardHead {
+  padding-bottom: 0.6rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -65,18 +68,23 @@
 .code {
   font-family: $font-display;
   font-weight: 900;
-  font-size: 1.15rem;
+  font-size: 3rem;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: #ffee00;
+  text-shadow: 0 0 18px rgba(255, 238, 0, 0.4);
 }
 
 .time {
-  font-size: 0.7rem;
-  color: $color-dim;
+  font-size: 1rem;
+  font-weight: 700;
+  color: $color-muted;
 }
 
 .items {
   display: flex;
   flex-direction: column;
-  gap: 0.55rem;
+  gap: 0.75rem;
 }
 
 .itemBlock {
@@ -86,36 +94,42 @@
 }
 
 .itemLine {
-  font-size: 0.82rem;
-  font-weight: 700;
+  font-size: 1.45rem;
+  font-weight: 800;
+  line-height: 1.2;
   color: $color-white;
 }
 
 .itemRemoved {
-  font-size: 0.72rem;
-  font-weight: 700;
-  color: #ff5a5a;
+  font-size: 1.2rem;
+  font-weight: 800;
+  line-height: 1.25;
+  color: #ff1744;
+  text-shadow: 0 0 12px rgba(255, 23, 68, 0.35);
 }
 
 .itemAdded {
-  font-size: 0.72rem;
-  font-weight: 700;
-  color: #7fc97f;
+  font-size: 1.2rem;
+  font-weight: 800;
+  line-height: 1.25;
+  color: #39ff5e;
+  text-shadow: 0 0 12px rgba(57, 255, 94, 0.3);
 }
 
 .itemNotes {
-  font-size: 0.72rem;
-  color: #b98b52;
-  font-weight: 500;
+  font-size: 1.2rem;
+  color: #f0b46a;
+  font-weight: 700;
+  line-height: 1.25;
 }
 
 .btn {
-  font-weight: 800;
-  font-size: 0.72rem;
+  font-weight: 900;
+  font-size: 1.15rem;
   letter-spacing: 0.06em;
   border: none;
   border-radius: 0;
-  padding: 0.7em 0.9em;
+  padding: 0.75em 0.9em;
   background: $color-white;
   color: $color-price-text;
 }

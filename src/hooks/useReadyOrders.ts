@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { supabase } from '../lib/supabase'
+import { authReady, supabase } from '../lib/supabase'
 
 const DISPLAY_MS = 15000
 
@@ -50,14 +50,23 @@ export function useReadyOrders(options: { announce?: boolean } = {}) {
       }, DISPLAY_MS)
     }
 
+    let channel: ReturnType<typeof supabase.channel> | null = null
+
     async function init() {
       const { data } = await supabase.from('orders').select('code, status')
       if (!alive || !data) return
       for (const o of data) knownStatus.current[o.code] = o.status
     }
-    init()
 
-    const channel = supabase
+    authReady.then(async () => {
+      if (!alive) return
+      await init()
+      if (!alive) return
+      channel = subscribe()
+    })
+
+    function subscribe() {
+      return supabase
       .channel('orders-ready-banner')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'orders' }, payload => {
         const row = payload.new as { code?: string; status?: string } | undefined
@@ -70,10 +79,11 @@ export function useReadyOrders(options: { announce?: boolean } = {}) {
         }
       })
       .subscribe()
+    }
 
     return () => {
       alive = false
-      supabase.removeChannel(channel)
+      if (channel) supabase.removeChannel(channel)
       if (timerRef.current) clearTimeout(timerRef.current)
     }
   }, [announce])

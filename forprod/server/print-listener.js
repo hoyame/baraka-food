@@ -21,6 +21,7 @@ const PRINTER_PORT = Number(process.env.PRINTER_PORT || 9100)
 const CAISSE_HOST = process.env.CAISSE_HOST || '192.168.1.81'
 const CAISSE_PORT = Number(process.env.CAISSE_PORT || 515)
 const CAISSE_QUEUE = process.env.CAISSE_QUEUE || 'TP85'
+const ORDERS_URL = (process.env.ORDERS_URL || 'https://commande.barakafood.fr').replace(/\/+$/, '')
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
 
@@ -43,6 +44,7 @@ function buildTicket(order) {
   const jour = date.toLocaleDateString('fr-FR')
   let t = ''
   t += ESC + '@'
+  t += ESC + 'M' + '\x00'
   t += ESC + 'a' + '\x01'
   t += GS + '!' + '\x11'
   t += 'BARAKA FOOD\n'
@@ -100,14 +102,42 @@ function printOrder(order, attempt = 1) {
   })
 }
 
+function qrCode(data, moduleSize = 7) {
+  const len = data.length + 3
+  return (
+    GS + '(k' + '\x04\x00' + '\x31\x41' + '\x32\x00' +
+    GS + '(k' + '\x03\x00' + '\x31\x43' + String.fromCharCode(moduleSize) +
+    GS + '(k' + '\x03\x00' + '\x31\x45' + '\x31' +
+    GS + '(k' + String.fromCharCode(len & 0xff) + String.fromCharCode((len >> 8) & 0xff) + '\x31\x50\x30' + data +
+    GS + '(k' + '\x03\x00' + '\x31\x51\x30'
+  )
+}
+
 function buildNumberTicket(order) {
+  const code = clean(order.code)
+  const url = ORDERS_URL + '/' + encodeURIComponent(code)
   let t = ''
   t += ESC + '@'
+  t += ESC + 'M' + '\x00'
   t += ESC + 'a' + '\x01'
   t += GS + '!' + '\x55'
-  t += clean(order.code) + '\n'
+  t += code + '\n'
   t += GS + '!' + '\x00'
-  t += '\n\n\n\n'
+  t += '\n'
+  t += ESC + 'E' + '\x01'
+  t += 'SUIVEZ VOTRE COMMANDE\n'
+  t += ESC + 'E' + '\x00'
+  t += 'DIRECTEMENT DEPUIS VOTRE TELEPHONE\n'
+  t += '\n'
+  t += qrCode(url)
+  t += '\n'
+  t += url.replace(/^https?:\/\//, '') + '\n'
+  t += '\n'
+  t += line('-')
+  t += 'SINON, ALLEZ SUR NOTRE SITE INTERNET,\n'
+  t += 'CLIQUEZ SUR SUIVRE MA COMMANDE\n'
+  t += 'ET RENSEIGNEZ VOTRE NUMERO DE COMMANDE\n'
+  t += '\n\n\n'
   t += GS + 'V' + '\x41' + '\x00'
   return t
 }
@@ -194,6 +224,7 @@ async function main() {
   console.log('[print] en ecoute des nouvelles commandes')
   console.log('[print] cuisine (raw 9100) :', PRINTER_IP + ':' + PRINTER_PORT)
   console.log('[caisse] TP85 (LPD 515)   :', CAISSE_HOST + ':' + CAISSE_PORT + ' file ' + CAISSE_QUEUE)
+  console.log('[caisse] QR de suivi      :', ORDERS_URL + '/<code>')
 }
 
 main()

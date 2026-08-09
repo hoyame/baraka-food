@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import StaffNav from '@/components/StaffNav'
 import { Toast, useToast } from '@/components/Toast'
-import { supabase } from '@/lib/supabase'
+import { authReady, supabase } from '@/lib/supabase'
 import type { MenuData, Order, OrderStatus } from '@/lib/types'
 import styles from './page.module.scss'
 
@@ -138,14 +138,15 @@ export default function SallePage() {
       for (const b of menu.page1.burgers) meta[b.name] = { ...emptyMeta, ingredients: splitDesc(b.desc), canMenu: true }
       meta[menu.page2.menuKids.name] = { ...emptyMeta, kidsChoices: ['Cheese Burger', 'Mini Tacos'] }
       const garnitures = (menu.page2.sandwich?.inclus ?? '').split('·').map((g) => g.trim()).filter(Boolean)
-      meta['Sandwich 1 viande'] = { ingredients: garnitures, isTacos: true, viandeCount: 1 }
-      meta['Sandwich 2 viandes'] = { ingredients: garnitures, isTacos: true, viandeCount: 2 }
+      meta['Sandwich 1 viande'] = { ingredients: garnitures, isTacos: true, viandeCount: 1, canMenu: true }
+      meta['Sandwich 2 viandes'] = { ingredients: garnitures, isTacos: true, viandeCount: 2, canMenu: true }
       for (const f of menu.page2.frites) meta[`Frites ${f.name}`] = { ...emptyMeta, isFrites: true }
       for (const t of menu.page3.tailles) {
         meta[`Tacos ${t.size} (${t.viandes})`] = {
           ...emptyMeta,
           isTacos: true,
           viandeCount: parseInt(t.viandes, 10) || 1,
+          canMenu: true,
         }
       }
       setItemMeta(meta)
@@ -157,15 +158,18 @@ export default function SallePage() {
       setFriteSupOptions((menu.page2.friteSupplements ?? []).filter((f) => f.available !== false).map((f) => f.name))
       setGratinageOptions((menu.page3.gratinage ?? []).filter((g) => g.available !== false).map((g) => g.name))
     }
-    loadCatalog()
+    let channel: ReturnType<typeof supabase.channel> | null = null
 
-    const channel = supabase
-      .channel('menu-salle')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'menu' }, loadCatalog)
-      .subscribe()
+    authReady.then(() => {
+      loadCatalog()
+      channel = supabase
+        .channel('menu-salle')
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'menu' }, loadCatalog)
+        .subscribe()
+    })
 
     return () => {
-      supabase.removeChannel(channel)
+      if (channel) supabase.removeChannel(channel)
     }
   }, [])
 
@@ -174,15 +178,21 @@ export default function SallePage() {
       const { data } = await supabase.from('orders').select('*')
       setOrders((data as Order[]) || [])
     }
-    loadTracking()
+    let channel: ReturnType<typeof supabase.channel> | null = null
 
-    const channel = supabase
-      .channel('orders-salle')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'orders' }, loadTracking)
-      .subscribe()
+    authReady.then(() => {
+      loadTracking()
+      channel = supabase
+        .channel('orders-salle')
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'orders' }, loadTracking)
+        .subscribe()
+    })
+
+    const fallback = setInterval(loadTracking, 15000)
 
     return () => {
-      supabase.removeChannel(channel)
+      clearInterval(fallback)
+      if (channel) supabase.removeChannel(channel)
     }
   }, [])
 
