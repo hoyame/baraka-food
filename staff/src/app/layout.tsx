@@ -15,7 +15,7 @@ const inter = Inter({
 })
 
 export const metadata: Metadata = {
-  title: 'Baraka Food — Staff',
+  title: 'BarakaFood - Staff',
   description: 'Salle, comptoir et cuisine — Baraka Food.',
   manifest: '/manifest.webmanifest',
   appleWebApp: {

@@ -2,6 +2,7 @@ import { Fragment, useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import logo from '../assets/logo.svg'
 import './Countdown.scss'
+import { useTitle } from '../hooks/useTitle'
 
 const TARGET = new Date(2026, 7, 18, 0, 0, 0).getTime()
 
@@ -15,6 +16,7 @@ function parts(diff: number) {
 }
 
 export default function Countdown() {
+  useTitle('Ouverture')
   const [now, setNow] = useState(() => Date.now())
 
   useEffect(() => {

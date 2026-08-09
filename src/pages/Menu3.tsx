@@ -7,8 +7,10 @@ import LinkIndicator from '../components/LinkIndicator'
 import logo from '../assets/logo.svg'
 import tacosImg from '../assets/tacos.png'
 import './Menu3.scss'
+import { useTitle } from '../hooks/useTitle'
 
 export default function Menu3() {
+  useTitle('Écran 3')
   const { menu, link } = useMenu()
   const reduced = useReducedMotion()
   const scaleCount = (menu?.page3.viandes.length ?? 0) + (menu?.page3.extras.items.length ?? 0)

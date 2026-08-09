@@ -3,6 +3,7 @@
 .main {
   flex: 1;
   padding: 0 1.5rem 3rem;
+  font-size: 1.3rem;
 
   * {
     text-transform: uppercase;
@@ -10,7 +11,7 @@
 }
 
 .wrap {
-  max-width: 780px;
+  max-width: 1010px;
   margin: 0 auto;
 }
 
@@ -28,7 +29,7 @@
 .blockTitle {
   font-family: $font-display;
   font-weight: 800;
-  font-size: 0.75rem;
+  font-size: 0.652em;
   letter-spacing: 0.06em;
   color: $color-muted;
   margin-bottom: 0.7rem;
@@ -46,7 +47,7 @@
 .catTab {
   font-family: $font-display;
   font-weight: 700;
-  font-size: 0.7rem;
+  font-size: 0.609em;
   letter-spacing: 0.06em;
   color: $color-muted;
   background: $color-bg-section;
@@ -69,14 +70,26 @@
 .catalogItem {
   display: block;
   background: $color-bg-section;
-  border: none;
+  border: 1px solid transparent;
   border-radius: 0;
-  padding: 0.75em 0.9em;
+  padding: 0.85em 0.9em;
   color: $color-white;
   text-align: left;
   font-family: $font-body;
   font-weight: 500;
-  font-size: 0.85rem;
+  font-size: 0.783em;
+  transition: background 0.12s ease, border-color 0.12s ease, transform 0.08s ease;
+
+  &:hover {
+    border-color: #333;
+  }
+
+  &:active {
+    background: $color-white;
+    border-color: $color-white;
+    color: $color-price-text;
+    transform: scale(0.98);
+  }
 }
 
 .cart {
@@ -87,7 +100,7 @@
 
 .cartEmpty {
   color: #333333;
-  font-size: 0.8rem;
+  font-size: 0.696em;
   padding: 1rem 0;
   text-align: center;
 }
@@ -109,7 +122,7 @@
 .cartLineWarnText {
   font-family: $font-display;
   font-weight: 800;
-  font-size: 0.7rem;
+  font-size: 0.609em;
   letter-spacing: 0.06em;
   color: #ff5a5a;
 }
@@ -123,14 +136,14 @@
 
 .cartLineName {
   font-weight: 700;
-  font-size: 0.85rem;
+  font-size: 0.739em;
 }
 
 .cartLineRemove {
   background: none;
   border: none;
   color: #ff8080;
-  font-size: 0.85rem;
+  font-size: 0.739em;
   font-weight: 700;
 }
 
@@ -143,7 +156,7 @@
   width: 3.2em;
   font-family: $font-display;
   font-weight: 700;
-  font-size: 0.8rem;
+  font-size: 0.696em;
   text-align: center;
   background: $color-bg;
   border: none;
@@ -156,7 +169,7 @@
   flex: 1;
   font-family: $font-body;
   font-weight: 500;
-  font-size: 0.78rem;
+  font-size: 0.678em;
   background: $color-bg;
   border: none;
   border-radius: 0;
@@ -178,7 +191,7 @@
 .chipGroupLabel {
   font-family: $font-display;
   font-weight: 700;
-  font-size: 0.62rem;
+  font-size: 0.539em;
   letter-spacing: 0.06em;
   color: $color-dim;
   margin-right: 0.2rem;
@@ -188,12 +201,16 @@
 .chip {
   font-family: $font-body;
   font-weight: 500;
-  font-size: 0.72rem;
+  font-size: 0.678em;
   color: $color-muted;
   background: $color-bg;
-  border: 1px solid transparent;
+  border: 1px solid #222;
   border-radius: 0;
-  padding: 0.35em 0.75em;
+  padding: 0.45em 0.8em;
+  transition: background 0.12s ease, color 0.12s ease, border-color 0.12s ease, transform 0.08s ease;
+
+  &:hover { border-color: #3a3a3a; color: $color-white; }
+  &:active { transform: scale(0.93); }
 }
 
 .chipOn {
@@ -214,7 +231,7 @@
 .sendBtn {
   width: 100%;
   font-weight: 800;
-  font-size: 0.85rem;
+  font-size: 0.739em;
   letter-spacing: 0.06em;
   color: $color-price-text;
   background: $color-white;
@@ -245,7 +262,7 @@
 .confirmCode {
   font-family: $font-display;
   font-weight: 900;
-  font-size: 2rem;
+  font-size: 1.739em;
 }
 
 .tracking {
@@ -278,7 +295,7 @@
 .trackCode {
   font-family: $font-display;
   font-weight: 900;
-  font-size: 1.05rem;
+  font-size: 0.913em;
 }
 
 .trackCardAlert .trackCode,
@@ -287,7 +304,7 @@
 }
 
 .trackStatus {
-  font-size: 0.68rem;
+  font-size: 0.591em;
   font-weight: 700;
   letter-spacing: 0.06em;
   color: $color-muted;
@@ -296,11 +313,80 @@
 .trackBtn {
   font-family: $font-display;
   font-weight: 800;
-  font-size: 0.68rem;
+  font-size: 0.591em;
   letter-spacing: 0.06em;
   border: none;
   border-radius: 0;
   padding: 0.6em 0.8em;
   background: $color-bg;
   color: $color-white;
+}
+
+.topBar {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 1rem;
+}
+
+.eyeBtn {
+  display: flex;
+  align-items: center;
+  gap: 0.55em;
+  font-family: $font-display;
+  font-weight: 900;
+  font-size: 0.748em;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: $color-muted;
+  background: transparent;
+  border: 1px solid $color-bg-section;
+  padding: 0.6em 1em;
+  border-radius: 0;
+  cursor: pointer;
+  transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+
+  &:hover { color: $color-white; border-color: $color-muted; }
+  &:focus-visible { outline: 2px solid $color-white; outline-offset: 2px; }
+}
+
+.eyeBtnOn {
+  background: $color-white;
+  border-color: $color-white;
+  color: $color-price-text;
+
+  &:hover { color: $color-price-text; }
+}
+
+.cartLineFold {
+  flex-shrink: 0;
+  width: 1.9em;
+  height: 1.9em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 1px solid $color-bg-section;
+  color: $color-muted;
+  font-size: 0.696em;
+  line-height: 1;
+  border-radius: 0;
+  cursor: pointer;
+
+  &:hover { color: $color-white; border-color: $color-muted; }
+}
+
+.cartLinePrice {
+  font-family: $font-display;
+  font-weight: 900;
+  font-size: 0.826em;
+  color: $color-white;
+  font-variant-numeric: tabular-nums;
+  flex-shrink: 0;
+}
+
+.cartLineSummary {
+  font-size: 0.678em;
+  color: $color-muted;
+  line-height: 1.5;
+  padding-left: 2.5em;
 }

@@ -6,8 +6,10 @@ import { imgFloat, useSpotlight } from '../lib/menuMotion'
 import LinkIndicator from '../components/LinkIndicator'
 import logo from '../assets/logo.svg'
 import './Menu2.scss'
+import { useTitle } from '../hooks/useTitle'
 
 export default function Menu2() {
+  useTitle('Écran 2')
   const { menu, link } = useMenu()
   const reduced = useReducedMotion()
   const scaleCount = (menu?.page3.viandes.length ?? 0) + (menu?.page3.extras.items.length ?? 0) + (menu?.page1.texmex.length ?? 0)

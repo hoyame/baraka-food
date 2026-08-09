@@ -6,6 +6,7 @@ export interface MenuItem {
 }
 
 export interface MenuData {
+  note: { label: string; price: string; img?: string }
   supplements: { id: string; name: string; price: string; available: boolean }[]
   page1: {
     burgers: { id: string; label: string; name: string; desc?: string; price: number; available: boolean }[]
@@ -15,6 +16,7 @@ export interface MenuData {
     classiques: { id: string; name: string; desc?: string; price: number; available: boolean }[]
     sandwich?: { img: string; prixSimple: number; prixDouble: number; inclus?: string; available: boolean }
     friteSupplements?: { id: string; name: string; available: boolean }[]
+    friteSupplementsPrice?: string
     crunchy: { id: string; name: string; desc?: string; price: number; available: boolean }
     menuKids: { id: string; name: string; desc?: string; price: number; available: boolean }
     frites: { id: string; name: string; price: number; available: boolean }[]
@@ -26,6 +28,7 @@ export interface MenuData {
     viandes: { id: string; name: string; available: boolean }[]
     sauces: { classiques: string[]; piquantes: string[] }
     gratinage?: { id: string; name: string; available: boolean }[]
+    gratinagePrice?: string
     extras: { surcharge: string; items: { id: string; name: string; available: boolean }[] }
   }
 }

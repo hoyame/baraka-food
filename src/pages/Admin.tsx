@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { fetchMenu, saveMenu, uploadImage, imgUrl } from '../lib/api'
 import type { MenuData } from '../lib/api'
 import './Admin.scss'
+import { useTitle } from '../hooks/useTitle'
 
 type Draft = (fn: (d: MenuData) => void) => void
 
@@ -159,6 +160,7 @@ function Row({ img, label, name, desc, price, available, onPatch, onMove, onDele
 }
 
 export default function Admin() {
+  useTitle('Admin')
   const [menu, setMenu] = useState<MenuData | null>(null)
   const [dirty, setDirty] = useState(false)
   const [status, setStatus] = useState('')

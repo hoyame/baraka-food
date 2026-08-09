@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import './Index.scss'
+import { useTitle } from '../hooks/useTitle'
 
 const screens = [
   { path: '/1', label: 'ÉCRAN 1', desc: 'Nos Burgers' },
@@ -11,6 +12,7 @@ const screens = [
 ]
 
 export default function Index() {
+  useTitle('Accueil')
   const navigate = useNavigate()
 
   return (

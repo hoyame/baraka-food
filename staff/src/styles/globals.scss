@@ -27,11 +27,17 @@ a {
 button {
   font-family: $font-display;
   cursor: pointer;
-  transition: transform 0.1s ease;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 0.08s ease, background 0.15s ease, color 0.15s ease;
 
   &:active {
     transform: scale(0.94);
   }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  button { transition: none; }
+  button:active { transform: none; }
 }
 
 ::selection {

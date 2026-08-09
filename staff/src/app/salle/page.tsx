@@ -20,6 +20,8 @@ interface ItemMeta {
   canMenu?: boolean
   kidsChoices?: string[]
   isFrites?: boolean
+  price?: number
+  noSauce?: boolean
 }
 
 interface CartLine {
@@ -41,10 +43,20 @@ interface CartLine {
   kidsChoices: string[]
   selectedKids: string | null
   isFrites: boolean
+  price: number
+  noSauce: boolean
+  collapsed: boolean
   notes: string
 }
 
 const emptyMeta: ItemMeta = { ingredients: [], isTacos: false, viandeCount: 0 }
+
+function parsePrice(v: string | number | undefined): number {
+  if (typeof v === 'number') return v
+  if (!v) return 0
+  const m = String(v).replace(',', '.').match(/[\d]+(\.[\d]+)?/)
+  return m ? parseFloat(m[0]) : 0
+}
 
 const trackLabel: Record<OrderStatus, string> = {
   attente: 'En attente',
@@ -67,6 +79,8 @@ export default function SallePage() {
   const [boissonOptions, setBoissonOptions] = useState<string[]>([])
   const [friteSupOptions, setFriteSupOptions] = useState<string[]>([])
   const [gratinageOptions, setGratinageOptions] = useState<string[]>([])
+  const [prices, setPrices] = useState({ extra: 0, gratinage: 0, friteSup: 0, menu: 0 })
+  const [showTotal, setShowTotal] = useState(false)
   const [cart, setCart] = useState<CartLine[]>([])
   const [sending, setSending] = useState(false)
   const [confirmCode, setConfirmCode] = useState<string | null>(null)
@@ -136,21 +150,31 @@ export default function SallePage() {
       setCategories(cats)
 
       const meta: Record<string, ItemMeta> = {}
-      for (const b of menu.page1.burgers) meta[b.name] = { ...emptyMeta, ingredients: splitDesc(b.desc), canMenu: true }
-      meta[menu.page2.menuKids.name] = { ...emptyMeta, kidsChoices: ['Cheese Burger', 'Mini Tacos'] }
+      for (const b of menu.page1.burgers) meta[b.name] = { ...emptyMeta, ingredients: splitDesc(b.desc), canMenu: true, price: b.price }
+      for (const t of menu.page1.texmex) meta[t.name] = { ...emptyMeta, price: t.price }
+      meta[menu.page2.menuKids.name] = { ...emptyMeta, kidsChoices: ['Cheese Burger', 'Mini Tacos'], price: menu.page2.menuKids.price }
       const garnitures = (menu.page2.sandwich?.inclus ?? '').split('·').map((g) => g.trim()).filter(Boolean)
-      meta['Sandwich 1 viande'] = { ingredients: garnitures, isTacos: true, viandeCount: 1, canMenu: true }
-      meta['Sandwich 2 viandes'] = { ingredients: garnitures, isTacos: true, viandeCount: 2, canMenu: true }
-      for (const f of menu.page2.frites) meta[`Frites ${f.name}`] = { ...emptyMeta, isFrites: true }
+      meta['Sandwich 1 viande'] = { ingredients: garnitures, isTacos: true, viandeCount: 1, canMenu: true, price: menu.page2.sandwich?.prixSimple ?? 0 }
+      meta['Sandwich 2 viandes'] = { ingredients: garnitures, isTacos: true, viandeCount: 2, canMenu: true, price: menu.page2.sandwich?.prixDouble ?? 0 }
+      for (const f of menu.page2.frites) meta[`Frites ${f.name}`] = { ...emptyMeta, isFrites: true, price: f.price }
+      for (const d of menu.page2.desserts) meta[d.name] = { ...emptyMeta, price: d.price, noSauce: true }
+      for (const b of menu.page2.boissons) meta[`Boisson ${b.name}`] = { ...emptyMeta, price: b.price, noSauce: true }
       for (const t of menu.page3.tailles) {
         meta[`Tacos ${t.size} (${t.viandes})`] = {
           ...emptyMeta,
           isTacos: true,
           viandeCount: parseInt(t.viandes, 10) || 1,
           canMenu: true,
+          price: t.price,
         }
       }
       setItemMeta(meta)
+      setPrices({
+        extra: parsePrice(menu.page3.extras.surcharge),
+        gratinage: parsePrice(menu.page3.gratinagePrice),
+        friteSup: parsePrice(menu.page2.friteSupplementsPrice),
+        menu: parsePrice(menu.note.price),
+      })
 
       setViandeOptions(menu.page3.viandes.filter((v) => v.available !== false).map((v) => v.name))
       setSauceOptions(menu.page3.sauces.classiques)
@@ -194,10 +218,24 @@ export default function SallePage() {
         kidsChoices: meta.kidsChoices ?? [],
         selectedKids: null,
         isFrites: meta.isFrites === true,
+        price: meta.price ?? 0,
+        noSauce: meta.noSauce === true,
+        collapsed: false,
         notes: '',
       },
     ])
   }
+
+  function lineTotal(l: CartLine) {
+    const options =
+      l.selectedExtras.length * prices.extra +
+      l.selectedGratinage.length * prices.gratinage +
+      (l.isFrites ? l.supplements.length * prices.friteSup : 0) +
+      (l.isMenu ? prices.menu : 0)
+    return (l.price + options) * l.qty
+  }
+
+  const total = cart.reduce((sum, l) => sum + lineTotal(l), 0)
 
   function removeLine(id: number) {
     setCart((c) => c.filter((l) => l.id !== id))
@@ -286,6 +324,28 @@ export default function SallePage() {
     <main className={styles.main}>
       <StaffNav />
       <div className={styles.wrap}>
+        <div className={styles.topBar}>
+          <button
+            className={`${styles.eyeBtn}${showTotal ? ` ${styles.eyeBtnOn}` : ''}`}
+            onClick={() => setShowTotal((v) => !v)}
+            title={showTotal ? 'Masquer le total' : 'Afficher le total'}
+            aria-pressed={showTotal}
+          >
+            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+              <path
+                d="M1.5 12S5 5.5 12 5.5 22.5 12 22.5 12 19 18.5 12 18.5 1.5 12 1.5 12Z"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.8"
+                strokeLinejoin="round"
+              />
+              <circle cx="12" cy="12" r="3.2" fill="none" stroke="currentColor" strokeWidth="1.8" />
+              {!showTotal && <path d="M4 20 20 4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />}
+            </svg>
+            <span>{showTotal ? `${total.toFixed(2)}€` : 'Total'}</span>
+          </button>
+        </div>
+
         <div className={styles.layout}>
           <div>
             <p className={styles.blockTitle}>Ajouter au ticket</p>
@@ -324,12 +384,38 @@ export default function SallePage() {
                 return (
                   <div key={line.id} className={`${styles.cartLine}${isUnavailable ? ` ${styles.cartLineWarn}` : ''}`}>
                     <div className={styles.cartLineHead}>
-                      <span className={styles.cartLineName}>{line.name}</span>
+                      <button
+                        className={styles.cartLineFold}
+                        onClick={() => updateLine(line.id, { collapsed: !line.collapsed })}
+                        title={line.collapsed ? 'Déplier' : 'Replier'}
+                      >
+                        {line.collapsed ? '▸' : '▾'}
+                      </button>
+                      <span className={styles.cartLineName}>
+                        {line.qty > 1 && <b>{line.qty}× </b>}{line.name}
+                      </span>
+                      {showTotal && <span className={styles.cartLinePrice}>{lineTotal(line).toFixed(2)}€</span>}
                       <button className={styles.cartLineRemove} onClick={() => removeLine(line.id)}>Retirer</button>
                     </div>
+
+                    {line.collapsed && (
+                      <div className={styles.cartLineSummary}>
+                        {[
+                          ...line.removedIngredients.map((r) => `sans ${r}`),
+                          ...line.selectedViandes,
+                          ...line.selectedSauces,
+                          ...line.selectedExtras,
+                          ...line.selectedGratinage.map((g) => `gratiné ${g}`),
+                          ...(line.isFrites ? line.supplements : []),
+                          ...(line.selectedKids ? [line.selectedKids] : []),
+                          ...(line.isMenu ? [`menu${line.selectedBoisson ? ` + ${line.selectedBoisson}` : ''}`] : []),
+                          ...(line.notes ? [line.notes] : []),
+                        ].join(' · ') || 'Aucune option'}
+                      </div>
+                    )}
                     {isUnavailable && <div className={styles.cartLineWarnText}>Épuisé — retirer ?</div>}
 
-                    {line.ingredients.length > 0 && (
+                    {!line.collapsed && line.ingredients.length > 0 && (
                       <div className={styles.chipRow}>
                         {line.ingredients.map((ing) => {
                           const isRemoved = line.removedIngredients.includes(ing)
@@ -346,7 +432,7 @@ export default function SallePage() {
                       </div>
                     )}
 
-                    {line.isTacos && (
+                    {!line.collapsed && line.isTacos && (
                       <>
                         <div className={styles.chipRow}>
                           <span className={styles.chipGroupLabel}>Viandes ({line.selectedViandes.length}/{line.viandeCount})</span>
@@ -363,7 +449,7 @@ export default function SallePage() {
                       </>
                     )}
 
-                    {line.isFrites && friteSupOptions.length > 0 && (
+                    {!line.collapsed && line.isFrites && friteSupOptions.length > 0 && (
                       <div className={styles.chipRow}>
                         <span className={styles.chipGroupLabel}>Suppléments</span>
                         {friteSupOptions.map((name) => (
@@ -378,6 +464,7 @@ export default function SallePage() {
                       </div>
                     )}
 
+                    {!line.collapsed && !line.noSauce && (
                     <div className={styles.chipRow}>
                       <span className={styles.chipGroupLabel}>Sauces</span>
                       {sauceOptions.map((name) => (
@@ -390,8 +477,9 @@ export default function SallePage() {
                         </button>
                       ))}
                     </div>
+                    )}
 
-                    {(line.isTacos || line.canMenu) && (
+                    {!line.collapsed && (line.isTacos || line.canMenu) && (
                       <div className={styles.chipRow}>
                         <span className={styles.chipGroupLabel}>Extras</span>
                         {extraOptions.map((name) => (
@@ -406,7 +494,7 @@ export default function SallePage() {
                       </div>
                     )}
 
-                    {line.kidsChoices.length > 0 && (
+                    {!line.collapsed && line.kidsChoices.length > 0 && (
                       <div className={styles.chipRow}>
                         <span className={styles.chipGroupLabel}>Choix</span>
                         {line.kidsChoices.map((name) => (
@@ -421,7 +509,7 @@ export default function SallePage() {
                       </div>
                     )}
 
-                    {line.isTacos && gratinageOptions.length > 0 && (
+                    {!line.collapsed && line.isTacos && gratinageOptions.length > 0 && (
                       <div className={styles.chipRow}>
                         <span className={styles.chipGroupLabel}>Gratinage</span>
                         {gratinageOptions.map((name) => (
@@ -436,7 +524,7 @@ export default function SallePage() {
                       </div>
                     )}
 
-                    {line.canMenu && (
+                    {!line.collapsed && line.canMenu && (
                       <div className={styles.chipRow}>
                         <span className={styles.chipGroupLabel}>Formule</span>
                         <button
@@ -457,6 +545,7 @@ export default function SallePage() {
                       </div>
                     )}
 
+                    {!line.collapsed && (
                     <div className={styles.cartLineRow}>
                       <input
                         className={styles.qtyInput}
@@ -474,6 +563,7 @@ export default function SallePage() {
                         onChange={(e) => updateLine(line.id, { notes: e.target.value })}
                       />
                     </div>
+                    )}
                   </div>
                 )
               })}

@@ -7,8 +7,10 @@ import ReadyAnnouncer from '../components/ReadyAnnouncer'
 import LinkIndicator from '../components/LinkIndicator'
 import logo from '../assets/logo.svg'
 import './Menu1.scss'
+import { useTitle } from '../hooks/useTitle'
 
 export default function Menu1() {
+  useTitle('Écran 1')
   const { menu, link } = useMenu()
   const reduced = useReducedMotion()
   const scaleCount = menu?.page2.desserts.length ?? 0

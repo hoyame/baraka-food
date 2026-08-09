@@ -7,6 +7,7 @@ import { useReadyOrders } from '../hooks/useReadyOrders'
 import LinkIndicator from '../components/LinkIndicator'
 import logo from '../assets/logo.svg'
 import './Orders.scss'
+import { useTitle } from '../hooks/useTitle'
 
 type OrderStatus = 'attente' | 'preparation' | 'pret_cuisine' | 'disponible' | 'recuperee'
 
@@ -23,6 +24,7 @@ const sections: { key: string; label: string; statuses: OrderStatus[] }[] = [
 ]
 
 export default function Orders() {
+  useTitle('Suivi des commandes')
   const [orders, setOrders] = useState<Order[]>([])
   const readyCode = useReadyOrders({ announce: false })
   const [link, setLink] = useState<LinkStatus>('reconnecting')
