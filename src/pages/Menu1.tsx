@@ -13,7 +13,7 @@ export default function Menu1() {
   useTitle('Écran 1')
   const { menu, link } = useMenu()
   const reduced = useReducedMotion()
-  const scaleCount = menu?.page2.desserts.length ?? 0
+  const scaleCount = menu?.page1.texmex.length ?? 0
   const scaleSpot = useSpotlight(scaleCount, 3200, reduced)
   const hasEntered = useRef(false)
   useEffect(() => { if (menu) hasEntered.current = true }, [menu])
@@ -84,9 +84,9 @@ export default function Menu1() {
       </section>
 
       <section className="m1__row m1__sups">
-        <div className="m1__spine"><span>DESSERTS</span></div>
+        <div className="m1__spine"><span>TEX-MEX</span></div>
         <div className="m1__sups-grid">
-          {page2.desserts.map((item, i) => (
+          {page1.texmex.map((item, i) => (
             <motion.div
               key={item.id}
               className={`m1__tcard${item.available ? '' : ' is-off'}`}

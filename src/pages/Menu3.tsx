@@ -157,14 +157,11 @@ export default function Menu3() {
               >
                 <motion.img className="m3__img m3__img--md m3__img--photo" src={imgUrl(e.img)} alt={e.name} {...imgFloat(i, reduced)} />
                 <span className="m3__tcard-name">{e.name}</span>
+                <span className="m3__tcard-price m3__tcard-price--sm">{(e.price ?? 0).toFixed(2)}€</span>
                 {!e.available && <span className="off-badge">ÉPUISÉ</span>}
               </motion.div>
             ))}
           </div>
-        </div>
-        <div className="m3__extras-price">
-          <span>Supplément</span>
-          <strong>{page3.extras.surcharge}</strong>
         </div>
       </section>
     </div>

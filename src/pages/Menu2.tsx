@@ -12,7 +12,7 @@ export default function Menu2() {
   useTitle('Écran 2')
   const { menu, link } = useMenu()
   const reduced = useReducedMotion()
-  const scaleCount = (menu?.page3.viandes.length ?? 0) + (menu?.page3.extras.items.length ?? 0) + (menu?.page1.texmex.length ?? 0)
+  const scaleCount = (menu?.page3.viandes.length ?? 0) + (menu?.page3.extras.items.length ?? 0) + (menu?.page2.desserts.length ?? 0)
   const scaleSpot = useSpotlight(scaleCount, 3200, reduced)
   const hasEntered = useRef(false)
   useEffect(() => { if (menu) hasEntered.current = true }, [menu])
@@ -121,7 +121,7 @@ export default function Menu2() {
                 {...imgFloat(i, reduced)}
               />
               <span className="m2__tcard-name">{e.name}</span>
-              <span className="m2__tcard-price m2__tcard-price--sm">{page3.extras.surcharge}</span>
+              <span className="m2__tcard-price m2__tcard-price--sm">{(e.price ?? 0).toFixed(2)}€</span>
               {!e.available && <span className="off-badge">ÉPUISÉ</span>}
             </motion.div>
           ))}
@@ -166,9 +166,9 @@ export default function Menu2() {
         </div>
 
         <div className="m2__texmex">
-          <div className="m2__spine"><span>TEX-MEX</span></div>
+          <div className="m2__spine"><span>DESSERTS</span></div>
           <div className="m2__texmex-grid">
-            {page1.texmex.map((item, i) => (
+            {page2.desserts.map((item, i) => (
               <motion.div
                 key={item.id}
                 className={`m2__tcard${item.available ? '' : ' is-off'}`}
@@ -176,12 +176,14 @@ export default function Menu2() {
                 animate={{ opacity: 1, y: 0, scale: item.available && scaleSpot === viandes.length + page3.extras.items.length + i ? 1.15 : 1 }}
                 transition={{ duration: 0.6, delay: 0.1 + i * 0.05 }}
               >
+                {item.img && (
                 <motion.img
                   className="m2__img m2__img--md m2__img--photo"
                   src={imgUrl(item.img)}
                   alt={item.name}
                   {...imgFloat(i, reduced)}
                 />
+                )}
                 <span className="m2__tcard-name">{item.name}</span>
                 <span className="m2__tcard-price">{item.price.toFixed(2)}€</span>
                 {!item.available && <span className="off-badge">ÉPUISÉ</span>}

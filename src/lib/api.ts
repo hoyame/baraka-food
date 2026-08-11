@@ -47,6 +47,7 @@ export interface ImgItem {
   id: string
   name: string
   img: string
+  price?: number
   available: boolean
 }
 
@@ -148,6 +149,13 @@ export function normalizeMenu(menu: MenuData): MenuData {
   }
   if (menu.page2.sandwich.inclus === undefined) menu.page2.sandwich.inclus = 'Salade · Tomate · Oignons' 
   if (menu.page3.gratinagePrice === undefined) menu.page3.gratinagePrice = '+2.00€'
+  {
+    const m2 = String(menu.page3.extras.surcharge || '').replace(',', '.').match(/[\d]+(\.[\d]+)?/)
+    const defaut = m2 ? parseFloat(m2[0]) : 0
+    for (const e of menu.page3.extras.items) {
+      if (typeof e.price !== 'number') e.price = defaut
+    }
+  }
   if (menu.page3.gratinageImg === undefined) menu.page3.gratinageImg = ''
   if (menu.page3.saucesImg === undefined) menu.page3.saucesImg = ''
   if (!menu.page3.gratinage) {

@@ -496,19 +496,13 @@ export default function Admin() {
             + AJOUTER UN GRATINAGE
           </button>
 
-          <h3>Extras — surcharge
-            <input
-              className="adm__input adm__input--price"
-              value={menu.page3.extras.surcharge}
-              onChange={e => update(d => { d.page3.extras.surcharge = e.target.value })}
-            />
-          </h3>
+          <h3>Extras</h3>
           {menu.page3.extras.items.map((item, i) => (
-            <Row key={item.id} {...item} onPatch={p => update(d => Object.assign(d.page3.extras.items[i], p))} onMove={dir => update(d => moveItem(d.page3.extras.items, i, dir))} onDelete={() => update(d => { d.page3.extras.items.splice(i, 1) })} />
+            <Row key={item.id} {...item} price={item.price ?? 0} onPatch={p => update(d => Object.assign(d.page3.extras.items[i], p))} onMove={dir => update(d => moveItem(d.page3.extras.items, i, dir))} onDelete={() => update(d => { d.page3.extras.items.splice(i, 1) })} />
           ))}
           <button
             className="adm__add"
-            onClick={() => update(d => { d.page3.extras.items.push({ id: `extra-${Date.now()}`, name: '', img: '', available: true }) })}
+            onClick={() => update(d => { d.page3.extras.items.push({ id: `extra-${Date.now()}`, name: '', img: '', price: 0, available: true }) })}
           >
             + AJOUTER UN EXTRA
           </button>
