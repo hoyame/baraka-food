@@ -18,8 +18,8 @@ interface Order {
 }
 
 const sections: { key: string; label: string; statuses: OrderStatus[] }[] = [
-  { key: 'attente', label: 'COMMANDES EN ATTENTE', statuses: ['attente'] },
-  { key: 'en-cours', label: 'COMMANDES EN COURS', statuses: ['preparation', 'pret_cuisine'] },
+  { key: 'attente', label: 'COMMANDES EN ATTENTE DE PRÉPARATION', statuses: ['attente'] },
+  { key: 'en-cours', label: 'COMMANDES EN COURS DE PRÉPARATION', statuses: ['preparation', 'pret_cuisine'] },
   { key: 'comptoir', label: 'DISPONIBLES AU COMPTOIR', statuses: ['disponible'] },
 ]
 
