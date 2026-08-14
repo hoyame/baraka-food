@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
 import { useMenu } from '../hooks/useMenu'
 import { imgUrl } from '../lib/api'
@@ -21,7 +21,7 @@ export default function Menu3() {
 
   if (!menu) return null
 
-  const { page2, page3, note } = menu
+  const { page3, note } = menu
 
   return (
     <div className="m3">
@@ -30,13 +30,13 @@ export default function Menu3() {
         <img className="m3__brand" src={logo} alt="Baraka Food" />
         <h1 className="m3__page-title">{page3.title}</h1>
         <div className="m3__head-right">
+          {note.img && (
+            <img className="m3__note-img" src={imgUrl(note.img)} alt="" />
+          )}
           <div className="m3__menu-note">
             <span>{note.label}</span>
             <strong>{note.price}</strong>
           </div>
-          {note.img && (
-            <img className="m3__note-img" src={imgUrl(note.img)} alt="" />
-          )}
         </div>
       </header>
 
@@ -44,7 +44,14 @@ export default function Menu3() {
         <div className="m3__tacos-hero">
           <motion.img className="m3__tacos-img" src={tacosImg} alt="Tacos" {...imgFloat(0, reduced)} />
         </div>
-        <div className="m3__tailles-grid">
+        <div
+          className="m3__tailles-grid"
+          style={{
+            gridTemplateColumns:
+              `repeat(${page3.tailles.length}, minmax(0, 0.72fr))` +
+              (page3.gratinage.length > 0 ? ' minmax(0, 1fr)' : ''),
+          }}
+        >
           {page3.tailles.map((t, i) => (
             <motion.div
               key={t.id}
@@ -125,21 +132,6 @@ export default function Menu3() {
             <span className="m3__sauce-sub">CLASSIQUES</span>
             <span className="m3__sauce-items">{page3.sauces.classiques.join(' · ')}</span>
           </div>
-          {page2.boissons.length > 0 && (
-            <div className="m3__sauce-group m3__sauce-group--hot">
-              <span className="m3__sauce-sub">BOISSONS</span>
-              <span className="m3__sauce-items">
-                {page2.boissons.map((b, i) => (
-                  <Fragment key={b.id}>
-                    {i > 0 && ' · '}
-                    <span className={b.available ? undefined : 'm3__sauce-item--off'}>
-                      {b.name} {b.price.toFixed(2)}€
-                    </span>
-                  </Fragment>
-                ))}
-              </span>
-            </div>
-          )}
         </div>
       </section>
 

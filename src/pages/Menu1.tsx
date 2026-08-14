@@ -30,13 +30,13 @@ export default function Menu1() {
         <img className="m1__brand" src={logo} alt="Baraka Food" />
         <h1 className="m1__page-title">{page1.title}</h1>
         <div className="m1__head-right">
+          {note.img && (
+            <img className="m1__note-img" src={imgUrl(note.img)} alt="" />
+          )}
           <div className="m1__menu-note">
             <span>{note.label}</span>
             <strong>{note.price}</strong>
           </div>
-          {note.img && (
-            <img className="m1__note-img" src={imgUrl(note.img)} alt="" />
-          )}
         </div>
       </header>
 
@@ -81,11 +81,43 @@ export default function Menu1() {
           <span className="m1__menukids-price">{page2.menuKids.price.toFixed(2)}€</span>
           {!page2.menuKids.available && <span className="off-badge">ÉPUISÉ</span>}
         </div>
+
+        {page2.boissons.length > 0 && (
+          <div className="m1__boissons">
+            <div className="m1__spine"><span>BOISSONS</span></div>
+            <div className="m1__boissons-grid">
+              {page2.boissons.map((b, i) => (
+                <motion.div
+                  key={b.id}
+                  className={`m1__tcard${b.available ? '' : ' is-off'}`}
+                  initial={entrance({ opacity: 0, y: 12 })}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.1 + i * 0.05 }}
+                >
+                  {b.img && (
+                    <motion.img
+                      className="m1__img m1__img--md m1__img--photo"
+                      src={imgUrl(b.img)}
+                      alt={b.name}
+                      {...imgFloat(i, reduced)}
+                    />
+                  )}
+                  <span className="m1__tcard-name">{b.name}</span>
+                  <span className="m1__tcard-price">{b.price.toFixed(2)}€</span>
+                  {!b.available && <span className="off-badge">ÉPUISÉ</span>}
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        )}
       </section>
 
       <section className="m1__row m1__sups">
         <div className="m1__spine"><span>TEX-MEX</span></div>
-        <div className="m1__sups-grid">
+        <div
+          className="m1__sups-grid"
+          style={{ gridTemplateColumns: `repeat(${page1.texmex.length}, minmax(0, 1fr))` }}
+        >
           {page1.texmex.map((item, i) => (
             <motion.div
               key={item.id}

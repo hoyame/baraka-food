@@ -327,17 +327,19 @@ export default function Admin() {
             </button>
           </div>
           <div className="adm__row">
-            <div className="adm__fields adm__fields--inline">
-              <label className="adm__inline-label">Inclus</label>
-              <input
-                className="adm__input adm__input--name"
+            <div className="adm__fields">
+              <label className="adm__inline-label">Composition</label>
+              <IngredientEditor
                 value={menu.page2.sandwich.inclus}
-                placeholder="Salade · Tomate · Oignons"
-                onChange={e => update(d => { d.page2.sandwich.inclus = e.target.value })}
+                onChange={v => update(d => { d.page2.sandwich.inclus = v })}
               />
             </div>
           </div>
-          <p className="adm__hint">Les viandes proposées sont celles de la section "Viandes" de la page 3. Le texte "Inclus" s'affiche sous chaque formule sandwich.</p>
+          <p className="adm__hint">Les viandes proposées sont celles de la section "Viandes" de la page 3. La composition s'affiche sous la formule "1 viande au choix", sur l'écran 2.</p>
+
+          <h3>Sandwich phare</h3>
+          <Row {...menu.page2.sandwichPhare} onPatch={p => update(d => Object.assign(d.page2.sandwichPhare, p))} />
+          <p className="adm__hint">Mis en avant sur l'écran 2, sur bandeau blanc, au-dessus des viandes.</p>
 
           <h3>Tex-Mex</h3>
           {menu.page1.texmex.map((item, i) => (
@@ -415,6 +417,7 @@ export default function Admin() {
           >
             + AJOUTER UNE BOISSON
           </button>
+          <p className="adm__hint">Affichées sur l'écran 1, à droite du Menu Kids. La photo est facultative.</p>
         </section>
 
         <section className="adm__section">

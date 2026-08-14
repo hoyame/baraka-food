@@ -104,9 +104,6 @@
     max-height: 2.6em;
     object-fit: contain;
     display: block;
-    margin-left: -1.34em;
-    transform: translateY(-0.24em) rotate(40deg);
-    transform-origin: center;
     filter: drop-shadow(0 3px 10px rgba(0, 0, 0, 0.5));
   }
 
@@ -169,6 +166,12 @@
     min-width: 0;
   }
 
+  &__compo-items {
+    font-size: 0.8em;
+    color: rgba(0, 0, 0, 0.72);
+    line-height: 1.4;
+  }
+
   &__fcard {
     position: relative;
     display: flex;
@@ -196,12 +199,22 @@
     letter-spacing: 0.06em;
     color: $color-muted;
     line-height: 1.2;
+
+    &--strong {
+      font-family: $font-display;
+      font-weight: 900;
+      font-size: 2.25em;
+      color: $color-white;
+      line-height: 1;
+      letter-spacing: -0.02em;
+      text-align: center;
+    }
   }
 
   &__fcard-inclus {
     font-size: 0.95em;
     letter-spacing: 0.06em;
-    color: $color-dim;
+    color: rgba($color-white, 0.68);
     line-height: 1.3;
     text-align: center;
     margin-top: 0.15em;
@@ -217,27 +230,75 @@
     margin-top: 0.2em;
   }
 
+  &__phare-row {
+    flex: 0.72;
+    display: flex;
+    padding: 1.15em 0;
+    background: $color-white;
+  }
+
+  &__phare {
+    position: relative;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 3em;
+    padding: 0.5em 2.5em;
+    background: $color-white;
+
+    .m2__img--lg {
+      height: 6.4em;
+      max-height: 100%;
+      filter: drop-shadow(0 4px 14px rgba(0, 0, 0, 0.45));
+    }
+  }
+
+  &__phare-text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25em;
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__phare-label {
+    font-family: $font-display;
+    font-weight: 700;
+    font-size: 0.72em;
+    letter-spacing: 0.18em;
+    color: rgba(0, 0, 0, 0.72);
+  }
+
+  &__phare-title {
+    font-family: $font-display;
+    font-weight: 900;
+    font-size: 1.8em;
+    color: $color-price-text;
+    line-height: 1;
+  }
+
+  &__phare-desc {
+    font-size: 0.8em;
+    color: rgba(0, 0, 0, 0.72);
+    line-height: 1.4;
+  }
+
+  &__phare-price {
+    font-family: $font-display;
+    font-weight: 900;
+    font-size: 2.4em;
+    color: $color-price-text;
+    letter-spacing: -0.02em;
+    line-height: 1;
+    flex-shrink: 0;
+  }
+
   &__viandes {
     flex: 1;
     display: flex;
-    background: $color-white;
-
-    .m2__spine {
-      border-right: none;
-
-      span { color: rgba(0, 0, 0, 0.4); }
-    }
 
     .m2__tcard {
       border-right: none;
-    }
-
-    .m2__tcard-name {
-      color: $color-price-text;
-    }
-
-    .m2__img--photo {
-      filter: drop-shadow(0 4px 14px rgba(0, 0, 0, 0.45));
     }
   }
 
@@ -281,19 +342,6 @@
     &--sm { font-size: 0.95em; }
   }
 
-  &__extras {
-    flex: 1;
-    display: flex;
-  }
-
-  &__extras-grid {
-    flex: 1;
-    display: grid;
-    grid-auto-flow: column;
-    grid-auto-columns: 1fr;
-    min-height: 0;
-  }
-
   &__bottom {
     flex: 0.62;
     display: flex;
@@ -308,7 +356,7 @@
     .m2__spine {
       border-right: none;
 
-      span { color: rgba(0, 0, 0, 0.4); }
+      span { color: rgba(0, 0, 0, 0.6); }
     }
 
     .m2__tcard {
@@ -431,7 +479,7 @@
   &__frites-sups-items {
     font-size: 0.72em;
     letter-spacing: 0.06em;
-    color: $color-dim;
+    color: $color-white;
     line-height: 1.3;
     margin-top: 0.35em;
   }

@@ -104,9 +104,6 @@
     max-height: 2.6em;
     object-fit: contain;
     display: block;
-    margin-left: -1.34em;
-    transform: translateY(-0.24em) rotate(40deg);
-    transform-origin: center;
     filter: drop-shadow(0 3px 10px rgba(0, 0, 0, 0.5));
   }
 
@@ -205,6 +202,25 @@
     padding: 1.15em 0;
   }
 
+  &__boissons {
+    flex: 0 0 30%;
+    display: flex;
+    min-width: 0;
+
+    .m1__spine {
+      border-right: none;
+      border-left: 1px solid $color-border;
+    }
+  }
+
+  &__boissons-grid {
+    flex: 1;
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: 1fr;
+    min-width: 0;
+  }
+
   &__menukids {
     position: relative;
     flex: 1;
@@ -239,7 +255,7 @@
 
   &__menukids-desc {
     font-size: 0.8em;
-    color: rgba(0, 0, 0, 0.45);
+    color: rgba(0, 0, 0, 0.72);
     line-height: 1.4;
   }
 
@@ -260,6 +276,7 @@
     justify-content: center;
     gap: 0.35em;
     padding: 0.4em;
+    min-width: 0;
     border-right: 1px solid $color-border;
 
     &:last-child { border-right: none; }
@@ -293,7 +310,7 @@
   &__sups-grid {
     flex: 1;
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(5, minmax(0, 1fr));
     min-height: 0;
   }
 }

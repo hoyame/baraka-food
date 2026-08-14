@@ -12,7 +12,7 @@ export default function Menu2() {
   useTitle('Écran 2')
   const { menu, link } = useMenu()
   const reduced = useReducedMotion()
-  const scaleCount = (menu?.page3.viandes.length ?? 0) + (menu?.page3.extras.items.length ?? 0) + (menu?.page2.desserts.length ?? 0)
+  const scaleCount = (menu?.page3.viandes.length ?? 0) + (menu?.page2.desserts.length ?? 0)
   const scaleSpot = useSpotlight(scaleCount, 3200, reduced)
   const hasEntered = useRef(false)
   useEffect(() => { if (menu) hasEntered.current = true }, [menu])
@@ -22,8 +22,10 @@ export default function Menu2() {
 
   const { page1, page2, page3, note } = menu
   const { sandwich } = page2
+  const phare = page2.sandwichPhare
   const viandes = page3.viandes
   const inclus = sandwich.inclus
+  const supplementViande = Math.max(0, sandwich.prixDouble - sandwich.prixSimple)
 
   return (
     <div className="m2">
@@ -32,13 +34,13 @@ export default function Menu2() {
         <img className="m2__brand" src={logo} alt="Baraka Food" />
         <h1 className="m2__page-title">{page2.title}</h1>
         <div className="m2__head-right">
+          {note.img && (
+            <img className="m2__note-img" src={imgUrl(note.img)} alt="" />
+          )}
           <div className="m2__menu-note">
             <span>{note.label}</span>
             <strong>{note.price}</strong>
           </div>
-          {note.img && (
-            <img className="m2__note-img" src={imgUrl(note.img)} alt="" />
-          )}
         </div>
       </header>
 
@@ -60,8 +62,8 @@ export default function Menu2() {
           >
             <span className="m2__fcard-count">1</span>
             <span className="m2__fcard-label">VIANDE AU CHOIX</span>
-            {inclus && <span className="m2__fcard-inclus">{inclus} inclus</span>}
             <span className="m2__fcard-price">{sandwich.prixSimple.toFixed(2)}€</span>
+            {inclus && <span className="m2__fcard-inclus">{inclus}</span>}
             {!sandwich.available && <span className="off-badge">ÉPUISÉ</span>}
           </motion.div>
           <motion.div
@@ -70,12 +72,30 @@ export default function Menu2() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.45, delay: 0.08 }}
           >
-            <span className="m2__fcard-count">2</span>
-            <span className="m2__fcard-label">DOUBLE VIANDE</span>
-            {inclus && <span className="m2__fcard-inclus">{inclus} inclus</span>}
-            <span className="m2__fcard-price">{sandwich.prixDouble.toFixed(2)}€</span>
+            <span className="m2__fcard-label m2__fcard-label--strong">SUPPLÉMENT VIANDE</span>
+            <span className="m2__fcard-price">+{supplementViande.toFixed(2)}€</span>
             {!sandwich.available && <span className="off-badge">ÉPUISÉ</span>}
           </motion.div>
+        </div>
+      </section>
+
+      <section className="m2__row m2__phare-row">
+        <div className={`m2__phare${phare.available ? '' : ' is-off'}`}>
+          {phare.img && (
+            <motion.img
+              className="m2__img m2__img--lg m2__img--photo"
+              src={imgUrl(phare.img)}
+              alt={phare.name}
+              {...imgFloat(0, reduced)}
+            />
+          )}
+          <div className="m2__phare-text">
+            {phare.label && <span className="m2__phare-label">{phare.label}</span>}
+            <span className="m2__phare-title">{phare.name}</span>
+            <p className="m2__phare-desc">{phare.desc}</p>
+          </div>
+          <span className="m2__phare-price">{phare.price.toFixed(2)}€</span>
+          {!phare.available && <span className="off-badge">ÉPUISÉ</span>}
         </div>
       </section>
 
@@ -98,31 +118,6 @@ export default function Menu2() {
               />
               <span className="m2__tcard-name">{v.name}</span>
               {!v.available && <span className="off-badge">ÉPUISÉ</span>}
-            </motion.div>
-          ))}
-        </div>
-      </section>
-
-      <section className="m2__row m2__extras">
-        <div className="m2__spine"><span>TES EXTRAS</span></div>
-        <div className="m2__extras-grid">
-          {page3.extras.items.map((e, i) => (
-            <motion.div
-              key={e.id}
-              className={`m2__tcard${e.available ? '' : ' is-off'}`}
-              initial={entrance({ opacity: 0, y: 12 })}
-              animate={{ opacity: 1, y: 0, scale: e.available && scaleSpot === viandes.length + i ? 1.15 : 1 }}
-              transition={{ duration: 0.6, delay: 0.1 + i * 0.05 }}
-            >
-              <motion.img
-                className="m2__img m2__img--md m2__img--photo"
-                src={imgUrl(e.img)}
-                alt={e.name}
-                {...imgFloat(i, reduced)}
-              />
-              <span className="m2__tcard-name">{e.name}</span>
-              <span className="m2__tcard-price m2__tcard-price--sm">{(e.price ?? 0).toFixed(2)}€</span>
-              {!e.available && <span className="off-badge">ÉPUISÉ</span>}
             </motion.div>
           ))}
         </div>
@@ -173,7 +168,7 @@ export default function Menu2() {
                 key={item.id}
                 className={`m2__tcard${item.available ? '' : ' is-off'}`}
                 initial={entrance({ opacity: 0, y: 12 })}
-                animate={{ opacity: 1, y: 0, scale: item.available && scaleSpot === viandes.length + page3.extras.items.length + i ? 1.15 : 1 }}
+                animate={{ opacity: 1, y: 0, scale: item.available && scaleSpot === viandes.length + i ? 1.15 : 1 }}
                 transition={{ duration: 0.6, delay: 0.1 + i * 0.05 }}
               >
                 {item.img && (

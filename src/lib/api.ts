@@ -95,6 +95,7 @@ export interface MenuData {
     title: string
     classiques: PricedItem[]
     sandwich: SandwichConfig
+    sandwichPhare: FeaturedItem
     crunchy: FeaturedItem
     menuKids: FeaturedItem
     frites: SimpleItem[]
@@ -147,7 +148,18 @@ export function normalizeMenu(menu: MenuData): MenuData {
       available: true,
     }
   }
-  if (menu.page2.sandwich.inclus === undefined) menu.page2.sandwich.inclus = 'Salade · Tomate · Oignons' 
+  if (menu.page2.sandwich.inclus === undefined) menu.page2.sandwich.inclus = 'Salade · Tomate · Oignons'
+  if (!menu.page2.sandwichPhare) {
+    menu.page2.sandwichPhare = {
+      id: 'sandwich-phare',
+      label: 'LE INCONTOURNABLE',
+      name: 'Sandwich Phare',
+      desc: '',
+      price: menu.page2.sandwich.prixSimple ?? 0,
+      img: '',
+      available: true,
+    }
+  }
   if (menu.page3.gratinagePrice === undefined) menu.page3.gratinagePrice = '+2.00€'
   {
     const m2 = String(menu.page3.extras.surcharge || '').replace(',', '.').match(/[\d]+(\.[\d]+)?/)

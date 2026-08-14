@@ -104,9 +104,6 @@
     max-height: 2.6em;
     object-fit: contain;
     display: block;
-    margin-left: -1.34em;
-    transform: translateY(-0.24em) rotate(40deg);
-    transform-origin: center;
     filter: drop-shadow(0 3px 10px rgba(0, 0, 0, 0.5));
   }
 
@@ -193,7 +190,7 @@
   &__tailles-grid {
     flex: 1;
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     min-width: 0;
   }
 
@@ -265,7 +262,7 @@
     gap: 0.2em 0.55em;
     font-size: 0.68em;
     letter-spacing: 0.06em;
-    color: rgba(0, 0, 0, 0.5);
+    color: rgba(0, 0, 0, 0.72);
     line-height: 1.3;
 
     span:not(:nth-child(3n))::after {
@@ -316,7 +313,7 @@
     .m3__spine {
       border-right: none;
 
-      span { color: rgba(0, 0, 0, 0.4); }
+      span { color: rgba(0, 0, 0, 0.6); }
     }
 
     .m3__tcard {
@@ -356,7 +353,7 @@
   &__sauces-grid {
     flex: 1;
     display: grid;
-    grid-template-columns: 1.6fr 1fr;
+    grid-template-columns: 1fr;
   }
 
   &__sauce-item--off {
@@ -371,7 +368,7 @@
     gap: 0.4em;
     padding: 0.7em 2em;
 
-    &--hot {
+    &--end {
       align-items: flex-end;
       text-align: right;
 
