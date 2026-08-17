@@ -7,6 +7,7 @@ import styles from './StaffNav.module.scss'
 const links = [
   { href: '/salle', label: 'Salle' },
   { href: '/cuisine', label: 'Cuisine' },
+  { href: '/commande', label: 'Commandes' },
 ]
 
 export default function StaffNav() {

@@ -161,6 +161,47 @@ function Row({ img, label, name, desc, price, available, onPatch, onMove, onDele
   )
 }
 
+function heuresDe(creneaux: string): (number | '')[] {
+  const plages = [...(creneaux || '').matchAll(/(\d{1,2})\s*[h:H]?\d*\s*[-\u2013]\s*(\d{1,2})/g)]
+  const vals: (number | '')[] = ['', '', '', '']
+  plages.slice(0, 2).forEach((m, i) => {
+    vals[i * 2] = parseInt(m[1], 10)
+    vals[i * 2 + 1] = parseInt(m[2], 10)
+  })
+  return vals
+}
+
+function creneauxDe(vals: (number | '')[]): string {
+  const plages: string[] = []
+  for (let i = 0; i < 4; i += 2) {
+    const a = vals[i]
+    const b = vals[i + 1]
+    if (a !== '' && b !== '') plages.push(`${a}h - ${b}h`)
+  }
+  return plages.join(' \u00b7 ')
+}
+
+function HeureInput({ value, onChange, disabled }: { value: number | ''; onChange: (v: number | '') => void; disabled?: boolean }) {
+  return (
+    <input
+      className="adm__input adm__input--heure"
+      type="number"
+      min={0}
+      max={23}
+      step={1}
+      placeholder="--"
+      value={value}
+      disabled={disabled}
+      onChange={e => {
+        const raw = e.target.value
+        if (raw === '') return onChange('')
+        const n = Math.max(0, Math.min(23, Math.floor(Number(raw))))
+        onChange(Number.isNaN(n) ? '' : n)
+      }}
+    />
+  )
+}
+
 export default function Admin() {
   useTitle('Admin')
   const [menu, setMenu] = useState<MenuData | null>(null)
@@ -328,13 +369,27 @@ export default function Admin() {
             <div key={h.jour} className={`adm__row${h.ferme ? ' adm__row--off' : ''}`}>
               <div className="adm__fields adm__fields--inline">
                 <label className="adm__inline-label adm__inline-label--day">{h.jour}</label>
-                <input
-                  className="adm__input adm__input--name"
-                  value={h.creneaux}
-                  placeholder="11h30 – 14h00 · 18h00 – 22h30"
-                  disabled={h.ferme}
-                  onChange={e => update(d => { d.infos.horaires[i].creneaux = e.target.value })}
-                />
+                {(() => {
+                  const vals = heuresDe(h.creneaux)
+                  const setVal = (j: number, v: number | '') => update(d => {
+                    const next = heuresDe(d.infos.horaires[i].creneaux)
+                    next[j] = v
+                    d.infos.horaires[i].creneaux = creneauxDe(next)
+                  })
+                  return (
+                    <span className="adm__heures">
+                      <span>de</span>
+                      <HeureInput value={vals[0]} disabled={h.ferme} onChange={v => setVal(0, v)} />
+                      <span>h à</span>
+                      <HeureInput value={vals[1]} disabled={h.ferme} onChange={v => setVal(1, v)} />
+                      <span>h, puis de</span>
+                      <HeureInput value={vals[2]} disabled={h.ferme} onChange={v => setVal(2, v)} />
+                      <span>h à</span>
+                      <HeureInput value={vals[3]} disabled={h.ferme} onChange={v => setVal(3, v)} />
+                      <span>h</span>
+                    </span>
+                  )
+                })()}
               </div>
               <button
                 className={`adm__toggle${h.ferme ? '' : ' adm__toggle--on'}`}

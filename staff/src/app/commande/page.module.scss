@@ -1,0 +1,108 @@
+@use '../../styles/variables' as *;
+
+.main {
+  flex: 1;
+  padding: 0 1.5rem 3rem;
+
+  * {
+    text-transform: uppercase;
+  }
+}
+
+.wrap {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.title {
+  font-family: $font-display;
+  font-weight: 900;
+  font-size: 1.2rem;
+  letter-spacing: 0.04em;
+  color: $color-white;
+  margin-bottom: 0.3rem;
+}
+
+.hint {
+  font-size: 0.72rem;
+  color: $color-muted;
+  margin-bottom: 1.2rem;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+
+.empty {
+  padding: 2rem;
+  text-align: center;
+  color: $color-muted;
+}
+
+.card {
+  background: $color-bg-section;
+  padding: 0.9rem 1.1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.cardHead {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+}
+
+.code {
+  font-family: $font-display;
+  font-weight: 900;
+  font-size: 1.15rem;
+  color: $color-white;
+}
+
+.status {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: $color-muted;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 0.25em 0.7em;
+}
+
+.time {
+  margin-left: auto;
+  font-size: 0.75rem;
+  color: $color-muted;
+}
+
+.reprintBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 0.7rem;
+  letter-spacing: 0.06em;
+  padding: 0.5em 0.9em;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: transparent;
+  color: rgba(255, 255, 255, 0.75);
+  cursor: pointer;
+
+  &:active { background: rgba(255, 255, 255, 0.15); }
+}
+
+.items {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.8rem;
+  color: $color-white;
+
+  em {
+    font-style: normal;
+    color: $color-muted;
+    }
+}

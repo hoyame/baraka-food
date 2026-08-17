@@ -1,30 +1,6 @@
 {
   "version": 4,
   "routes": {
-    "/salle": {
-      "experimentalBypassFor": [
-        {
-          "type": "header",
-          "key": "next-action"
-        },
-        {
-          "type": "header",
-          "key": "content-type",
-          "value": "multipart/form-data;.*"
-        }
-      ],
-      "initialRevalidateSeconds": false,
-      "srcRoute": "/salle",
-      "dataRoute": "/salle.rsc",
-      "allowHeader": [
-        "host",
-        "x-matched-path",
-        "x-prerender-revalidate",
-        "x-prerender-revalidate-if-generated",
-        "x-next-revalidated-tags",
-        "x-next-revalidate-tag-token"
-      ]
-    },
     "/_not-found": {
       "initialStatus": 404,
       "experimentalBypassFor": [
@@ -41,6 +17,54 @@
       "initialRevalidateSeconds": false,
       "srcRoute": "/_not-found",
       "dataRoute": "/_not-found.rsc",
+      "allowHeader": [
+        "host",
+        "x-matched-path",
+        "x-prerender-revalidate",
+        "x-prerender-revalidate-if-generated",
+        "x-next-revalidated-tags",
+        "x-next-revalidate-tag-token"
+      ]
+    },
+    "/": {
+      "experimentalBypassFor": [
+        {
+          "type": "header",
+          "key": "next-action"
+        },
+        {
+          "type": "header",
+          "key": "content-type",
+          "value": "multipart/form-data;.*"
+        }
+      ],
+      "initialRevalidateSeconds": false,
+      "srcRoute": "/",
+      "dataRoute": "/index.rsc",
+      "allowHeader": [
+        "host",
+        "x-matched-path",
+        "x-prerender-revalidate",
+        "x-prerender-revalidate-if-generated",
+        "x-next-revalidated-tags",
+        "x-next-revalidate-tag-token"
+      ]
+    },
+    "/commande": {
+      "experimentalBypassFor": [
+        {
+          "type": "header",
+          "key": "next-action"
+        },
+        {
+          "type": "header",
+          "key": "content-type",
+          "value": "multipart/form-data;.*"
+        }
+      ],
+      "initialRevalidateSeconds": false,
+      "srcRoute": "/commande",
+      "dataRoute": "/commande.rsc",
       "allowHeader": [
         "host",
         "x-matched-path",
@@ -74,7 +98,7 @@
         "x-next-revalidate-tag-token"
       ]
     },
-    "/": {
+    "/salle": {
       "experimentalBypassFor": [
         {
           "type": "header",
@@ -87,8 +111,8 @@
         }
       ],
       "initialRevalidateSeconds": false,
-      "srcRoute": "/",
-      "dataRoute": "/index.rsc",
+      "srcRoute": "/salle",
+      "dataRoute": "/salle.rsc",
       "allowHeader": [
         "host",
         "x-matched-path",
@@ -102,8 +126,8 @@
   "dynamicRoutes": {},
   "notFoundRoutes": [],
   "preview": {
-    "previewModeId": "a364b0b5dd39739a35435a1b2c502341",
-    "previewModeSigningKey": "4c11aa0221449623fd1e08c433e48e73db5641a0aa5720548c993063d4c0b134",
-    "previewModeEncryptionKey": "6bb85805beec83b1a779b857dcb6a74afc52cab883573e44cab6d85318dfa70c"
+    "previewModeId": "481927a2635208d18e8eb50d29741af7",
+    "previewModeSigningKey": "4765b11083d6cbfef2c3bd16fd703cf12ee3e20e0c39626ae5a1173b2fd0fb76",
+    "previewModeEncryptionKey": "a5a77a9c42e16114a5471775ec29e0c6f4d8c01b04f039af18329f2ea08b693d"
   }
 }

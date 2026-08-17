@@ -5,6 +5,7 @@ import StaffNav from '@/components/StaffNav'
 import { Toast, useToast } from '@/components/Toast'
 import { supabase } from '@/lib/supabase'
 import { watchTable } from '@/lib/realtime'
+import { sendReprint } from '@/lib/reprint'
 import type { MenuData, Order, OrderStatus } from '@/lib/types'
 import styles from './page.module.scss'
 
@@ -338,6 +339,11 @@ export default function SallePage() {
     setTimeout(() => setConfirmCode(null), 4000)
   }
 
+  async function reprint(order: Order) {
+    const ok = await sendReprint(order)
+    show(ok ? `${order.code} → réimpression envoyée` : 'Réimpression impossible')
+  }
+
   async function setOrderStatus(code: string, status: OrderStatus) {
     await supabase.from('orders').update({ status, updated_at: new Date().toISOString() }).eq('code', code)
   }
@@ -625,6 +631,11 @@ export default function SallePage() {
             return (
               <div key={order.code} className={`${styles.trackCard}${isAlert ? ` ${styles.trackCardAlert}` : ''}`}>
                 <span className={styles.trackCode}>{order.code}</span>
+                <button className={styles.reprintBtn} onClick={() => reprint(order)} title="Réimprimer le ticket">
+                  <svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true">
+                    <path d="M6 9V3h12v6M6 18h12v3H6zM4 9h16a2 2 0 0 1 2 2v5h-4M2 16h4v-5a2 2 0 0 0-2-2" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round" />
+                  </svg>
+                </button>
                 <span className={styles.trackStatus}>{trackLabel[order.status]}</span>
                 {order.status === 'pret_cuisine' && (
                   <button className={styles.trackBtn} onClick={() => setOrderStatus(order.code, 'disponible')}>

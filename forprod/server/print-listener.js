@@ -242,6 +242,28 @@ function subscribe() {
     })
 }
 
+let reprintChannel = null
+let reprintTimer = null
+
+function subscribeReprint() {
+  if (reprintChannel) supabase.removeChannel(reprintChannel)
+  reprintChannel = supabase
+    .channel('reprint')
+    .on('broadcast', { event: 'reprint' }, ({ payload }) => {
+      const order = payload && payload.order
+      if (!order || !order.code) return
+      log('[print] reimpression demandee', order.code)
+      printOrder(order)
+    })
+    .subscribe((status) => {
+      log('[print] canal reimpression:', status)
+      if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT' || status === 'CLOSED') {
+        clearTimeout(reprintTimer)
+        reprintTimer = setTimeout(subscribeReprint, 5000)
+      }
+    })
+}
+
 async function main() {
   try {
     const { error } = await supabase.auth.signInWithPassword({ email: STAFF_EMAIL, password: STAFF_PASSWORD })
@@ -251,6 +273,7 @@ async function main() {
   }
 
   subscribe()
+  subscribeReprint()
 
   log('[print] en ecoute des nouvelles commandes')
   log('[print] cuisine (raw 9100) :', PRINTER_IP + ':' + PRINTER_PORT)

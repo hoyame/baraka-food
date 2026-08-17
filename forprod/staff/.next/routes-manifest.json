@@ -33,6 +33,12 @@
       "namedRegex": "^/_not\\-found(?:/)?$"
     },
     {
+      "page": "/commande",
+      "regex": "^/commande(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/commande(?:/)?$"
+    },
+    {
       "page": "/cuisine",
       "regex": "^/cuisine(?:/)?$",
       "routeKeys": {},

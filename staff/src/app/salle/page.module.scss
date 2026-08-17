@@ -394,3 +394,16 @@
   line-height: 1.5;
   padding-left: 2.5em;
 }
+
+.reprintBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.35em;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: transparent;
+  color: rgba(255, 255, 255, 0.65);
+  cursor: pointer;
+
+  &:active { background: rgba(255, 255, 255, 0.15); }
+}

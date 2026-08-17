@@ -158,3 +158,18 @@
   border-color: #ededea;
   color: #0d0d0d;
 }
+
+.reprintBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: auto;
+  margin-right: 0.6rem;
+  padding: 0.35em;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: transparent;
+  color: rgba(255, 255, 255, 0.65);
+  cursor: pointer;
+
+  &:active { background: rgba(255, 255, 255, 0.15); }
+}

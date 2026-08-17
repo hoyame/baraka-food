@@ -436,3 +436,25 @@
     cursor: pointer;
   }
 }
+
+.adm__heures {
+  display: flex;
+  align-items: center;
+  gap: 0.45em;
+  font-size: 0.8em;
+  color: $color-muted;
+
+  span { white-space: nowrap; }
+}
+
+.adm__input--heure {
+  width: 3.6em;
+  text-align: center;
+  -moz-appearance: textfield;
+
+  &::-webkit-outer-spin-button,
+  &::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+}
