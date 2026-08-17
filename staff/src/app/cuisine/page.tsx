@@ -1,10 +1,11 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import StaffNav from '@/components/StaffNav'
 import { Toast, useToast } from '@/components/Toast'
 import { supabase } from '@/lib/supabase'
 import { watchTable } from '@/lib/realtime'
+import { playNewOrderChime, unlockAudio } from '@/lib/chime'
 import type { Order, OrderStatus } from '@/lib/types'
 import styles from './page.module.scss'
 
@@ -31,12 +32,47 @@ const trackLabelToast: Partial<Record<OrderStatus, string>> = {
 
 export default function CuisinePage() {
   const [orders, setOrders] = useState<Order[]>([])
+  const [soundOn, setSoundOn] = useState(false)
+  const soundOnRef = useRef(false)
+  const seenCodes = useRef<Set<string> | null>(null)
   const { toast, show } = useToast()
+
+  useEffect(() => {
+    if (localStorage.getItem('cuisine-son') === '1') {
+      const ok = unlockAudio()
+      setSoundOn(ok)
+      soundOnRef.current = ok
+    }
+  }, [])
+
+  function toggleSound() {
+    if (soundOn) {
+      setSoundOn(false)
+      soundOnRef.current = false
+      localStorage.setItem('cuisine-son', '0')
+      return
+    }
+    unlockAudio()
+    setSoundOn(true)
+    soundOnRef.current = true
+    localStorage.setItem('cuisine-son', '1')
+    playNewOrderChime()
+  }
 
   useEffect(() => {
     async function load() {
       const { data } = await supabase.from('orders').select('*').not('status', 'in', '(disponible,recuperee)')
-      setOrders((data as Order[]) || [])
+      const list = (data as Order[]) || []
+      setOrders(list)
+
+      const codes = new Set(list.map((o) => o.code))
+      if (seenCodes.current === null) {
+        seenCodes.current = codes
+        return
+      }
+      const nouveaux = list.filter((o) => o.status === 'attente' && !seenCodes.current!.has(o.code))
+      seenCodes.current = codes
+      if (nouveaux.length > 0 && soundOnRef.current) playNewOrderChime()
     }
     load()
 
@@ -52,6 +88,15 @@ export default function CuisinePage() {
     <main className={styles.main}>
       <StaffNav />
       <div className={styles.wrap}>
+        <div className={styles.soundBar}>
+          <button
+            className={`${styles.soundBtn}${soundOn ? ` ${styles.soundBtnOn}` : ''}`}
+            onClick={toggleSound}
+            aria-pressed={soundOn}
+          >
+            {soundOn ? 'Son activé' : 'Activer le son'}
+          </button>
+        </div>
         <div className={styles.columns}>
           {columns.map((col) => {
             const list = orders

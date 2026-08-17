@@ -7,7 +7,6 @@ export interface MenuItem {
 
 export interface MenuData {
   note: { label: string; price: string; img?: string }
-  supplements: { id: string; name: string; price: string; available: boolean }[]
   page1: {
     burgers: { id: string; label: string; name: string; desc?: string; price: number; available: boolean }[]
     texmex: { id: string; name: string; price: number; available: boolean }[]
@@ -15,6 +14,7 @@ export interface MenuData {
   page2: {
     classiques: { id: string; name: string; desc?: string; price: number; available: boolean }[]
     sandwich?: { img: string; prixSimple: number; prixDouble: number; inclus?: string; available: boolean }
+    sandwichPhare?: { id: string; label?: string; name: string; desc?: string; price: number; available: boolean }
     friteSupplements?: { id: string; name: string; available: boolean }[]
     friteSupplementsPrice?: string
     crunchy: { id: string; name: string; desc?: string; price: number; available: boolean }

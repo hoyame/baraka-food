@@ -25,6 +25,17 @@ const ORDERS_URL = (process.env.ORDERS_URL || 'https://commande.barakafood.fr').
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
 
+const stamp = () => new Date().toLocaleString('fr-FR')
+const log = (...a) => console.log(stamp(), ...a)
+const logErr = (...a) => console.error(stamp(), ...a)
+
+process.on('unhandledRejection', (err) => {
+  logErr('[fatal] promesse rejetee non geree :', err?.message || err)
+})
+process.on('uncaughtException', (err) => {
+  logErr('[fatal] exception non geree :', err?.message || err, err?.stack || '')
+})
+
 const ESC = '\x1B'
 const GS = '\x1D'
 
@@ -93,11 +104,11 @@ function printOrder(order, attempt = 1) {
   const socket = net.createConnection({ host: PRINTER_IP, port: PRINTER_PORT, timeout: 5000 })
   socket.on('connect', () => {
     socket.end(data)
-    console.log('[print] ticket imprime', order.code)
+    log('[print] ticket cuisine imprime', order.code)
   })
   socket.on('timeout', () => socket.destroy(new Error('timeout')))
   socket.on('error', (err) => {
-    console.error('[print] echec impression', order.code, err.message)
+    logErr('[print] echec impression cuisine', order.code, err.message, '(cible ' + PRINTER_IP + ':' + PRINTER_PORT + ')')
     if (attempt < 3) setTimeout(() => printOrder(order, attempt + 1), 3000)
   })
 }
@@ -197,34 +208,59 @@ function sendLpd(host, port, queue, payload) {
 function printNumberCaisse(order, attempt = 1) {
   const payload = Buffer.from(buildNumberTicket(order), 'binary')
   sendLpd(CAISSE_HOST, CAISSE_PORT, CAISSE_QUEUE, payload)
-    .then(() => console.log('[caisse] numero imprime', order.code))
+    .then(() => log('[caisse] numero imprime', order.code))
     .catch((err) => {
-      console.error('[caisse] echec impression', order.code, err.message)
+      logErr('[caisse] echec impression', order.code, err.message, '(cible ' + CAISSE_HOST + ':' + CAISSE_PORT + ')')
       if (attempt < 3) setTimeout(() => printNumberCaisse(order, attempt + 1), 3000)
     })
 }
 
 const printed = new Set()
 
-async function main() {
-  const { error } = await supabase.auth.signInWithPassword({ email: STAFF_EMAIL, password: STAFF_PASSWORD })
-  if (error) console.error('[print] auth supabase echouee:', error.message)
+let channel = null
+let resubscribeTimer = null
 
-  supabase
-    .channel('orders-print')
+function subscribe() {
+  if (channel) supabase.removeChannel(channel)
+  channel = supabase
+    .channel('orders-print-' + Date.now())
     .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'orders' }, (payload) => {
       const order = payload.new
       if (printed.has(order.code)) return
       printed.add(order.code)
+      log('[print] nouvelle commande', order.code)
       printOrder(order)
       printNumberCaisse(order)
     })
-    .subscribe((status) => console.log('[print] realtime:', status))
-
-  console.log('[print] en ecoute des nouvelles commandes')
-  console.log('[print] cuisine (raw 9100) :', PRINTER_IP + ':' + PRINTER_PORT)
-  console.log('[caisse] TP85 (LPD 515)   :', CAISSE_HOST + ':' + CAISSE_PORT + ' file ' + CAISSE_QUEUE)
-  console.log('[caisse] QR de suivi      :', ORDERS_URL + '/<code>')
+    .subscribe((status) => {
+      log('[print] realtime:', status)
+      if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT' || status === 'CLOSED') {
+        logErr('[print] connexion temps reel perdue, nouvelle tentative dans 5s')
+        clearTimeout(resubscribeTimer)
+        resubscribeTimer = setTimeout(subscribe, 5000)
+      }
+    })
 }
 
-main()
+async function main() {
+  try {
+    const { error } = await supabase.auth.signInWithPassword({ email: STAFF_EMAIL, password: STAFF_PASSWORD })
+    if (error) logErr('[print] auth supabase echouee:', error.message)
+  } catch (err) {
+    logErr('[print] auth supabase injoignable:', err?.message || err)
+  }
+
+  subscribe()
+
+  log('[print] en ecoute des nouvelles commandes')
+  log('[print] cuisine (raw 9100) :', PRINTER_IP + ':' + PRINTER_PORT)
+  log('[caisse] TP85 (LPD 515)   :', CAISSE_HOST + ':' + CAISSE_PORT + ' file ' + CAISSE_QUEUE)
+  log('[caisse] QR de suivi      :', ORDERS_URL + '/<code>')
+
+  setInterval(() => log('[print] toujours en ecoute'), 15 * 60 * 1000)
+}
+
+main().catch((err) => {
+  logErr('[print] demarrage impossible:', err?.message || err, err?.stack || '')
+  process.exit(1)
+})

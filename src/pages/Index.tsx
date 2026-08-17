@@ -8,7 +8,8 @@ const screens = [
   { path: '/2', label: 'ÉCRAN 2', desc: 'Les Sandwichs Baguette' },
   { path: '/3', label: 'ÉCRAN 3', desc: 'Compose ton Tacos' },
   { path: '/orders', label: 'ORDERS', desc: 'Suivi des commandes' },
-  { path: '/colldown', label: 'COMPTE À REBOURS', desc: 'Ouverture 18.08.26' },
+  { path: '/colldown', label: 'COMPTE À REBOURS', desc: 'Ouverture 18.08.26 à 11h' },
+  { path: '/inauguration', label: 'INAUGURATION', desc: 'Ce soir à 19h30' },
 ]
 
 export default function Index() {

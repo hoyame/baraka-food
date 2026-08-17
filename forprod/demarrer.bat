@@ -8,9 +8,10 @@ call npm install --omit=dev --no-audit --no-fund
 call npm install --omit=dev --no-audit --no-fund >nul 2>&1
 
 echo Demarrage de Baraka Food...
-start "BarakaFood-Ecrans" /min node server\index.js
-start "BarakaFood-Staff" /min cmd /c "set PORT=4040&& set HOSTNAME=0.0.0.0&& node staff\server.js"
-start "BarakaFood-Imprimante" /min node server\print-listener.js
+if not exist logs mkdir logs
+start "BarakaFood-Ecrans" /min cmd /c run-ecrans.bat
+start "BarakaFood-Staff" /min cmd /c run-staff.bat
+start "BarakaFood-Imprimante" /min cmd /c run-imprimante.bat
 
 timeout /t 3 /nobreak >nul
 
@@ -28,6 +29,9 @@ echo   Ecrans  : http://%LANIP%:4000/1  /2  /3
 echo   Admin   : http://%LANIP%:4000/admin
 echo   Salle   : http://%LANIP%:4040/salle
 echo   Cuisine : http://%LANIP%:4040/cuisine
+echo ================================================
+echo   Journaux (en cas de probleme) : %~dp0logs\
+echo     ecrans.log  staff.log  imprimante.log
 echo ================================================
 echo.
 

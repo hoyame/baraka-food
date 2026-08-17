@@ -6,6 +6,15 @@ import { fileURLToPath } from 'url'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
+const stamp = () => new Date().toLocaleString('fr-FR')
+
+process.on('unhandledRejection', (err) => {
+  console.error(stamp(), '[fatal] promesse rejetee non geree :', err?.message || err)
+})
+process.on('uncaughtException', (err) => {
+  console.error(stamp(), '[fatal] exception non geree :', err?.message || err, err?.stack || '')
+})
+
 const app = express()
 
 const DIST_DIR = path.join(__dirname, '..', 'dist')

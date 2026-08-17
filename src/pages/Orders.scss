@@ -181,3 +181,102 @@
     }
   }
 }
+
+.ord--closed {
+  align-items: center;
+  justify-content: center;
+  gap: 2.2em;
+  text-align: center;
+}
+
+.ord__closed-brand {
+  height: 5em;
+  width: auto;
+  display: block;
+  margin-bottom: 0.6em;
+}
+
+.ord__closed-title {
+  font-family: $font-display;
+  font-weight: 900;
+  font-size: 2.2em;
+  letter-spacing: 0.04em;
+  color: $color-white;
+  text-transform: uppercase;
+}
+
+.ord__closed-timer {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 0.45em;
+}
+
+.ord__closed-unit {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.ord__closed-sep {
+  font-family: $font-display;
+  font-weight: 900;
+  font-size: 4.6em;
+  line-height: 1;
+  color: $color-dim;
+}
+
+.ord__closed-value {
+  display: block;
+  font-family: $font-display;
+  font-weight: 900;
+  font-size: 4.6em;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  color: $color-white;
+  font-variant-numeric: tabular-nums;
+}
+
+.ord__closed-unit-label {
+  display: block;
+  font-family: $font-display;
+  font-weight: 700;
+  font-size: 0.62em;
+  letter-spacing: 0.2em;
+  color: $color-muted;
+  margin-top: 0.5em;
+  text-align: center;
+}
+
+.ord__closed-hours {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35em;
+  margin-top: 0.8em;
+}
+
+.ord__closed-days {
+  font-family: $font-display;
+  font-weight: 700;
+  font-size: 0.95em;
+  letter-spacing: 0.16em;
+  color: $color-muted;
+  text-transform: uppercase;
+}
+
+.ord__closed-slots {
+  font-family: $font-display;
+  font-weight: 900;
+  font-size: 1.5em;
+  letter-spacing: -0.01em;
+  color: $color-white;
+}
+
+.ord__closed-exception {
+  font-family: $font-display;
+  font-weight: 700;
+  font-size: 0.78em;
+  letter-spacing: 0.08em;
+  color: $color-muted;
+  text-transform: uppercase;
+}

@@ -1,13 +1,5 @@
 import { supabase } from './supabase'
 
-export interface Supplement {
-  id: string
-  name: string
-  price: string
-  img: string
-  available: boolean
-}
-
 export interface Burger {
   id: string
   label: string
@@ -85,7 +77,6 @@ export interface Infos {
 export interface MenuData {
   note: { label: string; price: string; img: string }
   infos: Infos
-  supplements: Supplement[]
   page1: {
     title: string
     burgers: Burger[]
@@ -201,6 +192,31 @@ export async function saveMenu(menu: MenuData): Promise<void> {
     .update({ data: menu, updated_at: new Date().toISOString() })
     .eq('id', 1)
   if (error) throw error
+}
+
+export async function fetchMenuStamped(): Promise<{ menu: MenuData; stamp: string | null }> {
+  const { data, error } = await supabase.from('menu').select('data, updated_at').eq('id', 1).single()
+  if (error) throw error
+  return { menu: normalizeMenu(data.data as MenuData), stamp: data.updated_at }
+}
+
+export async function fetchMenuStamp(): Promise<string | null> {
+  const { data, error } = await supabase.from('menu').select('updated_at').eq('id', 1).single()
+  if (error) throw error
+  return data.updated_at
+}
+
+export async function saveMenuGuarded(
+  menu: MenuData,
+  expectedStamp: string | null,
+): Promise<{ ok: true; stamp: string } | { ok: false }> {
+  const stamp = new Date().toISOString()
+  let query = supabase.from('menu').update({ data: menu, updated_at: stamp }).eq('id', 1)
+  query = expectedStamp === null ? query.is('updated_at', null) : query.eq('updated_at', expectedStamp)
+  const { data, error } = await query.select('updated_at')
+  if (error) throw error
+  if (!data || data.length === 0) return { ok: false }
+  return { ok: true, stamp: data[0].updated_at }
 }
 
 export async function uploadImage(file: File): Promise<string> {

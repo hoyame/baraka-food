@@ -15,7 +15,7 @@ Remplace `<IP-LAN>` par l'IP locale de la machine (affichée automatiquement au 
 
 | App | Description |
 |---|---|
-| `website/` | Site vitrine (menu public) |
+| `submodules/barakafood-website/` | Site vitrine (menu public, horaires, flyers imprimables) |
 | `client/` | Suivi de commande côté client — `/` pour saisir le numéro, `/CXX` pour suivre une commande précise |
 
 ## En développement (`npm run dev` dans chaque dossier)
@@ -23,6 +23,15 @@ Remplace `<IP-LAN>` par l'IP locale de la machine (affichée automatiquement au 
 | App | Port |
 |---|---|
 | Écrans + Admin (`src/`, Vite) | `4010` |
-| Site vitrine (`website/`) | `4020` |
+| Site vitrine (`submodules/barakafood-website/`) | `4020` |
 | Client (`client/`) | `4030` |
 | Staff — salle + cuisine (`staff/`) | `4040` |
+
+## Flyers imprimables (servis par le site vitrine)
+
+| Format | URL |
+|---|---|
+| Dépliant 2 volets, A4 paysage ×2 | `/flyer` |
+| Affiche recto, A4 portrait | `/flyer/affiche` |
+
+Un lien en haut de chaque page permet de passer de l'une à l'autre. Le contenu provient de Supabase : il suit ce qui est édité dans l'Admin.

@@ -1,8 +1,11 @@
-import { useEffect, useState } from 'react'
+import { Fragment, useEffect, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import { supabase } from '../lib/supabase'
 import { watchTable } from '../lib/realtime'
 import type { LinkStatus } from '../lib/realtime'
+import type { Horaire } from '../lib/api'
+import { useMenu } from '../hooks/useMenu'
 import { useReadyOrders } from '../hooks/useReadyOrders'
 import LinkIndicator from '../components/LinkIndicator'
 import logo from '../assets/logo.svg'
@@ -23,11 +26,86 @@ const sections: { key: string; label: string; statuses: OrderStatus[] }[] = [
   { key: 'comptoir', label: 'DISPONIBLES AU COMPTOIR', statuses: ['disponible'] },
 ]
 
+const JOURS = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi']
+
+function plagesDe(creneaux: string): { debut: number; fin: number }[] {
+  return [...(creneaux || '').matchAll(/(\d{1,2})\s*[h:]\s*(\d{2})?\s*[-–]\s*(\d{1,2})\s*[h:]\s*(\d{2})?/gi)]
+    .map(m => ({
+      debut: parseInt(m[1], 10) * 60 + parseInt(m[2] || '0', 10),
+      fin: parseInt(m[3], 10) * 60 + parseInt(m[4] || '0', 10),
+    }))
+}
+
+function estOuvert(horaires: Horaire[], date: Date): boolean {
+  const jour = JOURS[date.getDay()]
+  const h = horaires.find(x => x.jour.toLowerCase() === jour.toLowerCase())
+  if (!h || h.ferme) return false
+  const minutes = date.getHours() * 60 + date.getMinutes()
+  return plagesDe(h.creneaux).some(p => minutes >= p.debut && minutes < p.fin)
+}
+
+function fmtHeure(min: number) {
+  const h = Math.floor(min / 60)
+  const m = min % 60
+  return `${h}h${m ? String(m).padStart(2, '0') : ''}`
+}
+
+function prochaineOuverture(horaires: Horaire[], date: Date): Date | null {
+  for (let i = 0; i < 8; i++) {
+    const jour = new Date(date.getFullYear(), date.getMonth(), date.getDate() + i)
+    const h = horaires.find(x => x.jour.toLowerCase() === JOURS[jour.getDay()].toLowerCase())
+    if (!h || h.ferme) continue
+    for (const p of plagesDe(h.creneaux).sort((a, b) => a.debut - b.debut)) {
+      const debut = new Date(jour.getFullYear(), jour.getMonth(), jour.getDate(), 0, p.debut)
+      if (debut.getTime() > date.getTime()) return debut
+    }
+  }
+  return null
+}
+
+function resumeHoraires(horaires: Horaire[]) {
+  const bas = (j: string) => j.toLowerCase()
+  const creneauxDe = (h: Horaire) =>
+    plagesDe(h.creneaux).map(p => `${fmtHeure(p.debut)} – ${fmtHeure(p.fin)}`).join(' · ')
+
+  const ouverts = horaires.filter(h => !h.ferme)
+  if (!ouverts.length) return { principal: '', jours: '', exceptions: [] as string[] }
+
+  const compte = new Map<string, number>()
+  for (const h of ouverts) compte.set(creneauxDe(h), (compte.get(creneauxDe(h)) ?? 0) + 1)
+  const principal = [...compte.entries()].sort((a, b) => b[1] - a[1])[0][0]
+
+  const jours =
+    ouverts.length === horaires.length
+      ? '7j/7'
+      : ouverts.length === 1
+        ? `le ${bas(ouverts[0].jour)}`
+        : `du ${bas(ouverts[0].jour)} au ${bas(ouverts[ouverts.length - 1].jour)}`
+
+  const exceptions: string[] = []
+  const fermes = horaires.filter(h => h.ferme)
+  if (fermes.length) exceptions.push(`Fermé le ${fermes.map(h => bas(h.jour)).join(' et le ')}`)
+  for (const h of ouverts) {
+    if (creneauxDe(h) !== principal) exceptions.push(`Le ${bas(h.jour)} : ${creneauxDe(h)} uniquement`)
+  }
+
+  return { principal, jours, exceptions }
+}
+
 export default function Orders() {
   useTitle('Suivi des commandes')
   const [orders, setOrders] = useState<Order[]>([])
   const readyCode = useReadyOrders({ announce: false })
   const [link, setLink] = useState<LinkStatus>('reconnecting')
+  const { menu } = useMenu()
+  const [params] = useSearchParams()
+  const force = params.has('force')
+  const [now, setNow] = useState(() => new Date())
+
+  useEffect(() => {
+    const id = setInterval(() => setNow(new Date()), 1000)
+    return () => clearInterval(id)
+  }, [])
 
   useEffect(() => {
     let alive = true
@@ -48,6 +126,79 @@ export default function Orders() {
       stop()
     }
   }, [])
+
+  const horaires = menu?.infos.horaires ?? []
+  const ferme = !force && horaires.length > 0 && !estOuvert(horaires, now)
+
+  if (ferme) {
+    const { principal, jours, exceptions } = resumeHoraires(horaires)
+    const ouverture = prochaineOuverture(horaires, now)
+    const diff = ouverture ? Math.max(0, ouverture.getTime() - now.getTime()) : 0
+    const joursRestants = Math.floor(diff / 86400000)
+    const blocs = [
+      ...(joursRestants > 0
+        ? [{ value: String(joursRestants), label: joursRestants > 1 ? 'JOURS' : 'JOUR' }]
+        : []),
+      { value: String(Math.floor(diff / 3600000) % 24).padStart(2, '0'), label: 'HEURES' },
+      { value: String(Math.floor(diff / 60000) % 60).padStart(2, '0'), label: 'MINUTES' },
+      { value: String(Math.floor(diff / 1000) % 60).padStart(2, '0'), label: 'SECONDES' },
+    ]
+
+    return (
+      <div className="ord ord--closed">
+        <motion.img
+          className="ord__closed-brand"
+          src={logo}
+          alt="Baraka Food"
+          initial={{ opacity: 0, y: -16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+        />
+
+        {ouverture && (
+          <>
+            <motion.p
+              className="ord__closed-title"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.15 }}
+            >
+              OUVERTURE DANS
+            </motion.p>
+            <motion.div
+              className="ord__closed-timer"
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.3 }}
+            >
+              {blocs.map((b, i) => (
+                <Fragment key={b.label}>
+                  {i > 0 && <span className="ord__closed-sep">:</span>}
+                  <span className="ord__closed-unit">
+                    <span className="ord__closed-value">{b.value}</span>
+                    <span className="ord__closed-unit-label">{b.label}</span>
+                  </span>
+                </Fragment>
+              ))}
+            </motion.div>
+          </>
+        )}
+
+        <motion.div
+          className="ord__closed-hours"
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.45 }}
+        >
+          <span className="ord__closed-days">Ouvert {jours}</span>
+          <span className="ord__closed-slots">{principal}</span>
+          {exceptions.map(e => (
+            <span key={e} className="ord__closed-exception">{e}</span>
+          ))}
+        </motion.div>
+      </div>
+    )
+  }
 
   return (
     <div className="ord">

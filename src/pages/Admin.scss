@@ -409,3 +409,30 @@
     white-space: nowrap;
   }
 }
+
+.adm__conflict {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5em;
+  margin: 0 2em 1em;
+  padding: 0.9em 1.2em;
+  background: #3a1215;
+  border: 1px solid #ff1744;
+  color: #ffb4be;
+  font-size: 0.85em;
+  line-height: 1.4;
+
+  button {
+    flex-shrink: 0;
+    font-family: inherit;
+    font-weight: 700;
+    font-size: 0.9em;
+    letter-spacing: 0.06em;
+    padding: 0.6em 1.2em;
+    border: none;
+    background: #ff1744;
+    color: #fff;
+    cursor: pointer;
+  }
+}

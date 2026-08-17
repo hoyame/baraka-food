@@ -15,9 +15,6 @@ export default function LinkIndicator({ status }: { status: LinkStatus }) {
           transition={{ duration: 0.3 }}
         >
           <span className="link-ind__dot" />
-          <span className="link-ind__text">
-            {status === 'offline' ? 'Hors ligne' : 'Reconnexion'}
-          </span>
         </motion.div>
       )}
     </AnimatePresence>

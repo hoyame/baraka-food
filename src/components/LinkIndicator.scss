@@ -7,7 +7,6 @@
   z-index: 60;
   display: flex;
   align-items: center;
-  gap: 0.5em;
   pointer-events: none;
 
   &__dot {
@@ -18,24 +17,9 @@
     animation: link-ind-pulse 1.2s ease-in-out infinite;
   }
 
-  &__text {
-    font-family: $font-display;
-    font-weight: 700;
-    font-size: 0.62em;
-    letter-spacing: 0.06em;
-    white-space: nowrap;
-    text-transform: uppercase;
-  }
+  &--reconnecting .link-ind__dot { background: #f0b46a; }
 
-  &--reconnecting {
-    .link-ind__dot { background: #f0b46a; }
-    .link-ind__text { color: #f0b46a; }
-  }
-
-  &--offline {
-    .link-ind__dot { background: #ff1744; }
-    .link-ind__text { color: #ff1744; }
-  }
+  &--offline .link-ind__dot { background: #ff1744; }
 }
 
 @keyframes link-ind-pulse {

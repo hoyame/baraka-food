@@ -5,6 +5,11 @@ export const supabase = createClient(
   import.meta.env.VITE_SUPABASE_ANON_KEY,
 )
 
+export async function resignIn() {
+  await supabase.auth.signOut({ scope: 'local' }).catch(() => {})
+  await signIn()
+}
+
 async function signIn() {
   await supabase.auth.signInWithPassword({
     email: import.meta.env.VITE_STAFF_EMAIL,

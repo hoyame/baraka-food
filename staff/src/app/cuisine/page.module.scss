@@ -133,3 +133,28 @@
   background: $color-white;
   color: $color-price-text;
 }
+
+.soundBar {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 0.8rem;
+}
+
+.soundBtn {
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 0.8rem;
+  letter-spacing: 0.04em;
+  padding: 0.55em 1.1em;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 0;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.65);
+  cursor: pointer;
+}
+
+.soundBtnOn {
+  background: #ededea;
+  border-color: #ededea;
+  color: #0d0d0d;
+}

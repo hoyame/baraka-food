@@ -7,8 +7,9 @@ Tu es en train de tester un système multi-apps pour un restaurant, connecté à
 Lance les 4 apps en parallèle (ports différents) :
 
 ```
-npm run dev          # écrans + admin, http://localhost:5173 (ou 4010 selon config)
-cd website && npm run dev   # site vitrine, http://localhost:4020
+npm run dev          # écrans + admin, http://localhost:4010
+npm run server       # serveur écrans (build de prod), http://localhost:4000
+cd submodules/barakafood-website && npm run dev   # site vitrine + flyers, http://localhost:4020
 cd client && npm run dev    # page client, http://localhost:4030
 cd staff && npm run dev     # salle + cuisine, http://localhost:4040
 ```
@@ -32,12 +33,20 @@ Ouvre-les si possible sur des appareils/onglets/navigateurs différents pour bie
 - Uploade une nouvelle image sur un article existant. Vérifie qu'elle s'affiche correctement partout après sauvegarde.
 - Recharge complètement la page admin (F5) : vérifie que tu peux toujours sauvegarder sans erreur (la session staff doit se rétablir automatiquement, sans écran de login visible).
 
-## 3. Site vitrine (`website/`)
+## 3. Site vitrine (`submodules/barakafood-website/`)
 
 - Vérifie que la page d'accueil affiche la marque et le menu à jour.
 - Clique sur chaque onglet (Burgers / Sandwichs / Tacos) : vérifie qu'une seule catégorie s'affiche à la fois et que le contenu correspond.
 - Réduis la fenêtre du navigateur (ou ouvre sur mobile) : vérifie que la mise en page reste utilisable (responsive).
 - Vérifie qu'un article marqué indisponible depuis l'admin n'apparaît pas ou apparaît clairement grisé.
+- Vérifie la page `/horaires` et le pied de page (adresse, téléphone, horaires) — ils viennent de l'admin.
+
+## 3 bis. Flyers imprimables
+
+- Ouvre `/flyer` (dépliant 2 volets) et `/flyer/affiche` (affiche recto) : vérifie que prix, photos et sections correspondent aux écrans.
+- Sur chacun, lance l'aperçu avant impression : le dépliant doit sortir en **2 pages A4 paysage**, l'affiche en **1 seule page A4 portrait**.
+- Dans la boîte d'impression, mets les marges sur « Aucune » et l'échelle à 100 %.
+- Modifie un prix dans l'admin, recharge les flyers : la valeur doit suivre.
 
 ## 4. Salle (`staff/salle`)
 
@@ -74,7 +83,7 @@ Ouvre-les si possible sur des appareils/onglets/navigateurs différents pour bie
 
 ## 8. Sécurité
 
-- Sur `client/` ou `website/`, ouvre les devtools du navigateur (F12) → onglet Réseau → trouve une requête vers `supabase.co` → récupère l'URL et la clé `apikey` utilisée.
+- Sur `client/` ou le site vitrine, ouvre les devtools du navigateur (F12) → onglet Réseau → trouve une requête vers `supabase.co` → récupère l'URL et la clé `apikey` utilisée.
 - Depuis la Console du navigateur, essaie un appel `fetch` en `POST`, `PATCH` ou `DELETE` vers `https://<projet>.supabase.co/rest/v1/orders` ou `/menu` avec cette clé.
 - Vérifie que ça échoue (erreur 401/403, "row-level security policy").
 - Vérifie qu'un simple `GET` (lecture) avec la même clé fonctionne bien (comportement attendu : lecture publique OK, écriture bloquée).

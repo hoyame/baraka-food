@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
-import { fetchMenu, saveMenu, uploadImage, imgUrl } from '../lib/api'
+import { fetchMenuStamped, fetchMenuStamp, saveMenuGuarded, uploadImage, imgUrl } from '../lib/api'
+import { resignIn } from '../lib/supabase'
+import { watchTable } from '../lib/realtime'
 import type { MenuData } from '../lib/api'
 import './Admin.scss'
 import { useTitle } from '../hooks/useTitle'
@@ -164,9 +166,36 @@ export default function Admin() {
   const [menu, setMenu] = useState<MenuData | null>(null)
   const [dirty, setDirty] = useState(false)
   const [status, setStatus] = useState('')
+  const [conflict, setConflict] = useState(false)
+  const stampRef = useRef<string | null>(null)
+  const dirtyRef = useRef(false)
+  dirtyRef.current = dirty
+
+  const reload = async () => {
+    const { menu: fresh, stamp } = await fetchMenuStamped()
+    stampRef.current = stamp
+    setMenu(fresh)
+    setDirty(false)
+    setConflict(false)
+  }
 
   useEffect(() => {
-    fetchMenu().then(setMenu).catch(() => setStatus('Serveur injoignable — lance `npm run server`'))
+    reload().catch(() => setStatus('Serveur injoignable'))
+
+    return watchTable('menu-admin', 'menu', async () => {
+      try {
+        const stamp = await fetchMenuStamp()
+        if (stamp === stampRef.current) return
+        if (!dirtyRef.current) {
+          await reload()
+          setStatus('Menu mis à jour depuis un autre appareil ✓')
+          setTimeout(() => setStatus(''), 3000)
+        } else {
+          setConflict(true)
+        }
+      } catch {}
+    }, { pollMs: 15000 })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const update: Draft = fn => {
@@ -189,12 +218,31 @@ export default function Admin() {
     if (!menu) return
     setStatus('Enregistrement...')
     try {
-      await saveMenu(menu)
+      let result = await saveMenuGuarded(menu, stampRef.current)
+
+      if (!result.ok) {
+        const stampBase = await fetchMenuStamp()
+        if (stampBase !== stampRef.current) {
+          setConflict(true)
+          setStatus('')
+          return
+        }
+        setStatus('Session expirée — reconnexion...')
+        await resignIn()
+        result = await saveMenuGuarded(menu, stampRef.current)
+        if (!result.ok) {
+          setStatus('Échec — recharge la page et réessaie')
+          return
+        }
+      }
+
+      stampRef.current = result.stamp
       setDirty(false)
+      setConflict(false)
       setStatus('Enregistré ✓')
       setTimeout(() => setStatus(''), 2000)
     } catch {
-      setStatus('Erreur — serveur injoignable')
+      setStatus('Erreur — enregistrement impossible, réessaie')
     }
   }
 
@@ -206,9 +254,19 @@ export default function Admin() {
         <h1>ADMIN — BARAKA FOOD</h1>
         <div className="adm__header-right">
           <span className="adm__status">{status || (dirty ? 'Modifications non enregistrées' : '')}</span>
-          <button className="adm__save" onClick={save} disabled={!dirty}>ENREGISTRER</button>
+          <button className="adm__save" onClick={save} disabled={!dirty || conflict}>ENREGISTRER</button>
         </div>
       </header>
+
+      {conflict && (
+        <div className="adm__conflict">
+          <span>
+            Le menu a été modifié depuis un autre appareil. Pour ne rien écraser, recharge avant de
+            réenregistrer — tes modifications non enregistrées seront perdues.
+          </span>
+          <button onClick={() => reload().catch(() => setStatus('Serveur injoignable'))}>RECHARGER LE MENU</button>
+        </div>
+      )}
 
       <div className="adm__body">
         <section className="adm__section">

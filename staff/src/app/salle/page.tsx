@@ -22,6 +22,7 @@ interface ItemMeta {
   isFrites?: boolean
   price?: number
   noSauce?: boolean
+  viandeSup?: boolean
 }
 
 interface CartLine {
@@ -45,6 +46,7 @@ interface CartLine {
   isFrites: boolean
   price: number
   noSauce: boolean
+  viandeSup: boolean
   collapsed: boolean
   notes: string
 }
@@ -79,7 +81,7 @@ export default function SallePage() {
   const [boissonOptions, setBoissonOptions] = useState<string[]>([])
   const [friteSupOptions, setFriteSupOptions] = useState<string[]>([])
   const [gratinageOptions, setGratinageOptions] = useState<string[]>([])
-  const [prices, setPrices] = useState({ extra: 0, gratinage: 0, friteSup: 0, menu: 0 })
+  const [prices, setPrices] = useState({ extra: 0, gratinage: 0, friteSup: 0, menu: 0, viandeSup: 0 })
   const [showTotal, setShowTotal] = useState(false)
   const [cart, setCart] = useState<CartLine[]>([])
   const [sending, setSending] = useState(false)
@@ -100,8 +102,10 @@ export default function SallePage() {
         {
           label: 'Sandwichs',
           items: [
-            { name: 'Sandwich 1 viande', available: menu.page2.sandwich?.available !== false },
-            { name: 'Sandwich 2 viandes', available: menu.page2.sandwich?.available !== false },
+            { name: 'Sandwich', available: menu.page2.sandwich?.available !== false },
+            ...(menu.page2.sandwichPhare?.name
+              ? [{ name: menu.page2.sandwichPhare.name, available: menu.page2.sandwichPhare.available !== false }]
+              : []),
           ],
         },
         {
@@ -150,12 +154,25 @@ export default function SallePage() {
       setCategories(cats)
 
       const meta: Record<string, ItemMeta> = {}
-      for (const b of menu.page1.burgers) meta[b.name] = { ...emptyMeta, ingredients: splitDesc(b.desc), canMenu: true, price: b.price }
+      for (const b of menu.page1.burgers) meta[b.name] = { ...emptyMeta, ingredients: splitDesc(b.desc), canMenu: true, viandeSup: true, price: b.price }
       for (const t of menu.page1.texmex) meta[t.name] = { ...emptyMeta, price: t.price }
-      meta[menu.page2.menuKids.name] = { ...emptyMeta, kidsChoices: ['Cheese Burger', 'Mini Tacos'], price: menu.page2.menuKids.price }
+      const kidsChoices = (menu.page2.menuKids.desc ?? '')
+        .split('+')[0]
+        .split(/\s+ou\s+/i)
+        .map((c) => c.trim())
+        .filter(Boolean)
+      meta[menu.page2.menuKids.name] = { ...emptyMeta, kidsChoices, price: menu.page2.menuKids.price }
       const garnitures = (menu.page2.sandwich?.inclus ?? '').split('·').map((g) => g.trim()).filter(Boolean)
-      meta['Sandwich 1 viande'] = { ingredients: garnitures, isTacos: true, viandeCount: 1, canMenu: true, price: menu.page2.sandwich?.prixSimple ?? 0 }
-      meta['Sandwich 2 viandes'] = { ingredients: garnitures, isTacos: true, viandeCount: 2, canMenu: true, price: menu.page2.sandwich?.prixDouble ?? 0 }
+      meta['Sandwich'] = { ingredients: garnitures, isTacos: true, viandeCount: 1, canMenu: true, viandeSup: true, price: menu.page2.sandwich?.prixSimple ?? 0 }
+      if (menu.page2.sandwichPhare?.name) {
+        meta[menu.page2.sandwichPhare.name] = {
+          ...emptyMeta,
+          ingredients: splitDesc(menu.page2.sandwichPhare.desc),
+          canMenu: true,
+          viandeSup: true,
+          price: menu.page2.sandwichPhare.price,
+        }
+      }
       for (const f of menu.page2.frites) meta[`Frites ${f.name}`] = { ...emptyMeta, isFrites: true, price: f.price }
       for (const d of menu.page2.desserts) meta[d.name] = { ...emptyMeta, price: d.price, noSauce: true }
       for (const b of menu.page2.boissons) meta[`Boisson ${b.name}`] = { ...emptyMeta, price: b.price, noSauce: true }
@@ -165,6 +182,7 @@ export default function SallePage() {
           isTacos: true,
           viandeCount: parseInt(t.viandes, 10) || 1,
           canMenu: true,
+          viandeSup: true,
           price: t.price,
         }
       }
@@ -174,6 +192,7 @@ export default function SallePage() {
         gratinage: parsePrice(menu.page3.gratinagePrice),
         friteSup: parsePrice(menu.page2.friteSupplementsPrice),
         menu: parsePrice(menu.note.price),
+        viandeSup: Math.max(0, (menu.page2.sandwich?.prixDouble ?? 0) - (menu.page2.sandwich?.prixSimple ?? 0)),
       })
 
       setViandeOptions(menu.page3.viandes.filter((v) => v.available !== false).map((v) => v.name))
@@ -220,6 +239,7 @@ export default function SallePage() {
         isFrites: meta.isFrites === true,
         price: meta.price ?? 0,
         noSauce: meta.noSauce === true,
+        viandeSup: meta.viandeSup === true,
         collapsed: false,
         notes: '',
       },
@@ -227,9 +247,11 @@ export default function SallePage() {
   }
 
   function lineTotal(l: CartLine) {
+    const viandesEnSup = l.viandeSup ? Math.max(0, l.selectedViandes.length - l.viandeCount) : 0
     const options =
       l.selectedExtras.length * prices.extra +
       l.selectedGratinage.length * prices.gratinage +
+      viandesEnSup * prices.viandeSup +
       (l.isFrites ? l.supplements.length * prices.friteSup : 0) +
       (l.isMenu ? prices.menu : 0)
     return (l.price + options) * l.qty
@@ -258,7 +280,8 @@ export default function SallePage() {
 
   function toggleViande(line: CartLine, name: string) {
     const already = line.selectedViandes.includes(name)
-    if (!already && line.selectedViandes.length >= line.viandeCount) return
+    const max = line.viandeSup ? line.viandeCount + 3 : line.viandeCount
+    if (!already && line.selectedViandes.length >= max) return
     const selectedViandes = already
       ? line.selectedViandes.filter((v) => v !== name)
       : [...line.selectedViandes, name]
@@ -288,6 +311,9 @@ export default function SallePage() {
       added: [
         ...l.supplements,
         ...l.selectedViandes,
+        ...(l.viandeSup && l.selectedViandes.length > l.viandeCount
+          ? [`Supplement viande x${l.selectedViandes.length - l.viandeCount}`]
+          : []),
         ...l.selectedSauces,
         ...l.selectedExtras,
         ...l.selectedGratinage.map((g) => `Gratine ${g}`),
@@ -436,10 +462,17 @@ export default function SallePage() {
                       </div>
                     )}
 
-                    {!line.collapsed && line.isTacos && (
+                    {!line.collapsed && (line.isTacos || line.viandeSup) && (
                       <>
                         <div className={styles.chipRow}>
-                          <span className={styles.chipGroupLabel}>Viandes ({line.selectedViandes.length}/{line.viandeCount})</span>
+                          <span className={styles.chipGroupLabel}>
+                            {line.viandeCount > 0
+                              ? `Viandes (${line.selectedViandes.length}/${line.viandeCount})`
+                              : `Supplément viande (+${prices.viandeSup.toFixed(2)}€/viande)`}
+                            {line.viandeSup && line.selectedViandes.length > line.viandeCount && line.viandeCount > 0 && (
+                              ` + ${line.selectedViandes.length - line.viandeCount} en supplément (+${(prices.viandeSup * (line.selectedViandes.length - line.viandeCount)).toFixed(2)}€)`
+                            )}
+                          </span>
                           {viandeOptions.map((name) => (
                             <button
                               key={name}
@@ -535,7 +568,7 @@ export default function SallePage() {
                           className={`${styles.chip}${line.isMenu ? ` ${styles.chipAdd}` : ''}`}
                           onClick={() => updateLine(line.id, { isMenu: !line.isMenu, selectedBoisson: line.isMenu ? null : line.selectedBoisson })}
                         >
-                          MENU (frites + boisson)
+                          MENU (frites + boisson){prices.menu > 0 && ` +${prices.menu.toFixed(2)}€`}
                         </button>
                         {line.isMenu && boissonOptions.map((name) => (
                           <button
