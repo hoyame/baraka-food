@@ -3,6 +3,14 @@
 import { use, useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
+import {
+  notificationsGranted,
+  notificationsSupported,
+  notify,
+  registerSw,
+  requestNotifications,
+} from '@/lib/notifications'
+import InstallPrompt from '@/components/InstallPrompt'
 import styles from './page.module.scss'
 
 type Status = 'attente' | 'preparation' | 'pret_cuisine' | 'disponible' | 'recuperee'
@@ -13,6 +21,9 @@ interface Order {
   items: { name: string; qty: number; price: number; notes: string }[]
 }
 
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://barakafood.fr'
+const REVIEW_URL = 'https://g.page/r/Cb8Ja6Z72htXEAE/review'
+
 const copy: Record<Status, { title: string; desc: string }> = {
   attente: { title: 'Commande enregistrée', desc: 'Votre commande va être prise en charge en cuisine.' },
   preparation: { title: 'En préparation', desc: "On vous prévient dès que c'est prêt." },
@@ -21,17 +32,35 @@ const copy: Record<Status, { title: string; desc: string }> = {
   recuperee: { title: 'Commande récupérée', desc: 'Merci et bon appétit !' },
 }
 
+const notifCopy: Record<Status, string> = {
+  attente: 'Commande enregistrée',
+  preparation: 'Votre commande est en préparation',
+  pret_cuisine: 'Votre commande est bientôt prête',
+  disponible: 'Votre commande est prête ! Venez la récupérer au comptoir',
+  recuperee: 'Commande récupérée — merci et bon appétit !',
+}
+
+let audioCtx: AudioContext | null = null
+
+function unlockAudio() {
+  try {
+    if (!audioCtx) audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)()
+    if (audioCtx.state === 'suspended') audioCtx.resume()
+  } catch {}
+}
+
 function beep() {
   try {
-    const ctx = new (window.AudioContext || (window as any).webkitAudioContext)()
-    const osc = ctx.createOscillator()
-    const gain = ctx.createGain()
+    if (!audioCtx) audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)()
+    if (audioCtx.state === 'suspended') audioCtx.resume()
+    const osc = audioCtx.createOscillator()
+    const gain = audioCtx.createGain()
     osc.connect(gain)
-    gain.connect(ctx.destination)
+    gain.connect(audioCtx.destination)
     osc.frequency.value = 880
-    gain.gain.setValueAtTime(0.2, ctx.currentTime)
+    gain.gain.setValueAtTime(0.2, audioCtx.currentTime)
     osc.start()
-    osc.stop(ctx.currentTime + 0.5)
+    osc.stop(audioCtx.currentTime + 0.5)
   } catch {}
   if (navigator.vibrate) navigator.vibrate([200, 100, 200])
 }
@@ -40,8 +69,38 @@ export default function SuiviPage({ params }: { params: Promise<{ code: string }
   const { code: rawCode } = use(params)
   const code = rawCode.toUpperCase()
   const [order, setOrder] = useState<Order | null | undefined>(undefined)
+  const [notifState, setNotifState] = useState<'unsupported' | 'idle' | 'granted' | 'denied'>('idle')
   const lastStatus = useRef<Status | null>(null)
   const wasFound = useRef(false)
+
+  useEffect(() => {
+    const unlock = () => unlockAudio()
+    window.addEventListener('pointerdown', unlock, { once: true })
+    window.addEventListener('touchend', unlock, { once: true })
+    return () => {
+      window.removeEventListener('pointerdown', unlock)
+      window.removeEventListener('touchend', unlock)
+    }
+  }, [])
+
+  useEffect(() => {
+    if (!notificationsSupported()) {
+      setNotifState('unsupported')
+      return
+    }
+    if (notificationsGranted()) {
+      setNotifState('granted')
+      registerSw()
+    } else if (Notification.permission === 'denied') {
+      setNotifState('denied')
+    }
+  }, [])
+
+  async function enableNotifications() {
+    const ok = await requestNotifications()
+    setNotifState(ok ? 'granted' : Notification.permission === 'denied' ? 'denied' : 'idle')
+    if (ok) notify('Notifications activées', `On vous préviendra ici pour la commande ${code}.`)
+  }
 
   useEffect(() => {
     let alive = true
@@ -76,11 +135,16 @@ export default function SuiviPage({ params }: { params: Promise<{ code: string }
   }, [code])
 
   useEffect(() => {
-    if (order?.status === 'disponible' && lastStatus.current !== 'disponible') {
+    const status = order?.status
+    if (!status) return
+    if (lastStatus.current !== null && lastStatus.current !== status) {
+      notify(`Commande ${code}`, notifCopy[status], window.location.href)
+      if (status === 'disponible') beep()
+    } else if (status === 'disponible' && lastStatus.current !== 'disponible') {
       beep()
     }
-    lastStatus.current = order?.status ?? null
-  }, [order?.status])
+    lastStatus.current = status
+  }, [order?.status, code])
 
   const info = order === null
     ? { title: 'Commande introuvable', desc: 'Vérifiez le numéro avec le comptoir.' }
@@ -89,6 +153,7 @@ export default function SuiviPage({ params }: { params: Promise<{ code: string }
       : { title: 'Chargement…', desc: '' }
 
   const isReady = order?.status === 'disponible'
+  const isDone = order?.status === 'recuperee'
 
   return (
     <main className={styles.main}>
@@ -101,7 +166,32 @@ export default function SuiviPage({ params }: { params: Promise<{ code: string }
           <p className={styles.desc}>{info.desc}</p>
         </div>
 
-        <Link className={styles.changeLink} href="/">Changer de numéro</Link>
+        {order && !isReady && !isDone && notifState === 'idle' && (
+          <button className={styles.notifBtn} onClick={enableNotifications}>
+            Me prévenir sur ce téléphone
+          </button>
+        )}
+        {notifState === 'granted' && order && !isReady && !isDone && (
+          <p className={styles.notifOk}>Notifications activées — vous serez prévenu à chaque étape.</p>
+        )}
+        {notifState === 'denied' && order && !isReady && !isDone && (
+          <p className={styles.notifOk}>
+            Notifications bloquées par le navigateur — gardez cette page ouverte.
+          </p>
+        )}
+
+        {(isReady || isDone) && (
+          <a className={styles.reviewBtn} href={REVIEW_URL} target="_blank" rel="noopener noreferrer">
+            ★ Donnez votre avis sur Google
+          </a>
+        )}
+
+        {order && <InstallPrompt />}
+
+        <div className={styles.links}>
+          <Link className={styles.changeLink} href="/">Changer de numéro</Link>
+          <a className={styles.changeLink} href={SITE_URL}>Retour sur barakafood.fr</a>
+        </div>
       </div>
     </main>
   )

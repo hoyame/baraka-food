@@ -1,0 +1,82 @@
+@use '../styles/variables' as *;
+
+.box {
+  position: relative;
+  margin-top: 1.6rem;
+  padding: 1.1rem 2.2rem 1.1rem 1.2rem;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.04);
+  max-width: 340px;
+  text-align: left;
+}
+
+.close {
+  position: absolute;
+  top: 0.3rem;
+  right: 0.55rem;
+  border: none;
+  background: none;
+  color: $color-muted;
+  font-size: 1.1rem;
+  cursor: pointer;
+  line-height: 1;
+  padding: 0.2em;
+}
+
+.text {
+  font-size: 0.78rem;
+  color: $color-muted;
+  line-height: 1.5;
+  margin-bottom: 0.8rem;
+}
+
+.installBtn {
+  font-family: $font-display;
+  font-weight: 700;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.7em 1.3em;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: transparent;
+  color: $color-white;
+  cursor: pointer;
+}
+
+.steps {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  font-size: 0.78rem;
+  color: $color-white;
+  line-height: 1.45;
+
+  li {
+    display: flex;
+    align-items: baseline;
+    gap: 0.6rem;
+  }
+}
+
+.stepNum {
+  flex-shrink: 0;
+  font-family: $font-display;
+  font-weight: 900;
+  font-size: 0.72rem;
+  width: 1.5em;
+  height: 1.5em;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: $color-white;
+  color: $color-price-text;
+  border-radius: 50%;
+  transform: translateY(0.15em);
+}
+
+.shareIcon {
+  vertical-align: -0.15em;
+  margin: 0 0.3em;
+  color: #3a82f7;
+}

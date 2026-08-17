@@ -15,7 +15,7 @@ const inter = Inter({
 })
 
 export const metadata: Metadata = {
-  title: 'Baraka Food — Suivi de commande',
+  title: 'Suivi de commande',
   description: 'Suivez votre commande Baraka Food en direct.',
 }
 

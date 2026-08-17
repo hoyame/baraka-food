@@ -88,10 +88,53 @@
 
 .changeLink {
   display: inline-block;
-  margin-top: 1.5rem;
   font-family: $font-display;
   font-weight: 700;
   font-size: 0.75rem;
   letter-spacing: 0.1em;
   color: $color-muted;
+}
+
+.notifBtn {
+  margin-top: 1.4rem;
+  font-family: $font-display;
+  font-weight: 700;
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.85em 1.6em;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: transparent;
+  color: $color-white;
+  cursor: pointer;
+}
+
+.notifOk {
+  margin-top: 1.2rem;
+  font-size: 0.72rem;
+  color: $color-muted;
+  text-align: center;
+  line-height: 1.5;
+}
+
+.reviewBtn {
+  display: inline-block;
+  margin-top: 1.6rem;
+  font-family: $font-display;
+  font-weight: 900;
+  font-size: 0.85rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 1em 1.8em;
+  background: $color-white;
+  color: $color-price-text;
+  text-decoration: none;
+}
+
+.links {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+  margin-top: 1.8rem;
 }
