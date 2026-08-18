@@ -106,3 +106,31 @@
     color: $color-muted;
     }
 }
+
+.total {
+  font-family: $font-display;
+  font-weight: 900;
+  font-size: 1rem;
+  color: $color-white;
+  font-variant-numeric: tabular-nums;
+}
+
+.item {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.itemText {
+  min-width: 0;
+}
+
+.itemPrice {
+  flex-shrink: 0;
+  font-family: $font-display;
+  font-weight: 700;
+  font-size: 0.78rem;
+  color: $color-muted;
+  font-variant-numeric: tabular-nums;
+}

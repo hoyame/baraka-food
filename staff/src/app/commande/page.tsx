@@ -6,8 +6,71 @@ import { Toast, useToast } from '@/components/Toast'
 import { supabase } from '@/lib/supabase'
 import { watchTable } from '@/lib/realtime'
 import { sendReprint } from '@/lib/reprint'
-import type { Order, OrderStatus } from '@/lib/types'
+import type { MenuData, Order, OrderItem, OrderStatus } from '@/lib/types'
 import styles from './page.module.scss'
+
+function parsePrice(v: string | number | undefined): number {
+  if (typeof v === 'number') return v
+  if (!v) return 0
+  const m = String(v).replace(',', '.').match(/[\d]+(\.[\d]+)?/)
+  return m ? parseFloat(m[0]) : 0
+}
+
+interface Catalogue {
+  base: Record<string, number>
+  extras: Set<string>
+  friteSups: Set<string>
+  boissons: Set<string>
+  prixExtra: number
+  prixGratinage: number
+  prixFriteSup: number
+  prixMenu: number
+  prixViandeSup: number
+}
+
+function construireCatalogue(menu: MenuData): Catalogue {
+  const base: Record<string, number> = {}
+  for (const b of menu.page1.burgers) base[b.name] = b.price
+  for (const t of menu.page1.texmex) base[t.name] = t.price
+  base[menu.page2.menuKids.name] = menu.page2.menuKids.price
+  base['Sandwich'] = menu.page2.sandwich?.prixSimple ?? 0
+  if (menu.page2.sandwichPhare?.name) base[menu.page2.sandwichPhare.name] = menu.page2.sandwichPhare.price
+  for (const f of menu.page2.frites) base[`Frites ${f.name}`] = f.price
+  for (const d of menu.page2.desserts) base[d.name] = d.price
+  for (const b of menu.page2.boissons) base[`Boisson ${b.name}`] = b.price
+  for (const t of menu.page3.tailles) base[`Tacos ${t.size} (${t.viandes})`] = t.price
+
+  return {
+    base,
+    extras: new Set(menu.page3.extras.items.map((e) => e.name)),
+    friteSups: new Set((menu.page2.friteSupplements ?? []).map((f) => f.name)),
+    boissons: new Set(menu.page2.boissons.map((b) => b.name)),
+    prixExtra: parsePrice(menu.page3.extras.surcharge),
+    prixGratinage: parsePrice(menu.page3.gratinagePrice),
+    prixFriteSup: parsePrice(menu.page2.friteSupplementsPrice),
+    prixMenu: parsePrice(menu.note.price),
+    prixViandeSup: Math.max(0, (menu.page2.sandwich?.prixDouble ?? 0) - (menu.page2.sandwich?.prixSimple ?? 0)),
+  }
+}
+
+function prixLigne(item: OrderItem, cat: Catalogue): number {
+  const base = cat.base[item.name] ?? 0
+  let options = 0
+  const estFrites = item.name.startsWith('Frites ')
+  for (const a of item.added || []) {
+    const supViande = a.match(/^Supplement viande(?: x(\d+))?$/i)
+    if (supViande) options += cat.prixViandeSup * (supViande[1] ? parseInt(supViande[1], 10) : 1)
+    else if (/^Gratine /i.test(a)) options += cat.prixGratinage
+    else if (/^MENU frites/i.test(a)) options += cat.prixMenu
+    else if (cat.extras.has(a)) options += cat.prixExtra
+    else if (estFrites && cat.friteSups.has(a)) options += cat.prixFriteSup
+  }
+  return (base + options) * (item.qty || 1)
+}
+
+function totalCommande(order: Order, cat: Catalogue): number {
+  return (order.items || []).reduce((somme, item) => somme + prixLigne(item, cat), 0)
+}
 
 const statusLabel: Record<OrderStatus, string> = {
   attente: 'En attente',
@@ -19,6 +82,7 @@ const statusLabel: Record<OrderStatus, string> = {
 
 export default function CommandePage() {
   const [orders, setOrders] = useState<Order[]>([])
+  const [catalogue, setCatalogue] = useState<Catalogue | null>(null)
   const { toast, show } = useToast()
 
   useEffect(() => {
@@ -28,6 +92,14 @@ export default function CommandePage() {
     }
     load()
     return watchTable('orders-commande', 'orders', load)
+  }, [])
+
+  useEffect(() => {
+    async function loadMenu() {
+      const { data } = await supabase.from('menu').select('data').eq('id', 1).single()
+      if (data) setCatalogue(construireCatalogue(data.data as MenuData))
+    }
+    return watchTable('menu-commande', 'menu', loadMenu, { pollMs: 30000 })
   }, [])
 
   async function reprint(order: Order) {
@@ -51,6 +123,9 @@ export default function CommandePage() {
               <div className={styles.cardHead}>
                 <span className={styles.code}>{order.code}</span>
                 <span className={styles.status}>{statusLabel[order.status]}</span>
+                {catalogue && (
+                  <span className={styles.total}>{totalCommande(order, catalogue).toFixed(2)}€</span>
+                )}
                 <span className={styles.time}>
                   {new Date(order.created_at).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
                 </span>
@@ -64,10 +139,15 @@ export default function CommandePage() {
               <div className={styles.items}>
                 {order.items.map((item, i) => (
                   <span key={i} className={styles.item}>
-                    {item.qty > 1 ? `${item.qty}× ` : ''}{item.name}
-                    {item.added.length > 0 && <em> + {item.added.join(', ')}</em>}
-                    {item.removed.length > 0 && <em> — sans {item.removed.join(', ')}</em>}
-                    {item.notes && <em> ({item.notes})</em>}
+                    <span className={styles.itemText}>
+                      {item.qty > 1 ? `${item.qty}× ` : ''}{item.name}
+                      {item.added.length > 0 && <em> + {item.added.join(', ')}</em>}
+                      {item.removed.length > 0 && <em> — sans {item.removed.join(', ')}</em>}
+                      {item.notes && <em> ({item.notes})</em>}
+                    </span>
+                    {catalogue && (
+                      <span className={styles.itemPrice}>{prixLigne(item, catalogue).toFixed(2)}€</span>
+                    )}
                   </span>
                 ))}
               </div>

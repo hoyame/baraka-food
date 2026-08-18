@@ -6,6 +6,7 @@ import { Toast, useToast } from '@/components/Toast'
 import { supabase } from '@/lib/supabase'
 import { watchTable } from '@/lib/realtime'
 import { sendReprint } from '@/lib/reprint'
+import { setBoardSound } from '@/lib/boardSound'
 import type { MenuData, Order, OrderStatus } from '@/lib/types'
 import styles from './page.module.scss'
 
@@ -88,7 +89,24 @@ export default function SallePage() {
   const [sending, setSending] = useState(false)
   const [confirmCode, setConfirmCode] = useState<string | null>(null)
   const [orders, setOrders] = useState<Order[]>([])
+  const [boardSound, setBoardSoundState] = useState(true)
   const { toast, show } = useToast()
+
+  useEffect(() => {
+    setBoardSoundState(localStorage.getItem('board-son-cmd') !== '0')
+  }, [])
+
+  async function toggleBoardSound() {
+    const next = !boardSound
+    const ok = await setBoardSound(next)
+    if (!ok) {
+      show('Écrans injoignables — réessaie')
+      return
+    }
+    setBoardSoundState(next)
+    localStorage.setItem('board-son-cmd', next ? '1' : '0')
+    show(next ? 'Annonces vocales des écrans activées' : 'Annonces vocales des écrans coupées')
+  }
 
   useEffect(() => {
     async function loadCatalog() {
@@ -96,7 +114,9 @@ export default function SallePage() {
       if (error || !data) return
       const menu = data.data as MenuData
 
-      const splitDesc = (desc?: string) => (desc ? desc.split(' · ').filter(Boolean) : [])
+      const eclate = (list: string[]) =>
+        list.flatMap((i) => (/crudit/i.test(i) ? ['Salade', 'Tomate', 'Oignons'] : [i]))
+      const splitDesc = (desc?: string) => eclate(desc ? desc.split(' · ').filter(Boolean) : [])
 
       const rawCats: { label: string; items: { name: string; available?: boolean }[] }[] = [
         { label: 'Burgers', items: menu.page1.burgers },
@@ -163,7 +183,7 @@ export default function SallePage() {
         .map((c) => c.trim())
         .filter(Boolean)
       meta[menu.page2.menuKids.name] = { ...emptyMeta, kidsChoices, price: menu.page2.menuKids.price }
-      const garnitures = (menu.page2.sandwich?.inclus ?? '').split('·').map((g) => g.trim()).filter(Boolean)
+      const garnitures = eclate((menu.page2.sandwich?.inclus ?? '').split('·').map((g) => g.trim()).filter(Boolean))
       meta['Sandwich'] = { ingredients: garnitures, isTacos: true, viandeCount: 1, canMenu: true, viandeSup: true, price: menu.page2.sandwich?.prixSimple ?? 0 }
       if (menu.page2.sandwichPhare?.name) {
         meta[menu.page2.sandwichPhare.name] = {
@@ -405,7 +425,10 @@ export default function SallePage() {
             <div className={styles.catalog}>
               {(categories[activeCat]?.items || []).map((name) => (
                 <button key={name} className={styles.catalogItem} onClick={() => addToCart(name)}>
-                  {name}
+                  <span className={styles.catalogItemName}>{name}</span>
+                  {typeof itemMeta[name]?.price === 'number' && (
+                    <span className={styles.catalogItemPrice}>{itemMeta[name].price!.toFixed(2)}€</span>
+                  )}
                 </button>
               ))}
             </div>
@@ -624,7 +647,16 @@ export default function SallePage() {
         </div>
 
         <div className={styles.tracking}>
-          <p className={styles.blockTitle}>Commandes en cours</p>
+          <div className={styles.trackingHead}>
+            <p className={styles.blockTitle}>Commandes en cours</p>
+            <button
+              className={`${styles.soundBtn}${boardSound ? ` ${styles.soundBtnOn}` : ''}`}
+              onClick={toggleBoardSound}
+              aria-pressed={boardSound}
+            >
+              {boardSound ? 'Son écrans : activé' : 'Son écrans : coupé'}
+            </button>
+          </div>
           {activeOrders.length === 0 && <div className={styles.cartEmpty}>Aucune commande en cours</div>}
           {activeOrders.map((order) => {
             const isAlert = order.status === 'pret_cuisine'

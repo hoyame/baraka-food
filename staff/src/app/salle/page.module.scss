@@ -68,7 +68,10 @@
 }
 
 .catalogItem {
-  display: block;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.6em;
   background: $color-bg-section;
   border: 1px solid transparent;
   border-radius: 0;
@@ -406,4 +409,42 @@
   cursor: pointer;
 
   &:active { background: rgba(255, 255, 255, 0.15); }
+}
+
+.trackingHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.soundBtn {
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  padding: 0.5em 1em;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: transparent;
+  color: rgba(255, 255, 255, 0.65);
+  cursor: pointer;
+}
+
+.soundBtnOn {
+  background: #ededea;
+  border-color: #ededea;
+  color: #0d0d0d;
+}
+
+.catalogItemName {
+  min-width: 0;
+}
+
+.catalogItemPrice {
+  flex-shrink: 0;
+  font-family: $font-display;
+  font-weight: 900;
+  font-size: 0.95em;
+  color: rgba(255, 255, 255, 0.85);
+  font-variant-numeric: tabular-nums;
 }

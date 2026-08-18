@@ -20,10 +20,10 @@
       "static/chunks/4bd1b696-c023c6e3521b1417.js",
       "static/chunks/255-62902f04efbdd792.js",
       "static/chunks/main-app-7e17f17fa53e51b6.js",
-      "static/css/3d4868065db3fc47.css",
+      "static/css/ea34423d95842589.css",
       "static/chunks/44530001-36b3e4f4c85f2629.js",
       "static/chunks/322-45780a8e8f064bb0.js",
-      "static/chunks/app/commande/page-12752637048c17b4.js"
+      "static/chunks/app/commande/page-1acab89469a9f716.js"
     ],
     "/page": [
       "static/chunks/webpack-395629e08af09f16.js",
@@ -31,23 +31,6 @@
       "static/chunks/255-62902f04efbdd792.js",
       "static/chunks/main-app-7e17f17fa53e51b6.js",
       "static/chunks/app/page-713192c19c4fde8e.js"
-    ],
-    "/cuisine/layout": [
-      "static/chunks/webpack-395629e08af09f16.js",
-      "static/chunks/4bd1b696-c023c6e3521b1417.js",
-      "static/chunks/255-62902f04efbdd792.js",
-      "static/chunks/main-app-7e17f17fa53e51b6.js",
-      "static/chunks/app/cuisine/layout-713192c19c4fde8e.js"
-    ],
-    "/cuisine/page": [
-      "static/chunks/webpack-395629e08af09f16.js",
-      "static/chunks/4bd1b696-c023c6e3521b1417.js",
-      "static/chunks/255-62902f04efbdd792.js",
-      "static/chunks/main-app-7e17f17fa53e51b6.js",
-      "static/css/3d4868065db3fc47.css",
-      "static/chunks/44530001-36b3e4f4c85f2629.js",
-      "static/chunks/322-45780a8e8f064bb0.js",
-      "static/chunks/app/cuisine/page-22effded01263507.js"
     ],
     "/salle/layout": [
       "static/chunks/webpack-395629e08af09f16.js",
@@ -61,10 +44,27 @@
       "static/chunks/4bd1b696-c023c6e3521b1417.js",
       "static/chunks/255-62902f04efbdd792.js",
       "static/chunks/main-app-7e17f17fa53e51b6.js",
-      "static/css/3d4868065db3fc47.css",
+      "static/css/ea34423d95842589.css",
       "static/chunks/44530001-36b3e4f4c85f2629.js",
       "static/chunks/322-45780a8e8f064bb0.js",
-      "static/chunks/app/salle/page-b5c6e77c5f332930.js"
+      "static/chunks/app/salle/page-d90af077de2646d9.js"
+    ],
+    "/cuisine/layout": [
+      "static/chunks/webpack-395629e08af09f16.js",
+      "static/chunks/4bd1b696-c023c6e3521b1417.js",
+      "static/chunks/255-62902f04efbdd792.js",
+      "static/chunks/main-app-7e17f17fa53e51b6.js",
+      "static/chunks/app/cuisine/layout-713192c19c4fde8e.js"
+    ],
+    "/cuisine/page": [
+      "static/chunks/webpack-395629e08af09f16.js",
+      "static/chunks/4bd1b696-c023c6e3521b1417.js",
+      "static/chunks/255-62902f04efbdd792.js",
+      "static/chunks/main-app-7e17f17fa53e51b6.js",
+      "static/css/ea34423d95842589.css",
+      "static/chunks/44530001-36b3e4f4c85f2629.js",
+      "static/chunks/322-45780a8e8f064bb0.js",
+      "static/chunks/app/cuisine/page-22effded01263507.js"
     ]
   }
 }

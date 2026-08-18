@@ -2,6 +2,6 @@
   "/_not-found/page": "/_not-found",
   "/commande/page": "/commande",
   "/page": "/",
-  "/cuisine/page": "/cuisine",
-  "/salle/page": "/salle"
+  "/salle/page": "/salle",
+  "/cuisine/page": "/cuisine"
 }

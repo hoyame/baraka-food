@@ -1,11 +1,14 @@
 {
-  "name": "Baraka Food — Staff",
-  "short_name": "Baraka Staff",
+  "name": "Staff",
+  "short_name": "Staff",
   "description": "Prise de commande en salle et suivi cuisine.",
   "start_url": "/salle",
   "scope": "/",
   "display": "fullscreen",
-  "display_override": ["fullscreen", "standalone"],
+  "display_override": [
+    "fullscreen",
+    "standalone"
+  ],
   "orientation": "landscape",
   "background_color": "#0d0d0d",
   "theme_color": "#0d0d0d",

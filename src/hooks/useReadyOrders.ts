@@ -4,7 +4,16 @@ import { watchTable } from '../lib/realtime'
 
 const DISPLAY_MS = 15000
 
+function sonActif(): boolean {
+  try {
+    return localStorage.getItem('board-son') !== '0'
+  } catch {
+    return true
+  }
+}
+
 function annonce(code: string) {
+  if (!sonActif()) return
   try {
     const synth = window.speechSynthesis
     if (!synth) return
@@ -67,9 +76,19 @@ export function useReadyOrders(options: { announce?: boolean } = {}) {
 
     const stop = watchTable('orders-ready', 'orders', () => { sync() })
 
+    const sonChannel = supabase
+      .channel('board-sound')
+      .on('broadcast', { event: 'set' }, ({ payload }) => {
+        try {
+          localStorage.setItem('board-son', payload?.on === false ? '0' : '1')
+        } catch {}
+      })
+      .subscribe()
+
     return () => {
       alive = false
       stop()
+      supabase.removeChannel(sonChannel)
       if (timerRef.current) clearTimeout(timerRef.current)
     }
   }, [announce])
