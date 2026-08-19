@@ -538,3 +538,21 @@
 
   &::placeholder { color: rgba(255, 255, 255, 0.4); }
 }
+
+.codeLivreur {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: rgba(255, 255, 255, 0.55);
+  padding: 0.5em 1em;
+  border: 1px dashed rgba(255, 255, 255, 0.25);
+
+  b {
+    font-family: inherit;
+    font-weight: 900;
+    font-size: 1.1em;
+    color: #f0b46a;
+    letter-spacing: 0.15em;
+    margin-left: 0.3em;
+  }
+}

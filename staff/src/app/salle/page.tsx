@@ -129,7 +129,23 @@ export default function SallePage() {
   const [clientReconnu, setClientReconnu] = useState(false)
   const [epuiserArme, setEpuiserArme] = useState(false)
   const [toutEpuise, setToutEpuise] = useState(false)
+  const [codeLivreur, setCodeLivreur] = useState('')
   const { toast, show } = useToast()
+
+  useEffect(() => {
+    const secret = process.env.NEXT_PUBLIC_LIVREUR_SECRET
+    if (!secret) return
+    async function calculer() {
+      const date = new Date().toLocaleDateString('fr-CA', { timeZone: 'Europe/Paris' })
+      const donnees = new TextEncoder().encode(`${secret}:${date}`)
+      const empreinte = await crypto.subtle.digest('SHA-256', donnees)
+      const hex = [...new Uint8Array(empreinte)].map((o) => o.toString(16).padStart(2, '0')).join('')
+      setCodeLivreur(String(parseInt(hex.slice(0, 12), 16) % 1000000).padStart(6, '0'))
+    }
+    calculer()
+    const id = setInterval(calculer, 60000)
+    return () => clearInterval(id)
+  }, [])
 
   useEffect(() => {
     setBoardSoundState(localStorage.getItem('board-son-cmd') !== '0')
@@ -860,6 +876,11 @@ export default function SallePage() {
           <div className={styles.trackingHead}>
             <p className={styles.blockTitle}>Commandes en cours</p>
             <div className={styles.trackingBtns}>
+              {codeLivreur && (
+                <span className={styles.codeLivreur} title="Code d'accès de l'espace livreur, valable aujourd'hui">
+                  Code livreur du jour : <b>{codeLivreur}</b>
+                </span>
+              )}
               <button
                 className={`${styles.dangerBtn}${epuiserArme ? ` ${styles.dangerBtnArmed}` : ''}${toutEpuise ? ` ${styles.dangerBtnRestore}` : ''}`}
                 onClick={basculerRupture}
