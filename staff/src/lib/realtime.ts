@@ -6,7 +6,7 @@ export function watchTable(
   onChange: () => void,
   options: { pollMs?: number } = {},
 ) {
-  const { pollMs = 15000 } = options
+  const { pollMs = 120000 } = options
   let alive = true
   let channel: ReturnType<typeof supabase.channel> | null = null
   let retry: ReturnType<typeof setTimeout> | null = null

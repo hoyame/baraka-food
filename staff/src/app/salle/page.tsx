@@ -333,7 +333,7 @@ export default function SallePage() {
       setFriteSupOptions((menu.page2.friteSupplements ?? []).filter((f) => f.available !== false).map((f) => f.name))
       setGratinageOptions((menu.page3.gratinage ?? []).filter((g) => g.available !== false).map((g) => g.name))
     }
-    return watchTable('menu-salle', 'menu', loadCatalog, { pollMs: 30000 })
+    return watchTable('menu-salle', 'menu', loadCatalog, { pollMs: 300000 })
   }, [])
 
   useEffect(() => {

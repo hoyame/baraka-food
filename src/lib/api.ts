@@ -109,7 +109,12 @@ export interface MenuData {
   }
 }
 
+const SUPABASE_IMAGES = 'https://dunywwhlojoeeuvxbqtn.supabase.co/storage/v1/object/public/menu-images/'
+
 export function imgUrl(path: string) {
+  if (path && path.startsWith(SUPABASE_IMAGES)) {
+    return '/img/' + path.slice(SUPABASE_IMAGES.length)
+  }
   return path
 }
 

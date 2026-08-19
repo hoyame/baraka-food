@@ -8,7 +8,7 @@ export function watchTable(
   onChange: () => void,
   options: { pollMs?: number; onStatus?: (s: LinkStatus) => void } = {},
 ) {
-  const { pollMs = 15000, onStatus } = options
+  const { pollMs = 120000, onStatus } = options
   const report = (s: LinkStatus) => onStatus?.(navigator.onLine ? s : 'offline')
   let alive = true
   let channel: ReturnType<typeof supabase.channel> | null = null

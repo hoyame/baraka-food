@@ -100,7 +100,7 @@ export default function CommandePage() {
       const { data } = await supabase.from('menu').select('data').eq('id', 1).single()
       if (data) setCatalogue(construireCatalogue(data.data as MenuData))
     }
-    return watchTable('menu-commande', 'menu', loadMenu, { pollMs: 30000 })
+    return watchTable('menu-commande', 'menu', loadMenu, { pollMs: 300000 })
   }, [])
 
   async function reprint(order: Order) {

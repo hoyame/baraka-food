@@ -263,7 +263,7 @@ export default function Admin() {
           setConflict(true)
         }
       } catch {}
-    }, { pollMs: 15000 })
+    }, { pollMs: 120000 })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 

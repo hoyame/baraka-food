@@ -31,7 +31,7 @@ export function useMenu() {
       } catch {}
     }
     load()
-    const stop = watchTable('menu-changes', 'menu', load, { pollMs: 30000, onStatus: setLink })
+    const stop = watchTable('menu-changes', 'menu', load, { pollMs: 300000, onStatus: setLink })
 
     return () => {
       alive = false

@@ -23,7 +23,7 @@
       "static/css/b33b5bd5d7099f69.css",
       "static/chunks/44530001-36b3e4f4c85f2629.js",
       "static/chunks/322-45780a8e8f064bb0.js",
-      "static/chunks/app/commande/page-5e63732d37923dd7.js"
+      "static/chunks/app/commande/page-c062e7855fe6f4d2.js"
     ],
     "/page": [
       "static/chunks/webpack-395629e08af09f16.js",
@@ -47,7 +47,7 @@
       "static/css/b33b5bd5d7099f69.css",
       "static/chunks/44530001-36b3e4f4c85f2629.js",
       "static/chunks/322-45780a8e8f064bb0.js",
-      "static/chunks/app/salle/page-e0054d15036386dd.js"
+      "static/chunks/app/salle/page-3c5ca69de8acb422.js"
     ],
     "/cuisine/layout": [
       "static/chunks/webpack-395629e08af09f16.js",
@@ -64,7 +64,7 @@
       "static/css/b33b5bd5d7099f69.css",
       "static/chunks/44530001-36b3e4f4c85f2629.js",
       "static/chunks/322-45780a8e8f064bb0.js",
-      "static/chunks/app/cuisine/page-9043afdc146dd924.js"
+      "static/chunks/app/cuisine/page-3d967c6e49a728e7.js"
     ]
   }
 }
