@@ -131,7 +131,7 @@ export default function Orders() {
         .from('orders')
         .select('code, status, created_at')
         .neq('status', 'recuperee')
-      if (alive && data) setOrders(data as Order[])
+      if (alive && data) setOrders((data as Order[]).filter(o => !/^(LV|LIV)-/i.test(o.code)))
     }
 
     load()

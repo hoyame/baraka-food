@@ -72,6 +72,7 @@ export default function SuiviPage({ params }: { params: Promise<{ code: string }
   const [notifState, setNotifState] = useState<'unsupported' | 'idle' | 'granted' | 'denied'>('idle')
   const lastStatus = useRef<Status | null>(null)
   const wasFound = useRef(false)
+  const codeComplet = useRef(code)
 
   useEffect(() => {
     const unlock = () => unlockAudio()
@@ -114,6 +115,7 @@ export default function SuiviPage({ params }: { params: Promise<{ code: string }
 
       if (data) {
         wasFound.current = true
+        codeComplet.current = data.code
         setOrder(data)
       } else if (wasFound.current) {
         // la ligne a été supprimée après récupération par le comptoir
@@ -141,7 +143,14 @@ export default function SuiviPage({ params }: { params: Promise<{ code: string }
     const status = order?.status
     if (!status) return
     if (lastStatus.current !== null && lastStatus.current !== status) {
-      notify(`Commande ${code}`, notifCopy[status], window.location.href)
+      const livraison = /^(LV|LIV)-/i.test(codeComplet.current)
+      const texte =
+        livraison && status === 'disponible'
+          ? 'Votre commande est en cours de livraison !'
+          : livraison && status === 'recuperee'
+            ? 'Commande livrée — bon appétit !'
+            : notifCopy[status]
+      notify(`Commande ${code}`, texte, window.location.href)
       if (status === 'disponible') beep()
     } else if (status === 'disponible' && lastStatus.current !== 'disponible') {
       beep()
@@ -149,14 +158,24 @@ export default function SuiviPage({ params }: { params: Promise<{ code: string }
     lastStatus.current = status
   }, [order?.status, code])
 
+  const estLivraison = /^(LV|LIV)-/i.test(codeComplet.current)
+  const copyLivraison: Partial<Record<Status, { title: string; desc: string }>> = {
+    disponible: { title: 'En cours de livraison', desc: 'Votre commande est en route !' },
+    recuperee: { title: 'Livrée', desc: 'Bon appétit !' },
+  }
   const info = order === null
     ? { title: 'Commande introuvable', desc: 'Vérifiez le numéro avec le comptoir.' }
     : order
-      ? copy[order.status]
+      ? (estLivraison && copyLivraison[order.status]) || copy[order.status]
       : { title: 'Chargement…', desc: '' }
 
   const isReady = order?.status === 'disponible'
   const isDone = order?.status === 'recuperee'
+
+  const etapesLivraison = ['Enregistrée', 'En préparation', 'En livraison', 'Livrée']
+  const etapeActuelle = order
+    ? { attente: 0, preparation: 1, pret_cuisine: 1, disponible: 2, recuperee: 3 }[order.status]
+    : 0
 
   return (
     <main className={styles.main}>
@@ -168,6 +187,20 @@ export default function SuiviPage({ params }: { params: Promise<{ code: string }
           <h1 className={styles.title}>{info.title}</h1>
           <p className={styles.desc}>{info.desc}</p>
         </div>
+
+        {order && estLivraison && (
+          <div className={styles.etapes}>
+            {etapesLivraison.map((etape, i) => (
+              <div
+                key={etape}
+                className={`${styles.etape}${i <= etapeActuelle ? ` ${styles.etapeFaite}` : ''}${i === etapeActuelle ? ` ${styles.etapeActive}` : ''}`}
+              >
+                <span className={styles.etapePoint} />
+                <span className={styles.etapeNom}>{etape}</span>
+              </div>
+            ))}
+          </div>
+        )}
 
         {order && !isReady && !isDone && notifState === 'idle' && (
           <button className={styles.notifBtn} onClick={enableNotifications}>

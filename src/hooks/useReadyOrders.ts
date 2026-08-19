@@ -67,7 +67,7 @@ export function useReadyOrders(options: { announce?: boolean } = {}) {
         const wasDisponible = knownStatus.current[o.code] === 'disponible'
         const first = knownStatus.current[o.code] === undefined
         knownStatus.current[o.code] = o.status
-        if (o.status === 'disponible' && !wasDisponible && !first) {
+        if (o.status === 'disponible' && !wasDisponible && !first && !/^(LV|LIV)-/i.test(o.code)) {
           queue.current.push(o.code)
           playNext()
         }

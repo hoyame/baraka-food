@@ -70,6 +70,38 @@ const trackLabel: Record<OrderStatus, string> = {
   recuperee: 'Récupérée',
 }
 
+const CLIENTS_KEY = 'salle-clients'
+
+interface ClientConnu {
+  prenom: string
+  adresse: string
+  tel: string
+}
+
+function normaliserTel(tel: string): string {
+  return (tel || '').replace(/\D/g, '')
+}
+
+function lireClients(): Record<string, ClientConnu> {
+  try {
+    return JSON.parse(localStorage.getItem(CLIENTS_KEY) || '{}')
+  } catch {
+    return {}
+  }
+}
+
+function memoriserClient(tel: string, prenom: string, adresse: string) {
+  const cle = normaliserTel(tel)
+  if (cle.length < 10) return
+  try {
+    const clients = lireClients()
+    clients[cle] = { prenom, adresse, tel }
+    const cles = Object.keys(clients)
+    if (cles.length > 200) delete clients[cles[0]]
+    localStorage.setItem(CLIENTS_KEY, JSON.stringify(clients))
+  } catch {}
+}
+
 let lineId = 0
 
 export default function SallePage() {
@@ -94,6 +126,7 @@ export default function SallePage() {
   const [clientPrenom, setClientPrenom] = useState('')
   const [clientTel, setClientTel] = useState('')
   const [clientAdresse, setClientAdresse] = useState('')
+  const [clientReconnu, setClientReconnu] = useState(false)
   const [epuiserArme, setEpuiserArme] = useState(false)
   const [toutEpuise, setToutEpuise] = useState(false)
   const { toast, show } = useToast()
@@ -142,6 +175,21 @@ export default function SallePage() {
       return
     }
     show(remettre ? 'Tous les articles sont remis en vente' : 'Tous les articles sont passés en rupture')
+  }
+
+  function saisirTel(tel: string) {
+    setClientTel(tel)
+    const connu = lireClients()[normaliserTel(tel)]
+    if (connu) {
+      setClientPrenom((v) => v.trim() ? v : connu.prenom)
+      setClientAdresse((v) => v.trim() ? v : connu.adresse)
+      if (!clientReconnu) {
+        setClientReconnu(true)
+        show(`Client reconnu : ${connu.prenom}`)
+      }
+    } else {
+      setClientReconnu(false)
+    }
   }
 
   async function toggleBoardSound() {
@@ -451,11 +499,14 @@ export default function SallePage() {
     setSending(false)
     if (error) return
 
+    if (service === 'LV') memoriserClient(clientTel, clientPrenom.trim(), clientAdresse.trim())
+
     setCart([])
     setService('SP')
     setClientPrenom('')
     setClientTel('')
     setClientAdresse('')
+    setClientReconnu(false)
     setConfirmCode(code)
     setTimeout(() => setConfirmCode(null), 4000)
   }
@@ -521,6 +572,16 @@ export default function SallePage() {
 
             {service !== 'SP' && (
               <div className={styles.clientFields}>
+                {service === 'LV' && (
+                  <input
+                    className={styles.clientInput}
+                    type="tel"
+                    placeholder="Téléphone *"
+                    value={clientTel}
+                    onChange={(e) => saisirTel(e.target.value)}
+                    autoFocus
+                  />
+                )}
                 <input
                   className={styles.clientInput}
                   type="text"
@@ -529,22 +590,13 @@ export default function SallePage() {
                   onChange={(e) => setClientPrenom(e.target.value)}
                 />
                 {service === 'LV' && (
-                  <>
-                    <input
-                      className={styles.clientInput}
-                      type="tel"
-                      placeholder="Téléphone *"
-                      value={clientTel}
-                      onChange={(e) => setClientTel(e.target.value)}
-                    />
-                    <input
-                      className={styles.clientInput}
-                      type="text"
-                      placeholder="Adresse de livraison *"
-                      value={clientAdresse}
-                      onChange={(e) => setClientAdresse(e.target.value)}
-                    />
-                  </>
+                  <input
+                    className={styles.clientInput}
+                    type="text"
+                    placeholder="Adresse de livraison *"
+                    value={clientAdresse}
+                    onChange={(e) => setClientAdresse(e.target.value)}
+                  />
                 )}
               </div>
             )}
@@ -830,6 +882,7 @@ export default function SallePage() {
           {activeOrders.length === 0 && <div className={styles.cartEmpty}>Aucune commande en cours</div>}
           {activeOrders.map((order) => {
             const isAlert = order.status === 'pret_cuisine'
+            const estLivraison = /^(LV|LIV)-/i.test(order.code)
             return (
               <div key={order.code} className={`${styles.trackCard}${isAlert ? ` ${styles.trackCardAlert}` : ''}`}>
                 <span className={styles.trackCode}>{order.code}</span>
@@ -838,15 +891,21 @@ export default function SallePage() {
                     <path d="M6 9V3h12v6M6 18h12v3H6zM4 9h16a2 2 0 0 1 2 2v5h-4M2 16h4v-5a2 2 0 0 0-2-2" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round" />
                   </svg>
                 </button>
-                <span className={styles.trackStatus}>{trackLabel[order.status]}</span>
+                <span className={styles.trackStatus}>
+                  {estLivraison && order.status === 'disponible'
+                    ? 'En livraison'
+                    : estLivraison && order.status === 'pret_cuisine'
+                      ? 'Prête — à expédier'
+                      : trackLabel[order.status]}
+                </span>
                 {order.status === 'pret_cuisine' && (
                   <button className={styles.trackBtn} onClick={() => setOrderStatus(order.code, 'disponible')}>
-                    Mettre au comptoir
+                    {estLivraison ? 'Lancer la livraison' : 'Mettre au comptoir'}
                   </button>
                 )}
                 {order.status === 'disponible' && (
                   <button className={styles.trackBtn} onClick={() => removeOrder(order.code)}>
-                    Récupérée
+                    {estLivraison ? 'Livrée' : 'Récupérée'}
                   </button>
                 )}
               </div>

@@ -123,7 +123,11 @@ export default function CommandePage() {
             <div key={order.code} className={styles.card}>
               <div className={styles.cardHead}>
                 <span className={styles.code}>{order.code}</span>
-                <span className={styles.status}>{statusLabel[order.status]}</span>
+                <span className={styles.status}>
+                  {/^(LV|LIV)-/i.test(order.code) && order.status === 'disponible'
+                    ? 'En livraison'
+                    : statusLabel[order.status]}
+                </span>
                 {catalogue && (
                   <span className={styles.total}>{totalCommande(order, catalogue).toFixed(2)}€</span>
                 )}

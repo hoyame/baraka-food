@@ -19,18 +19,11 @@
 }
 
 .brand {
-  font-family: $font-display;
-  font-weight: 900;
-  font-size: 1.6rem;
-  line-height: 1;
-  margin-bottom: 0.4rem;
-
-  span {
-    display: block;
-    color: $color-muted;
-    font-size: 0.9rem;
-    margin-top: 0.3rem;
-  }
+  width: 150px;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+}
 }
 
 .lead {
@@ -80,4 +73,16 @@
   font-size: 0.85rem;
   min-height: 1.2em;
   margin-top: 0.6rem;
+}
+
+.livraisonLink {
+  display: inline-block;
+  margin-top: 1.6rem;
+  font-family: $font-display;
+  font-weight: 700;
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: $color-muted;
+  text-decoration: underline;
 }
