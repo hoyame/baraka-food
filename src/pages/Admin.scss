@@ -458,3 +458,189 @@
     margin: 0;
   }
 }
+
+
+
+.adm__search {
+  font-family: inherit;
+  font-size: 0.85rem;
+  padding: 0.7em 0.9em;
+  margin-bottom: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: transparent;
+  color: $color-white;
+  border-radius: 0;
+
+  &::placeholder { color: rgba(255, 255, 255, 0.4); }
+}
+
+
+
+
+
+
+.adm__result-title {
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: rgba(255, 255, 255, 0.55);
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+}
+
+.adm__goto {
+  font-family: inherit;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  margin-left: 1rem;
+  padding: 0.45em 0.9em;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: transparent;
+  color: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+  vertical-align: middle;
+}
+
+@media (max-width: 820px) {
+  
+  
+  .adm__search {
+    flex-basis: 100%;
+    margin-bottom: 0.5rem;
+  }
+
+  
+  }
+
+
+.adm__toolbar {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.1rem 2rem 0;
+
+  .adm__search {
+    flex: 1;
+    max-width: 420px;
+    margin: 0 auto;
+  }
+}
+
+.adm__back {
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 0.8rem;
+  letter-spacing: 0.04em;
+  padding: 0.6em 1.1em;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: transparent;
+  color: rgba(255, 255, 255, 0.75);
+  cursor: pointer;
+  flex-shrink: 0;
+
+  &:hover { color: $color-white; border-color: rgba(255, 255, 255, 0.5); }
+}
+
+.adm__hub {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.9rem;
+  max-width: 580px;
+  margin: 0 auto;
+  padding: 3rem 0;
+}
+
+.adm__hub--dense {
+  max-width: 860px;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  padding: 1.5rem 0 3rem;
+}
+
+.adm__tile {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 1.1rem;
+  min-height: 78px;
+  padding: 1rem 3.4rem 1rem 1.2rem;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: transparent;
+  color: $color-white;
+  cursor: pointer;
+  text-align: left;
+  border-radius: 0;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+
+  &:hover,
+  &:focus-visible {
+    background: $color-white;
+    border-color: $color-white;
+    color: $color-price-text;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-white;
+    outline-offset: 3px;
+  }
+}
+
+.adm__tile--big {
+  min-height: 96px;
+}
+
+.adm__tile-icon {
+  display: block;
+  opacity: 0.85;
+}
+
+.adm__tile-label {
+  font-family: $font-display;
+  font-weight: 900;
+  font-size: 1.05rem;
+  line-height: 1.05;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+}
+
+.adm__tile--big .adm__tile-label {
+  font-size: 1.3rem;
+}
+
+.adm__tile-count {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  right: 1rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 0.2em 0.6em;
+  background: rgba(255, 255, 255, 0.12);
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.adm__tile:hover .adm__tile-count,
+.adm__tile:focus-visible .adm__tile-count {
+  background: rgba(13, 13, 13, 0.12);
+  color: $color-price-text;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .adm__tile { transition: none; }
+}
+
+@media (max-width: 600px) {
+  .adm__hub {
+    padding: 1.5rem 0;
+  }
+
+  .adm__hub--dense {
+    grid-template-columns: 1fr;
+  }
+
+  .adm__toolbar {
+    padding: 1rem 1.2rem 0;
+  }
+}
