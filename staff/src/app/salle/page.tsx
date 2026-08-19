@@ -84,17 +84,62 @@ export default function SallePage() {
   const [friteSupOptions, setFriteSupOptions] = useState<string[]>([])
   const [gratinageOptions, setGratinageOptions] = useState<string[]>([])
   const [prices, setPrices] = useState({ extra: 0, gratinage: 0, friteSup: 0, menu: 0, viandeSup: 0 })
-  const [showTotal, setShowTotal] = useState(false)
+  const [showTotal, setShowTotal] = useState(true)
   const [cart, setCart] = useState<CartLine[]>([])
   const [sending, setSending] = useState(false)
   const [confirmCode, setConfirmCode] = useState<string | null>(null)
   const [orders, setOrders] = useState<Order[]>([])
   const [boardSound, setBoardSoundState] = useState(true)
+  const [service, setService] = useState<'SP' | 'EMP' | 'LIV'>('SP')
+  const [epuiserArme, setEpuiserArme] = useState(false)
+  const [toutEpuise, setToutEpuise] = useState(false)
   const { toast, show } = useToast()
 
   useEffect(() => {
     setBoardSoundState(localStorage.getItem('board-son-cmd') !== '0')
   }, [])
+
+  async function basculerRupture() {
+    const remettre = toutEpuise
+    if (!remettre && !epuiserArme) {
+      setEpuiserArme(true)
+      setTimeout(() => setEpuiserArme(false), 4000)
+      return
+    }
+    setEpuiserArme(false)
+    const { data, error } = await supabase.from('menu').select('data, updated_at').eq('id', 1).single()
+    if (error || !data) {
+      show('Menu injoignable — réessaie')
+      return
+    }
+    const m = data.data as MenuData
+    const regler = (list?: { available: boolean }[]) => (list ?? []).forEach((x) => { x.available = remettre })
+    regler(m.page1.burgers)
+    regler(m.page1.texmex)
+    regler(m.page2.frites)
+    regler(m.page2.desserts)
+    regler(m.page2.boissons)
+    regler(m.page2.friteSupplements)
+    regler(m.page3.tailles)
+    regler(m.page3.viandes)
+    regler(m.page3.extras.items)
+    regler(m.page3.gratinage)
+    m.page2.menuKids.available = remettre
+    if (m.page2.sandwich) m.page2.sandwich.available = remettre
+    if (m.page2.sandwichPhare) m.page2.sandwichPhare.available = remettre
+
+    const { data: maj, error: errMaj } = await supabase
+      .from('menu')
+      .update({ data: m, updated_at: new Date().toISOString() })
+      .eq('id', 1)
+      .eq('updated_at', data.updated_at)
+      .select('updated_at')
+    if (errMaj || !maj || maj.length === 0) {
+      show('Conflit — le menu a changé, réessaie')
+      return
+    }
+    show(remettre ? 'Tous les articles sont remis en vente' : 'Tous les articles sont passés en rupture')
+  }
 
   async function toggleBoardSound() {
     const next = !boardSound
@@ -173,6 +218,20 @@ export default function SallePage() {
       for (const n of unavailable) if (availableNames.has(n)) unavailable.delete(n)
       setUnavailableNames(unavailable)
       setCategories(cats)
+
+      const flags: boolean[] = [
+        ...menu.page1.burgers.map((x) => x.available !== false),
+        ...menu.page1.texmex.map((x) => x.available !== false),
+        ...menu.page2.frites.map((x) => x.available !== false),
+        ...menu.page2.desserts.map((x) => x.available !== false),
+        ...menu.page2.boissons.map((x) => x.available !== false),
+        ...menu.page3.tailles.map((x) => x.available !== false),
+        ...menu.page3.viandes.map((x) => x.available !== false),
+        ...menu.page3.extras.items.map((x) => x.available !== false),
+        menu.page2.menuKids.available !== false,
+        menu.page2.sandwich?.available !== false,
+      ]
+      setToutEpuise(flags.length > 0 && flags.every((dispo) => !dispo))
 
       const meta: Record<string, ItemMeta> = {}
       for (const b of menu.page1.burgers) meta[b.name] = { ...emptyMeta, ingredients: splitDesc(b.desc), canMenu: true, viandeSup: true, price: b.price }
@@ -299,13 +358,17 @@ export default function SallePage() {
     updateLine(line.id, { removedIngredients: removed })
   }
 
-  function toggleViande(line: CartLine, name: string) {
-    const already = line.selectedViandes.includes(name)
+  function addViande(line: CartLine, name: string) {
     const max = line.viandeSup ? line.viandeCount + 3 : line.viandeCount
-    if (!already && line.selectedViandes.length >= max) return
-    const selectedViandes = already
-      ? line.selectedViandes.filter((v) => v !== name)
-      : [...line.selectedViandes, name]
+    if (line.selectedViandes.length >= max) return
+    updateLine(line.id, { selectedViandes: [...line.selectedViandes, name] })
+  }
+
+  function removeViande(line: CartLine, name: string) {
+    const i = line.selectedViandes.lastIndexOf(name)
+    if (i === -1) return
+    const selectedViandes = [...line.selectedViandes]
+    selectedViandes.splice(i, 1)
     updateLine(line.id, { selectedViandes })
   }
 
@@ -331,7 +394,11 @@ export default function SallePage() {
       removed: l.removedIngredients,
       added: [
         ...l.supplements,
-        ...l.selectedViandes,
+        ...(() => {
+          const compte = new Map<string, number>()
+          for (const v of l.selectedViandes) compte.set(v, (compte.get(v) ?? 0) + 1)
+          return [...compte.entries()].map(([v, n]) => (n > 1 ? `${v} x${n}` : v))
+        })(),
         ...(l.viandeSup && l.selectedViandes.length > l.viandeCount
           ? [`Supplement viande x${l.selectedViandes.length - l.viandeCount}`]
           : []),
@@ -344,17 +411,19 @@ export default function SallePage() {
       notes: l.notes,
     }))
 
-    const { data: code, error: codeError } = await supabase.rpc('next_order_code')
+    const { data: brut, error: codeError } = await supabase.rpc('next_order_code')
     if (codeError) {
       setSending(false)
       return
     }
+    const code = `${service}-${brut}`
 
     const { error } = await supabase.from('orders').insert({ code, status: 'attente', items })
     setSending(false)
     if (error) return
 
     setCart([])
+    setService('SP')
     setConfirmCode(code)
     setTimeout(() => setConfirmCode(null), 4000)
   }
@@ -404,6 +473,20 @@ export default function SallePage() {
 
         <div className={styles.layout}>
           <div>
+            <p className={styles.blockTitle}>Type de commande</p>
+            <div className={styles.serviceTabs}>
+              {([['SP', 'Sur place'], ['EMP', 'À emporter'], ['LIV', 'Livraison']] as const).map(([key, label]) => (
+                <button
+                  key={key}
+                  className={`${styles.serviceTab}${service === key ? ` ${styles.serviceTabActive}` : ''}`}
+                  onClick={() => setService(key)}
+                  aria-pressed={service === key}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+
             <p className={styles.blockTitle}>Ajouter au ticket</p>
             {[['Burgers', 'Sandwichs', 'Tacos', 'Menu Kids'], ['Tex-Mex', 'Accompagnements', 'Desserts', 'Boissons']].map((row, r) => (
               <div key={r} className={styles.catTabs}>
@@ -502,15 +585,28 @@ export default function SallePage() {
                               ` + ${line.selectedViandes.length - line.viandeCount} en supplément (+${(prices.viandeSup * (line.selectedViandes.length - line.viandeCount)).toFixed(2)}€)`
                             )}
                           </span>
-                          {viandeOptions.map((name) => (
-                            <button
-                              key={name}
-                              className={`${styles.chip}${line.selectedViandes.includes(name) ? ` ${styles.chipAdd}` : ''}`}
-                              onClick={() => toggleViande(line, name)}
-                            >
-                              {name}
-                            </button>
-                          ))}
+                          {viandeOptions.map((name) => {
+                            const count = line.selectedViandes.filter((v) => v === name).length
+                            return (
+                              <span key={name} className={styles.chipPair}>
+                                <button
+                                  className={`${styles.chip}${count > 0 ? ` ${styles.chipAdd}` : ''}`}
+                                  onClick={() => addViande(line, name)}
+                                >
+                                  {name}{count > 1 && ` ×${count}`}
+                                </button>
+                                {count > 0 && (
+                                  <button
+                                    className={styles.chipMinus}
+                                    onClick={() => removeViande(line, name)}
+                                    aria-label={`Retirer une portion de ${name}`}
+                                  >
+                                    −
+                                  </button>
+                                )}
+                              </span>
+                            )
+                          })}
                         </div>
                       </>
                     )}
@@ -649,13 +745,25 @@ export default function SallePage() {
         <div className={styles.tracking}>
           <div className={styles.trackingHead}>
             <p className={styles.blockTitle}>Commandes en cours</p>
-            <button
-              className={`${styles.soundBtn}${boardSound ? ` ${styles.soundBtnOn}` : ''}`}
-              onClick={toggleBoardSound}
-              aria-pressed={boardSound}
-            >
-              {boardSound ? 'Son écrans : activé' : 'Son écrans : coupé'}
-            </button>
+            <div className={styles.trackingBtns}>
+              <button
+                className={`${styles.dangerBtn}${epuiserArme ? ` ${styles.dangerBtnArmed}` : ''}${toutEpuise ? ` ${styles.dangerBtnRestore}` : ''}`}
+                onClick={basculerRupture}
+              >
+                {toutEpuise
+                  ? 'Tout remettre en vente'
+                  : epuiserArme
+                    ? 'Confirmer la rupture ?'
+                    : 'Ressources épuisées'}
+              </button>
+              <button
+                className={`${styles.soundBtn}${boardSound ? ` ${styles.soundBtnOn}` : ''}`}
+                onClick={toggleBoardSound}
+                aria-pressed={boardSound}
+              >
+                {boardSound ? 'Son écrans : activé' : 'Son écrans : coupé'}
+              </button>
+            </div>
           </div>
           {activeOrders.length === 0 && <div className={styles.cartEmpty}>Aucune commande en cours</div>}
           {activeOrders.map((order) => {

@@ -17,7 +17,7 @@ function annonce(code: string) {
   try {
     const synth = window.speechSynthesis
     if (!synth) return
-    const spelled = code.replace(/([A-Za-z])(\d+)/, '$1 $2')
+    const spelled = code.replace(/^(SP|EMP|LIV)-/i, '').replace(/([A-Za-z])(\d+)/, '$1 $2')
     const say = (voice: SpeechSynthesisVoice | undefined) => {
       const utter = new SpeechSynthesisUtterance(`Commande ${spelled}, prête`)
       utter.lang = 'fr-FR'

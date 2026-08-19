@@ -34,7 +34,7 @@ export default function SaisiePage() {
             className={styles.input}
             type="text"
             placeholder="N° de commande"
-            maxLength={8}
+            maxLength={10}
             value={code}
             onChange={(e) => setCode(e.target.value)}
             autoFocus
