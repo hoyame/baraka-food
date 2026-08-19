@@ -173,3 +173,13 @@
 
   &:active { background: rgba(255, 255, 255, 0.15); }
 }
+
+.clientInfo {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem 1rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #f0b46a;
+  letter-spacing: 0.03em;
+}

@@ -7,6 +7,7 @@ import { supabase } from '@/lib/supabase'
 import { watchTable } from '@/lib/realtime'
 import { playNewOrderChime, unlockAudio } from '@/lib/chime'
 import { sendReprint } from '@/lib/reprint'
+import { articlesDe, clientInfoDe } from '@/lib/clientInfo'
 import type { Order, OrderStatus } from '@/lib/types'
 import styles from './page.module.scss'
 
@@ -127,8 +128,19 @@ export default function CuisinePage() {
                           {new Date(order.created_at).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
                         </span>
                       </div>
+                      {(() => {
+                        const client = clientInfoDe(order)
+                        if (!client) return null
+                        return (
+                          <div className={styles.clientInfo}>
+                            <span>{client.prenom}</span>
+                            {client.tel && <span>{client.tel}</span>}
+                            {client.adresse && <span>{client.adresse}</span>}
+                          </div>
+                        )
+                      })()}
                       <div className={styles.items}>
-                        {order.items.map((item, i) => (
+                        {articlesDe(order).map((item, i) => (
                           <div key={i} className={styles.itemBlock}>
                             <div className={styles.itemLine}>{item.qty > 1 ? `${item.qty}x ` : ''}{item.name}</div>
                             {item.removed.length > 0 && (

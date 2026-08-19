@@ -49,10 +49,23 @@ function clean(s) {
   return String(s).normalize('NFD').replace(/[\u0300-\u036f]/g, '')
 }
 
+function clientInfoDe(order) {
+  const entree = (order.items || []).find((i) => i.name === '__CLIENT__')
+  if (!entree) return null
+  try {
+    const infos = JSON.parse(entree.notes || '{}')
+    if (!infos.prenom && !infos.tel && !infos.adresse) return null
+    return infos
+  } catch {
+    return null
+  }
+}
+
 function buildTicket(order) {
   const date = new Date(order.created_at)
   const heure = date.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
   const jour = date.toLocaleDateString('fr-FR')
+  const client = clientInfoDe(order)
   let t = ''
   t += ESC + '@'
   t += ESC + 'M' + '\x00'
@@ -66,8 +79,18 @@ function buildTicket(order) {
   t += clean(order.code) + '\n'
   t += GS + '!' + '\x00'
   t += line('=')
+  if (client) {
+    t += ESC + 'E' + '\x01'
+    t += GS + '!' + '\x11'
+    t += clean(client.prenom).toUpperCase() + '\n'
+    t += GS + '!' + '\x00'
+    t += ESC + 'E' + '\x00'
+    if (client.tel) t += clean(client.tel) + '\n'
+    if (client.adresse) t += clean(client.adresse) + '\n'
+    t += line('=')
+  }
   t += ESC + 'a' + '\x00'
-  for (const item of order.items || []) {
+  for (const item of (order.items || []).filter((i) => i.name !== '__CLIENT__')) {
     t += ESC + 'E' + '\x01'
     t += GS + '!' + '\x11'
     t += item.qty + ' x ' + clean(item.name) + '\n'
@@ -90,7 +113,7 @@ function buildTicket(order) {
     }
     t += line('-')
   }
-  const totalArticles = (order.items || []).reduce((n, i) => n + (i.qty || 0), 0)
+  const totalArticles = (order.items || []).filter((i) => i.name !== '__CLIENT__').reduce((n, i) => n + (i.qty || 0), 0)
   t += ESC + 'a' + '\x01'
   t += totalArticles + ' article(s)\n'
   t += ESC + 'a' + '\x00'
@@ -125,7 +148,7 @@ function qrCode(data, moduleSize = 7) {
 }
 
 function buildNumberTicket(order) {
-  const code = clean(order.code)
+  const code = clean(order.code).replace(/^(SP|EP|LV|EMP|LIV)-/i, '')
   const url = ORDERS_URL + '/' + encodeURIComponent(code)
   let t = ''
   t += ESC + '@'

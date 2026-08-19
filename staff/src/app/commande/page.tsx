@@ -6,6 +6,7 @@ import { Toast, useToast } from '@/components/Toast'
 import { supabase } from '@/lib/supabase'
 import { watchTable } from '@/lib/realtime'
 import { sendReprint } from '@/lib/reprint'
+import { articlesDe, clientInfoDe } from '@/lib/clientInfo'
 import type { MenuData, Order, OrderItem, OrderStatus } from '@/lib/types'
 import styles from './page.module.scss'
 
@@ -69,7 +70,7 @@ function prixLigne(item: OrderItem, cat: Catalogue): number {
 }
 
 function totalCommande(order: Order, cat: Catalogue): number {
-  return (order.items || []).reduce((somme, item) => somme + prixLigne(item, cat), 0)
+  return articlesDe(order).reduce((somme, item) => somme + prixLigne(item, cat), 0)
 }
 
 const statusLabel: Record<OrderStatus, string> = {
@@ -136,8 +137,19 @@ export default function CommandePage() {
                   <span>Réimprimer</span>
                 </button>
               </div>
+              {(() => {
+                const client = clientInfoDe(order)
+                if (!client) return null
+                return (
+                  <div className={styles.clientInfo}>
+                    <span>{client.prenom}</span>
+                    {client.tel && <span>{client.tel}</span>}
+                    {client.adresse && <span>{client.adresse}</span>}
+                  </div>
+                )
+              })()}
               <div className={styles.items}>
-                {order.items.map((item, i) => (
+                {articlesDe(order).map((item, i) => (
                   <span key={i} className={styles.item}>
                     <span className={styles.itemText}>
                       {item.qty > 1 ? `${item.qty}× ` : ''}{item.name}

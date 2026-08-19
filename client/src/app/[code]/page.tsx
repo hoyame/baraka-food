@@ -106,7 +106,10 @@ export default function SuiviPage({ params }: { params: Promise<{ code: string }
     let alive = true
 
     async function load() {
-      const { data } = await supabase.from('orders').select('*').eq('code', code).maybeSingle()
+      let { data } = await supabase.from('orders').select('*').eq('code', code).maybeSingle()
+      if (!data && !code.includes('-')) {
+        ;({ data } = await supabase.from('orders').select('*').like('code', `%-${code}`).maybeSingle())
+      }
       if (!alive) return
 
       if (data) {

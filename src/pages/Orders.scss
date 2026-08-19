@@ -280,3 +280,24 @@
   color: $color-muted;
   text-transform: uppercase;
 }
+
+.ord__rupture {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9em;
+  max-width: 26em;
+  text-align: center;
+
+  p {
+    font-family: $font-display;
+    font-weight: 700;
+    font-size: 1.15em;
+    line-height: 1.45;
+    color: $color-white;
+  }
+}
+
+.ord__rupture-excuse {
+  font-size: 0.9em !important;
+  color: $color-muted !important;
+}

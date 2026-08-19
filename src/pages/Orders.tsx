@@ -4,7 +4,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { supabase } from '../lib/supabase'
 import { watchTable } from '../lib/realtime'
 import type { LinkStatus } from '../lib/realtime'
-import type { Horaire } from '../lib/api'
+import type { Horaire, MenuData } from '../lib/api'
 import { useMenu } from '../hooks/useMenu'
 import { useReadyOrders } from '../hooks/useReadyOrders'
 import LinkIndicator from '../components/LinkIndicator'
@@ -92,6 +92,22 @@ function resumeHoraires(horaires: Horaire[]) {
   return { principal, jours, exceptions }
 }
 
+function toutEpuise(menu: MenuData): boolean {
+  const flags: boolean[] = [
+    ...menu.page1.burgers.map(x => x.available !== false),
+    ...menu.page1.texmex.map(x => x.available !== false),
+    ...menu.page2.frites.map(x => x.available !== false),
+    ...menu.page2.desserts.map(x => x.available !== false),
+    ...menu.page2.boissons.map(x => x.available !== false),
+    ...menu.page3.tailles.map(x => x.available !== false),
+    ...menu.page3.viandes.map(x => x.available !== false),
+    ...menu.page3.extras.items.map(x => x.available !== false),
+    menu.page2.menuKids.available !== false,
+    menu.page2.sandwich?.available !== false,
+  ]
+  return flags.length > 0 && flags.every(dispo => !dispo)
+}
+
 export default function Orders() {
   useTitle('Suivi des commandes')
   const [orders, setOrders] = useState<Order[]>([])
@@ -129,6 +145,39 @@ export default function Orders() {
 
   const horaires = menu?.infos.horaires ?? []
   const ferme = !force && horaires.length > 0 && !estOuvert(horaires, now)
+  const rupture = params.has('rupture') || (!ferme && menu !== null && toutEpuise(menu))
+
+  if (rupture) {
+    return (
+      <div className="ord ord--closed">
+        <motion.img
+          className="ord__closed-brand"
+          src={logo}
+          alt="Baraka Food"
+          initial={{ opacity: 0, y: -16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+        />
+        <motion.p
+          className="ord__closed-title"
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.15 }}
+        >
+          STOCK ÉPUISÉ
+        </motion.p>
+        <motion.div
+          className="ord__rupture"
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.3 }}
+        >
+          <p>Nos stocks sont épuisés pour aujourd'hui et la prise de commande est désormais impossible.</p>
+          <p className="ord__rupture-excuse">Désolé de la gêne occasionnée — merci de votre compréhension.</p>
+        </motion.div>
+      </div>
+    )
+  }
 
   if (ferme) {
     const { principal, jours, exceptions } = resumeHoraires(horaires)

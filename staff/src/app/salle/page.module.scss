@@ -519,3 +519,22 @@
   border-color: rgba(255, 255, 255, 0.4);
   color: #ededea;
 }
+
+.clientFields {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1.2rem;
+}
+
+.clientInput {
+  font-family: inherit;
+  font-size: 0.85rem;
+  padding: 0.7em 0.9em;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: transparent;
+  color: #ededea;
+  border-radius: 0;
+
+  &::placeholder { color: rgba(255, 255, 255, 0.4); }
+}

@@ -90,7 +90,10 @@ export default function SallePage() {
   const [confirmCode, setConfirmCode] = useState<string | null>(null)
   const [orders, setOrders] = useState<Order[]>([])
   const [boardSound, setBoardSoundState] = useState(true)
-  const [service, setService] = useState<'SP' | 'EMP' | 'LIV'>('SP')
+  const [service, setService] = useState<'SP' | 'EP' | 'LV'>('SP')
+  const [clientPrenom, setClientPrenom] = useState('')
+  const [clientTel, setClientTel] = useState('')
+  const [clientAdresse, setClientAdresse] = useState('')
   const [epuiserArme, setEpuiserArme] = useState(false)
   const [toutEpuise, setToutEpuise] = useState(false)
   const { toast, show } = useToast()
@@ -359,8 +362,7 @@ export default function SallePage() {
   }
 
   function addViande(line: CartLine, name: string) {
-    const max = line.viandeSup ? line.viandeCount + 3 : line.viandeCount
-    if (line.selectedViandes.length >= max) return
+    if (!line.viandeSup && line.selectedViandes.length >= line.viandeCount) return
     updateLine(line.id, { selectedViandes: [...line.selectedViandes, name] })
   }
 
@@ -386,9 +388,36 @@ export default function SallePage() {
       show(`Choisis la viande pour : ${incomplete.name}`)
       return
     }
+    if (service !== 'SP' && !clientPrenom.trim()) {
+      show('Prénom du client obligatoire')
+      return
+    }
+    if (service === 'LV' && !clientTel.trim()) {
+      show('Téléphone obligatoire pour une livraison')
+      return
+    }
+    if (service === 'LV' && !clientAdresse.trim()) {
+      show('Adresse obligatoire pour une livraison')
+      return
+    }
     setSending(true)
 
-    const items = cart.map((l) => ({
+    const clientInfo =
+      service === 'SP'
+        ? []
+        : [{
+            name: '__CLIENT__',
+            qty: 0,
+            removed: [],
+            added: [],
+            notes: JSON.stringify({
+              prenom: clientPrenom.trim(),
+              tel: service === 'LV' ? clientTel.trim() : '',
+              adresse: service === 'LV' ? clientAdresse.trim() : '',
+            }),
+          }]
+
+    const items = [...clientInfo, ...cart.map((l) => ({
       name: l.name,
       qty: l.qty,
       removed: l.removedIngredients,
@@ -409,7 +438,7 @@ export default function SallePage() {
         ...(l.selectedKids ? [l.selectedKids] : []),
       ],
       notes: l.notes,
-    }))
+    }))]
 
     const { data: brut, error: codeError } = await supabase.rpc('next_order_code')
     if (codeError) {
@@ -424,6 +453,9 @@ export default function SallePage() {
 
     setCart([])
     setService('SP')
+    setClientPrenom('')
+    setClientTel('')
+    setClientAdresse('')
     setConfirmCode(code)
     setTimeout(() => setConfirmCode(null), 4000)
   }
@@ -475,7 +507,7 @@ export default function SallePage() {
           <div>
             <p className={styles.blockTitle}>Type de commande</p>
             <div className={styles.serviceTabs}>
-              {([['SP', 'Sur place'], ['EMP', 'À emporter'], ['LIV', 'Livraison']] as const).map(([key, label]) => (
+              {([['SP', 'Sur place'], ['EP', 'À emporter'], ['LV', 'Livraison']] as const).map(([key, label]) => (
                 <button
                   key={key}
                   className={`${styles.serviceTab}${service === key ? ` ${styles.serviceTabActive}` : ''}`}
@@ -486,6 +518,36 @@ export default function SallePage() {
                 </button>
               ))}
             </div>
+
+            {service !== 'SP' && (
+              <div className={styles.clientFields}>
+                <input
+                  className={styles.clientInput}
+                  type="text"
+                  placeholder="Prénom du client *"
+                  value={clientPrenom}
+                  onChange={(e) => setClientPrenom(e.target.value)}
+                />
+                {service === 'LV' && (
+                  <>
+                    <input
+                      className={styles.clientInput}
+                      type="tel"
+                      placeholder="Téléphone *"
+                      value={clientTel}
+                      onChange={(e) => setClientTel(e.target.value)}
+                    />
+                    <input
+                      className={styles.clientInput}
+                      type="text"
+                      placeholder="Adresse de livraison *"
+                      value={clientAdresse}
+                      onChange={(e) => setClientAdresse(e.target.value)}
+                    />
+                  </>
+                )}
+              </div>
+            )}
 
             <p className={styles.blockTitle}>Ajouter au ticket</p>
             {[['Burgers', 'Sandwichs', 'Tacos', 'Menu Kids'], ['Tex-Mex', 'Accompagnements', 'Desserts', 'Boissons']].map((row, r) => (
