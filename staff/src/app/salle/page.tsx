@@ -122,6 +122,7 @@ export default function SallePage() {
   const [confirmCode, setConfirmCode] = useState<string | null>(null)
   const [orders, setOrders] = useState<Order[]>([])
   const [boardSound, setBoardSoundState] = useState(true)
+  const [prixTicket, setPrixTicket] = useState(false)
   const [service, setService] = useState<'SP' | 'EP' | 'LV'>('SP')
   const [clientPrenom, setClientPrenom] = useState('')
   const [clientTel, setClientTel] = useState('')
@@ -149,7 +150,15 @@ export default function SallePage() {
 
   useEffect(() => {
     setBoardSoundState(localStorage.getItem('board-son-cmd') !== '0')
+    setPrixTicket(localStorage.getItem('ticket-prix') === '1')
   }, [])
+
+  function togglePrixTicket() {
+    const next = !prixTicket
+    setPrixTicket(next)
+    localStorage.setItem('ticket-prix', next ? '1' : '0')
+    show(next ? 'Le prix sera imprimé sur le ticket client' : 'Prix retiré du ticket client')
+  }
 
   async function basculerRupture() {
     const remettre = toutEpuise
@@ -467,7 +476,7 @@ export default function SallePage() {
     setSending(true)
 
     const clientInfo =
-      service === 'SP'
+      service === 'SP' && !prixTicket
         ? []
         : [{
             name: '__CLIENT__',
@@ -475,9 +484,10 @@ export default function SallePage() {
             removed: [],
             added: [],
             notes: JSON.stringify({
-              prenom: clientPrenom.trim(),
+              prenom: service === 'SP' ? '' : clientPrenom.trim(),
               tel: service === 'LV' ? clientTel.trim() : '',
               adresse: service === 'LV' ? clientAdresse.trim() : '',
+              ...(prixTicket ? { total: total.toFixed(2) } : {}),
             }),
           }]
 
@@ -897,6 +907,13 @@ export default function SallePage() {
                 aria-pressed={boardSound}
               >
                 {boardSound ? 'Son écrans : activé' : 'Son écrans : coupé'}
+              </button>
+              <button
+                className={`${styles.soundBtn}${prixTicket ? ` ${styles.soundBtnOn}` : ''}`}
+                onClick={togglePrixTicket}
+                aria-pressed={prixTicket}
+              >
+                {prixTicket ? 'Prix sur ticket : activé' : 'Prix sur ticket : désactivé'}
               </button>
             </div>
           </div>
