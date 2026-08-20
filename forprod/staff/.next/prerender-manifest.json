@@ -1,6 +1,30 @@
 {
   "version": 4,
   "routes": {
+    "/commande": {
+      "experimentalBypassFor": [
+        {
+          "type": "header",
+          "key": "next-action"
+        },
+        {
+          "type": "header",
+          "key": "content-type",
+          "value": "multipart/form-data;.*"
+        }
+      ],
+      "initialRevalidateSeconds": false,
+      "srcRoute": "/commande",
+      "dataRoute": "/commande.rsc",
+      "allowHeader": [
+        "host",
+        "x-matched-path",
+        "x-prerender-revalidate",
+        "x-prerender-revalidate-if-generated",
+        "x-next-revalidated-tags",
+        "x-next-revalidate-tag-token"
+      ]
+    },
     "/_not-found": {
       "initialStatus": 404,
       "experimentalBypassFor": [
@@ -17,54 +41,6 @@
       "initialRevalidateSeconds": false,
       "srcRoute": "/_not-found",
       "dataRoute": "/_not-found.rsc",
-      "allowHeader": [
-        "host",
-        "x-matched-path",
-        "x-prerender-revalidate",
-        "x-prerender-revalidate-if-generated",
-        "x-next-revalidated-tags",
-        "x-next-revalidate-tag-token"
-      ]
-    },
-    "/cuisine": {
-      "experimentalBypassFor": [
-        {
-          "type": "header",
-          "key": "next-action"
-        },
-        {
-          "type": "header",
-          "key": "content-type",
-          "value": "multipart/form-data;.*"
-        }
-      ],
-      "initialRevalidateSeconds": false,
-      "srcRoute": "/cuisine",
-      "dataRoute": "/cuisine.rsc",
-      "allowHeader": [
-        "host",
-        "x-matched-path",
-        "x-prerender-revalidate",
-        "x-prerender-revalidate-if-generated",
-        "x-next-revalidated-tags",
-        "x-next-revalidate-tag-token"
-      ]
-    },
-    "/salle": {
-      "experimentalBypassFor": [
-        {
-          "type": "header",
-          "key": "next-action"
-        },
-        {
-          "type": "header",
-          "key": "content-type",
-          "value": "multipart/form-data;.*"
-        }
-      ],
-      "initialRevalidateSeconds": false,
-      "srcRoute": "/salle",
-      "dataRoute": "/salle.rsc",
       "allowHeader": [
         "host",
         "x-matched-path",
@@ -98,7 +74,7 @@
         "x-next-revalidate-tag-token"
       ]
     },
-    "/commande": {
+    "/salle": {
       "experimentalBypassFor": [
         {
           "type": "header",
@@ -111,8 +87,32 @@
         }
       ],
       "initialRevalidateSeconds": false,
-      "srcRoute": "/commande",
-      "dataRoute": "/commande.rsc",
+      "srcRoute": "/salle",
+      "dataRoute": "/salle.rsc",
+      "allowHeader": [
+        "host",
+        "x-matched-path",
+        "x-prerender-revalidate",
+        "x-prerender-revalidate-if-generated",
+        "x-next-revalidated-tags",
+        "x-next-revalidate-tag-token"
+      ]
+    },
+    "/cuisine": {
+      "experimentalBypassFor": [
+        {
+          "type": "header",
+          "key": "next-action"
+        },
+        {
+          "type": "header",
+          "key": "content-type",
+          "value": "multipart/form-data;.*"
+        }
+      ],
+      "initialRevalidateSeconds": false,
+      "srcRoute": "/cuisine",
+      "dataRoute": "/cuisine.rsc",
       "allowHeader": [
         "host",
         "x-matched-path",
@@ -126,8 +126,8 @@
   "dynamicRoutes": {},
   "notFoundRoutes": [],
   "preview": {
-    "previewModeId": "f8135484fe247a62d131bf921a917a55",
-    "previewModeSigningKey": "c422bc6fbb6ac02ec5aeaf255405f54e52387acc8638dc9ddba5817a070b4054",
-    "previewModeEncryptionKey": "edb8bb446cbf0c93e7a7bc9cf34781a8f27f7f72a7571c4b58341efb7074a80d"
+    "previewModeId": "804d3607ca684de95c9dab390ea656c5",
+    "previewModeSigningKey": "b751e0cf8f845ef86f67a2cdc5ee17e808f599fe9e5a49d75905d74dc5b1c371",
+    "previewModeEncryptionKey": "781b2dda55d76e77b88fff4ee5a40ceaff530b41532358fd19366321746807dc"
   }
 }

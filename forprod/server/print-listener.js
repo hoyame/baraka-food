@@ -22,6 +22,7 @@ const CAISSE_HOST = process.env.CAISSE_HOST || '192.168.1.81'
 const CAISSE_PORT = Number(process.env.CAISSE_PORT || 515)
 const CAISSE_QUEUE = process.env.CAISSE_QUEUE || 'TP85'
 const ORDERS_URL = (process.env.ORDERS_URL || 'https://commande.barakafood.fr').replace(/\/+$/, '')
+const REVIEW_URL = process.env.REVIEW_URL || 'https://g.page/r/Cb8Ja6Z72htXEAE/review'
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
 
@@ -56,6 +57,21 @@ function clientInfoDe(order) {
     const infos = JSON.parse(entree.notes || '{}')
     if (!infos.prenom && !infos.tel && !infos.adresse) return null
     return infos
+  } catch {
+    return null
+  }
+}
+
+function estLivraison(code) {
+  return /^(LV|LIV)-/i.test(String(code || ''))
+}
+
+function totalDe(order) {
+  const entree = (order.items || []).find((i) => i.name === '__CLIENT__')
+  if (!entree) return null
+  try {
+    const total = JSON.parse(entree.notes || '{}').total
+    return total ? String(total) : null
   } catch {
     return null
   }
@@ -116,6 +132,25 @@ function buildTicket(order) {
   const totalArticles = (order.items || []).filter((i) => i.name !== '__CLIENT__').reduce((n, i) => n + (i.qty || 0), 0)
   t += ESC + 'a' + '\x01'
   t += totalArticles + ' article(s)\n'
+  if (estLivraison(order.code)) {
+    const total = totalDe(order)
+    if (total) {
+      t += '\n'
+      t += ESC + 'E' + '\x01'
+      t += GS + '!' + '\x11'
+      t += 'TOTAL: ' + clean(total) + ' EUR\n'
+      t += GS + '!' + '\x00'
+      t += ESC + 'E' + '\x00'
+    }
+    t += line('=')
+    t += ESC + 'E' + '\x01'
+    t += 'MERCI POUR VOTRE COMMANDE !\n'
+    t += ESC + 'E' + '\x00'
+    t += 'LAISSEZ-NOUS UN AVIS SUR GOOGLE\n'
+    t += '\n'
+    t += qrCode(REVIEW_URL)
+    t += '\n'
+  }
   t += ESC + 'a' + '\x00'
   t += '\n\n\n\n'
   t += GS + 'V' + '\x41' + '\x00'
@@ -158,6 +193,15 @@ function buildNumberTicket(order) {
   t += code + '\n'
   t += GS + '!' + '\x00'
   t += '\n'
+  const total = totalDe(order)
+  if (total) {
+    t += ESC + 'E' + '\x01'
+    t += GS + '!' + '\x11'
+    t += 'TOTAL: ' + clean(total) + ' EUR\n'
+    t += GS + '!' + '\x00'
+    t += ESC + 'E' + '\x00'
+    t += '\n'
+  }
   t += ESC + 'E' + '\x01'
   t += 'SUIVEZ VOTRE COMMANDE\n'
   t += ESC + 'E' + '\x00'
@@ -253,7 +297,8 @@ function subscribe() {
       printed.add(order.code)
       log('[print] nouvelle commande', order.code)
       printOrder(order)
-      printNumberCaisse(order)
+      if (estLivraison(order.code)) log('[caisse] livraison, pas de ticket caisse', order.code)
+      else printNumberCaisse(order)
     })
     .subscribe((status) => {
       log('[print] realtime:', status)
