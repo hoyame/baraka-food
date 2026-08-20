@@ -22,8 +22,6 @@ export default function SaisiePage() {
   return (
     <main className={styles.main}>
       <div className={styles.wrap}>
-        <img className={styles.brand} src="/logo.svg" alt="Baraka Food" />
-
         <p className={styles.lead}>Entrez le numéro indiqué sur votre ticket pour suivre votre commande</p>
 
         <form className={styles.form} onSubmit={handleSubmit}>

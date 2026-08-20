@@ -72,8 +72,6 @@ export default function LivraisonPage() {
   return (
     <main className={styles.main}>
       <div className={styles.wrap}>
-        <img className={styles.brand} src="/logo.svg" alt="Baraka Food" />
-
         <p className={styles.lead}>
           Entrez le numéro de téléphone donné lors de la commande, ou votre numéro de commande, pour suivre votre livraison
         </p>
