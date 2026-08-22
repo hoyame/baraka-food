@@ -669,7 +669,7 @@ export default function Admin() {
   return (
     <div className="adm">
       <header className="adm__header">
-        <h1>ADMIN — BARAKA FOOD</h1>
+        <h1>ADMIN<span className="adm__h1-suffix"> — BARAKA FOOD</span></h1>
         <div className="adm__header-right">
           <span className="adm__status">{status || (dirty ? 'Modifications non enregistrées' : '')}</span>
           <button className="adm__save" onClick={save} disabled={!dirty || conflict}>ENREGISTRER</button>
@@ -698,7 +698,7 @@ export default function Admin() {
         <input
           className="adm__search"
           type="search"
-          placeholder="Rechercher un article..."
+          placeholder="Rechercher..."
           value={search}
           onChange={e => setSearch(e.target.value)}
         />
@@ -831,15 +831,20 @@ export default function Admin() {
                     })
                     return (
                       <span className="adm__heures">
-                        <span>de</span>
-                        <HeureInput value={vals[0]} disabled={h.ferme} onChange={v => setVal(0, v)} />
-                        <span>h à</span>
-                        <HeureInput value={vals[1]} disabled={h.ferme} onChange={v => setVal(1, v)} />
-                        <span>h, puis de</span>
-                        <HeureInput value={vals[2]} disabled={h.ferme} onChange={v => setVal(2, v)} />
-                        <span>h à</span>
-                        <HeureInput value={vals[3]} disabled={h.ferme} onChange={v => setVal(3, v)} />
-                        <span>h</span>
+                        <span className="adm__heures-plage">
+                          <span>de</span>
+                          <HeureInput value={vals[0]} disabled={h.ferme} onChange={v => setVal(0, v)} />
+                          <span>h à</span>
+                          <HeureInput value={vals[1]} disabled={h.ferme} onChange={v => setVal(1, v)} />
+                          <span>h</span>
+                        </span>
+                        <span className="adm__heures-plage">
+                          <span>puis de</span>
+                          <HeureInput value={vals[2]} disabled={h.ferme} onChange={v => setVal(2, v)} />
+                          <span>h à</span>
+                          <HeureInput value={vals[3]} disabled={h.ferme} onChange={v => setVal(3, v)} />
+                          <span>h</span>
+                        </span>
                       </span>
                     )
                   })()}

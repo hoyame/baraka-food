@@ -2,11 +2,14 @@
 
 import { useEffect, useState } from 'react'
 import StaffNav from '@/components/StaffNav'
+import OptionsMenu from '@/components/OptionsMenu'
 import { Toast, useToast } from '@/components/Toast'
 import { supabase } from '@/lib/supabase'
 import { watchTable } from '@/lib/realtime'
 import { sendReprint } from '@/lib/reprint'
 import { setBoardSound } from '@/lib/boardSound'
+import { sha256Hex } from '@/lib/sha256'
+import { clientInfoDe } from '@/lib/clientInfo'
 import type { MenuData, Order, OrderStatus } from '@/lib/types'
 import styles from './page.module.scss'
 
@@ -123,6 +126,7 @@ export default function SallePage() {
   const [orders, setOrders] = useState<Order[]>([])
   const [boardSound, setBoardSoundState] = useState(true)
   const [prixTicket, setPrixTicket] = useState(false)
+  const [ticketSurPlace, setTicketSurPlace] = useState(true)
   const [service, setService] = useState<'SP' | 'EP' | 'LV'>('SP')
   const [clientPrenom, setClientPrenom] = useState('')
   const [clientTel, setClientTel] = useState('')
@@ -136,11 +140,9 @@ export default function SallePage() {
   useEffect(() => {
     const secret = process.env.NEXT_PUBLIC_LIVREUR_SECRET
     if (!secret) return
-    async function calculer() {
+    function calculer() {
       const date = new Date().toLocaleDateString('fr-CA', { timeZone: 'Europe/Paris' })
-      const donnees = new TextEncoder().encode(`${secret}:${date}`)
-      const empreinte = await crypto.subtle.digest('SHA-256', donnees)
-      const hex = [...new Uint8Array(empreinte)].map((o) => o.toString(16).padStart(2, '0')).join('')
+      const hex = sha256Hex(`${secret}:${date}`)
       setCodeLivreur(String(parseInt(hex.slice(0, 12), 16) % 1000000).padStart(6, '0'))
     }
     calculer()
@@ -151,7 +153,15 @@ export default function SallePage() {
   useEffect(() => {
     setBoardSoundState(localStorage.getItem('board-son-cmd') !== '0')
     setPrixTicket(localStorage.getItem('ticket-prix') === '1')
+    setTicketSurPlace(localStorage.getItem('ticket-sur-place') !== '0')
   }, [])
+
+  function toggleTicketSurPlace() {
+    const next = !ticketSurPlace
+    setTicketSurPlace(next)
+    localStorage.setItem('ticket-sur-place', next ? '1' : '0')
+    show(next ? 'Ticket client imprimé pour les commandes sur place' : 'Plus de ticket client pour les commandes sur place')
+  }
 
   function togglePrixTicket() {
     const next = !prixTicket
@@ -476,7 +486,7 @@ export default function SallePage() {
     setSending(true)
 
     const clientInfo =
-      service === 'SP' && !prixTicket
+      service === 'SP' && !prixTicket && !clientPrenom.trim() && ticketSurPlace
         ? []
         : [{
             name: '__CLIENT__',
@@ -484,10 +494,11 @@ export default function SallePage() {
             removed: [],
             added: [],
             notes: JSON.stringify({
-              prenom: service === 'SP' ? '' : clientPrenom.trim(),
+              prenom: clientPrenom.trim(),
               tel: service === 'LV' ? clientTel.trim() : '',
               adresse: service === 'LV' ? clientAdresse.trim() : '',
               ...(prixTicket ? { total: total.toFixed(2) } : {}),
+              ...(service === 'SP' && !ticketSurPlace ? { sansTicket: true } : {}),
             }),
           }]
 
@@ -578,7 +589,46 @@ export default function SallePage() {
             </svg>
             <span>{showTotal ? `${total.toFixed(2)}€` : 'Total'}</span>
           </button>
+          <OptionsMenu>
+            {codeLivreur !== '' && (
+              <span className={styles.codeLivreur} title="Code d'accès de l'espace livreur, valable aujourd'hui">
+                Code livreur du jour : <b>{codeLivreur}</b>
+              </span>
+            )}
+            <button
+              className={`${styles.dangerBtn}${epuiserArme ? ` ${styles.dangerBtnArmed}` : ''}${toutEpuise ? ` ${styles.dangerBtnRestore}` : ''}`}
+              onClick={basculerRupture}
+            >
+              {toutEpuise
+                ? 'Tout remettre en vente'
+                : epuiserArme
+                  ? 'Confirmer la rupture ?'
+                  : 'Ressources épuisées'}
+            </button>
+            <button
+              className={`${styles.soundBtn}${boardSound ? ` ${styles.soundBtnOn}` : ''}`}
+              onClick={toggleBoardSound}
+              aria-pressed={boardSound}
+            >
+              {boardSound ? 'Son écrans : activé' : 'Son écrans : coupé'}
+            </button>
+            <button
+              className={`${styles.soundBtn}${prixTicket ? ` ${styles.soundBtnOn}` : ''}`}
+              onClick={togglePrixTicket}
+              aria-pressed={prixTicket}
+            >
+              {prixTicket ? 'Prix sur ticket : activé' : 'Prix sur ticket : désactivé'}
+            </button>
+            <button
+              className={`${styles.soundBtn}${ticketSurPlace ? ` ${styles.soundBtnOn}` : ''}`}
+              onClick={toggleTicketSurPlace}
+              aria-pressed={ticketSurPlace}
+            >
+              {ticketSurPlace ? 'Ticket sur place : imprimé' : 'Ticket sur place : non imprimé'}
+            </button>
+          </OptionsMenu>
         </div>
+
 
         <div className={styles.layout}>
           <div>
@@ -595,6 +645,18 @@ export default function SallePage() {
                 </button>
               ))}
             </div>
+
+            {service === 'SP' && (
+              <div className={styles.clientFields}>
+                <input
+                  className={styles.clientInput}
+                  type="text"
+                  placeholder="Prénom du client (facultatif)"
+                  value={clientPrenom}
+                  onChange={(e) => setClientPrenom(e.target.value)}
+                />
+              </div>
+            )}
 
             {service !== 'SP' && (
               <div className={styles.clientFields}>
@@ -873,7 +935,7 @@ export default function SallePage() {
             <button className={styles.sendBtn} disabled={cart.length === 0 || sending} onClick={sendOrder}>
               Envoyer en cuisine
             </button>
-            {confirmCode && (
+            {confirmCode !== null && (
               <div className={styles.confirm}>
                 <span>Commande envoyée</span>
                 <span className={styles.confirmCode}>{confirmCode}</span>
@@ -885,37 +947,6 @@ export default function SallePage() {
         <div className={styles.tracking}>
           <div className={styles.trackingHead}>
             <p className={styles.blockTitle}>Commandes en cours</p>
-            <div className={styles.trackingBtns}>
-              {codeLivreur && (
-                <span className={styles.codeLivreur} title="Code d'accès de l'espace livreur, valable aujourd'hui">
-                  Code livreur du jour : <b>{codeLivreur}</b>
-                </span>
-              )}
-              <button
-                className={`${styles.dangerBtn}${epuiserArme ? ` ${styles.dangerBtnArmed}` : ''}${toutEpuise ? ` ${styles.dangerBtnRestore}` : ''}`}
-                onClick={basculerRupture}
-              >
-                {toutEpuise
-                  ? 'Tout remettre en vente'
-                  : epuiserArme
-                    ? 'Confirmer la rupture ?'
-                    : 'Ressources épuisées'}
-              </button>
-              <button
-                className={`${styles.soundBtn}${boardSound ? ` ${styles.soundBtnOn}` : ''}`}
-                onClick={toggleBoardSound}
-                aria-pressed={boardSound}
-              >
-                {boardSound ? 'Son écrans : activé' : 'Son écrans : coupé'}
-              </button>
-              <button
-                className={`${styles.soundBtn}${prixTicket ? ` ${styles.soundBtnOn}` : ''}`}
-                onClick={togglePrixTicket}
-                aria-pressed={prixTicket}
-              >
-                {prixTicket ? 'Prix sur ticket : activé' : 'Prix sur ticket : désactivé'}
-              </button>
-            </div>
           </div>
           {activeOrders.length === 0 && <div className={styles.cartEmpty}>Aucune commande en cours</div>}
           {activeOrders.map((order) => {
@@ -929,6 +960,9 @@ export default function SallePage() {
                     <path d="M6 9V3h12v6M6 18h12v3H6zM4 9h16a2 2 0 0 1 2 2v5h-4M2 16h4v-5a2 2 0 0 0-2-2" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round" />
                   </svg>
                 </button>
+                {Boolean(clientInfoDe(order)?.prenom) && (
+                  <span className={styles.trackNom}>{clientInfoDe(order)?.prenom}</span>
+                )}
                 <span className={styles.trackStatus}>
                   {estLivraison && order.status === 'disponible'
                     ? 'En livraison'

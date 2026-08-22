@@ -439,12 +439,19 @@
 
 .adm__heures {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 0.45em;
+  gap: 0.45em 0.9em;
   font-size: 0.8em;
   color: $color-muted;
 
   span { white-space: nowrap; }
+}
+
+.adm__heures-plage {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45em;
 }
 
 .adm__input--heure {
@@ -463,9 +470,9 @@
 
 .adm__search {
   font-family: inherit;
-  font-size: 0.85rem;
+  font-size: 1.1em;
   padding: 0.7em 0.9em;
-  margin-bottom: 1rem;
+  margin-bottom: 1.3em;
   border: 1px solid rgba(255, 255, 255, 0.25);
   background: transparent;
   color: $color-white;
@@ -480,20 +487,20 @@
 
 
 .adm__result-title {
-  font-size: 0.8rem;
+  font-size: 1.04em;
   font-weight: 700;
   letter-spacing: 0.06em;
   color: rgba(255, 255, 255, 0.55);
   text-transform: uppercase;
-  margin-bottom: 1rem;
+  margin-bottom: 1.3em;
 }
 
 .adm__goto {
   font-family: inherit;
-  font-size: 0.62rem;
+  font-size: 0.81em;
   font-weight: 700;
   letter-spacing: 0.06em;
-  margin-left: 1rem;
+  margin-left: 1.3em;
   padding: 0.45em 0.9em;
   border: 1px solid rgba(255, 255, 255, 0.25);
   background: transparent;
@@ -502,23 +509,13 @@
   vertical-align: middle;
 }
 
-@media (max-width: 820px) {
-  
-  
-  .adm__search {
-    flex-basis: 100%;
-    margin-bottom: 0.5rem;
-  }
-
-  
-  }
 
 
 .adm__toolbar {
   display: flex;
   align-items: center;
-  gap: 1rem;
-  padding: 1.1rem 2rem 0;
+  gap: 1.3em;
+  padding: 1.43em 2.6em 0;
 
   .adm__search {
     flex: 1;
@@ -530,7 +527,7 @@
 .adm__back {
   font-family: inherit;
   font-weight: 700;
-  font-size: 0.8rem;
+  font-size: 1.04em;
   letter-spacing: 0.04em;
   padding: 0.6em 1.1em;
   border: 1px solid rgba(255, 255, 255, 0.25);
@@ -545,16 +542,17 @@
 .adm__hub {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 0.9rem;
+  gap: 1.17em;
+  width: 100%;
   max-width: 580px;
   margin: 0 auto;
-  padding: 3rem 0;
+  padding: 3.9em 0;
 }
 
 .adm__hub--dense {
   max-width: 860px;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  padding: 1.5rem 0 3rem;
+  padding: 1.95em 0 3.9em;
 }
 
 .adm__tile {
@@ -563,9 +561,9 @@
   flex-direction: row;
   justify-content: flex-start;
   align-items: center;
-  gap: 1.1rem;
+  gap: 1.43em;
   min-height: 78px;
-  padding: 1rem 3.4rem 1rem 1.2rem;
+  padding: 1.3em 4.42em 1.3em 1.56em;
   border: 1px solid rgba(255, 255, 255, 0.18);
   background: transparent;
   color: $color-white;
@@ -599,22 +597,22 @@
 .adm__tile-label {
   font-family: $font-display;
   font-weight: 900;
-  font-size: 1.05rem;
+  font-size: 1.37em;
   line-height: 1.05;
   letter-spacing: 0.01em;
   text-transform: uppercase;
 }
 
 .adm__tile--big .adm__tile-label {
-  font-size: 1.3rem;
+  font-size: 1.69em;
 }
 
 .adm__tile-count {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  right: 1rem;
-  font-size: 0.7rem;
+  right: 1.3em;
+  font-size: 0.91em;
   font-weight: 700;
   padding: 0.2em 0.6em;
   background: rgba(255, 255, 255, 0.12);
@@ -632,15 +630,213 @@
 }
 
 @media (max-width: 600px) {
+  .adm__header {
+    padding: 0.7em 0.9em;
+    padding-top: calc(0.7em + env(safe-area-inset-top));
+    gap: 0.6em;
+
+    h1 { font-size: 0.8em; }
+  }
+
+  .adm__h1-suffix { display: none; }
+
+  .adm__status {
+    font-size: 0.62em;
+    line-height: 1.2;
+    max-width: 9em;
+  }
+
+  .adm__save {
+    font-size: 0.7em;
+    padding: 0.9em 1.1em;
+  }
+
+  .adm__conflict {
+    flex-direction: column;
+    align-items: stretch;
+    margin: 0.8em 0.9em 0;
+    gap: 0.8em;
+
+    button { padding: 0.9em; }
+  }
+
+  .adm__toolbar {
+    padding: 1em 0.9em 0;
+    gap: 0.78em;
+
+    .adm__search { max-width: none; }
+  }
+
+  .adm__search {
+    font-size: 16px;
+    padding: 0.75em 0.9em;
+    margin-bottom: 0;
+    min-height: 48px;
+  }
+
+  .adm__back {
+    font-size: 1.01em;
+    padding: 0 1em;
+    min-height: 48px;
+    white-space: nowrap;
+  }
+
+  .adm__body {
+    padding: 1em 0.9em 6em;
+    padding-bottom: calc(6em + env(safe-area-inset-bottom));
+    gap: 1.4em;
+  }
+
   .adm__hub {
-    padding: 1.5rem 0;
+    padding: 1.3em 0 2.6em;
+    gap: 0.91em;
   }
 
   .adm__hub--dense {
     grid-template-columns: 1fr;
+    padding: 0.65em 0 2.6em;
   }
 
-  .adm__toolbar {
-    padding: 1rem 1.2rem 0;
+  .adm__tile {
+    min-height: 64px;
+    padding: 1.17em 4.16em 1.17em 1.3em;
+    gap: 1.17em;
+  }
+
+  .adm__tile--big { min-height: 84px; }
+
+  .adm__tile-label { font-size: 1.23em; }
+  .adm__tile--big .adm__tile-label { font-size: 1.49em; }
+
+  .adm__section h2 {
+    font-size: 0.95em;
+    gap: 0.5em;
+  }
+
+  .adm__goto {
+    margin-left: auto;
+    padding: 0.6em 0.9em;
+  }
+
+  .adm__row {
+    padding: 0.75em;
+    gap: 0.6em;
+  }
+
+  .adm__fields {
+    min-width: 0;
+    flex-basis: 12em;
+  }
+
+  .adm__fields--inline {
+    flex-wrap: wrap;
+    row-gap: 0.6em;
+  }
+
+  .adm__input,
+  .adm__input--label,
+  .adm__input--desc,
+  .adm__ingredient-input,
+  .adm__ingredient-chip,
+  .adm__textarea {
+    font-size: 16px;
+  }
+
+  .adm__input {
+    padding: 0.7em 0.75em;
+    min-height: 44px;
+  }
+
+  .adm__input--price {
+    width: 5em;
+    min-height: 48px;
+  }
+
+  .adm__input--size {
+    width: 3.2em;
+    min-height: 48px;
+  }
+
+  .adm__toggle {
+    flex: 1 1 auto;
+    width: auto;
+    min-height: 48px;
+    padding: 0 0.8em;
+    margin-left: 0;
+  }
+
+  .adm__delete {
+    width: 3em;
+    height: 48px;
+  }
+
+  .adm__move {
+    flex-direction: column;
+    gap: 4px;
+
+    button {
+      width: 2.6em;
+      height: 2.2em;
+      font-size: 0.8em;
+    }
+  }
+
+  .adm__thumb {
+    width: 4em;
+    height: 4em;
+  }
+
+  .adm__ingredient-chip {
+    padding: 0.45em 0.45em 0.45em 0.8em;
+
+    button {
+      font-size: 1.3em;
+      padding: 0.1em 0.4em;
+    }
+  }
+
+  .adm__ingredient-input {
+    min-height: 44px;
+    min-width: 9em;
+  }
+
+  .adm__add {
+    width: 100%;
+    min-height: 52px;
+    font-size: 0.78em;
+  }
+
+  .adm__heures {
+    row-gap: 0.5em;
+    font-size: 0.78em;
+    width: 100%;
+  }
+
+  .adm__heures-plage { flex-basis: 100%; }
+
+  .adm__inline-label {
+    white-space: normal;
+    line-height: 1.3;
+  }
+
+  .adm__fields--inline > .adm__input:not(.adm__input--price):not(.adm__input--size):not(.adm__input--heure) {
+    flex: 1 1 8em;
+    width: auto;
+    min-width: 0;
+  }
+
+  .adm__inline-label--day {
+    min-width: 0;
+    flex-basis: 100%;
+    font-size: 0.8em;
+    font-weight: 700;
+    color: $color-white;
+  }
+
+  .adm__inline-label { font-size: 0.75em; }
+
+  .adm__input--heure {
+    width: 3.4em;
+    min-height: 44px;
   }
 }

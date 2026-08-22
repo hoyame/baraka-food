@@ -282,7 +282,6 @@
 .trackCard {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   gap: 0.8rem;
   background: $color-bg-section;
   border-radius: 0;
@@ -310,7 +309,21 @@
   color: $color-price-text;
 }
 
+.trackNom {
+  font-family: $font-display;
+  font-weight: 800;
+  font-size: 0.55em;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.trackCardAlert .trackNom {
+  color: $color-price-text;
+}
+
 .trackStatus {
+  margin-left: auto;
   font-size: 0.591em;
   font-weight: 700;
   letter-spacing: 0.06em;
@@ -331,7 +344,9 @@
 
 .topBar {
   display: flex;
+  align-items: stretch;
   justify-content: flex-end;
+  gap: 0.6rem;
   margin-bottom: 1rem;
 }
 
@@ -496,6 +511,7 @@
   align-items: center;
   gap: 0.6rem;
 }
+
 
 .dangerBtn {
   font-family: inherit;

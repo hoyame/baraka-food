@@ -13,6 +13,8 @@ export function watchTable(
   let alive = true
   let channel: ReturnType<typeof supabase.channel> | null = null
   let retry: ReturnType<typeof setTimeout> | null = null
+  let generation = 0
+  let retryDelay = 3000
 
   const open = () => {
     if (!alive) return
@@ -20,6 +22,7 @@ export function watchTable(
       clearTimeout(retry)
       retry = null
     }
+    const gen = ++generation
     if (channel) {
       supabase.removeChannel(channel)
       channel = null
@@ -27,14 +30,16 @@ export function watchTable(
     channel = supabase
       .channel(`${name}-${Date.now()}`)
       .on('postgres_changes', { event: '*', schema: 'public', table }, onChange)
-      .subscribe(status => {
-        if (!alive) return
+      .subscribe((status) => {
+        if (!alive || gen !== generation) return
         if (status === 'SUBSCRIBED') {
+          retryDelay = 3000
           report('live')
           onChange()
         } else if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT' || status === 'CLOSED') {
           report('reconnecting')
-          retry = setTimeout(open, 3000)
+          retry = setTimeout(open, retryDelay)
+          retryDelay = Math.min(retryDelay * 2, 60000)
         }
       })
   }

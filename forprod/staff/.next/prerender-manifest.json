@@ -1,7 +1,7 @@
 {
   "version": 4,
   "routes": {
-    "/commande": {
+    "/salle": {
       "experimentalBypassFor": [
         {
           "type": "header",
@@ -14,8 +14,8 @@
         }
       ],
       "initialRevalidateSeconds": false,
-      "srcRoute": "/commande",
-      "dataRoute": "/commande.rsc",
+      "srcRoute": "/salle",
+      "dataRoute": "/salle.rsc",
       "allowHeader": [
         "host",
         "x-matched-path",
@@ -74,7 +74,7 @@
         "x-next-revalidate-tag-token"
       ]
     },
-    "/salle": {
+    "/commande": {
       "experimentalBypassFor": [
         {
           "type": "header",
@@ -87,8 +87,8 @@
         }
       ],
       "initialRevalidateSeconds": false,
-      "srcRoute": "/salle",
-      "dataRoute": "/salle.rsc",
+      "srcRoute": "/commande",
+      "dataRoute": "/commande.rsc",
       "allowHeader": [
         "host",
         "x-matched-path",
@@ -126,8 +126,8 @@
   "dynamicRoutes": {},
   "notFoundRoutes": [],
   "preview": {
-    "previewModeId": "804d3607ca684de95c9dab390ea656c5",
-    "previewModeSigningKey": "b751e0cf8f845ef86f67a2cdc5ee17e808f599fe9e5a49d75905d74dc5b1c371",
-    "previewModeEncryptionKey": "781b2dda55d76e77b88fff4ee5a40ceaff530b41532358fd19366321746807dc"
+    "previewModeId": "e0b014dbc31fd0c353ec050f3f31b735",
+    "previewModeSigningKey": "83ad7fbc19e295cf73fadbdc7a1e21387b53c735250e7dbe91aac1a7396899aa",
+    "previewModeEncryptionKey": "98f43192cdf933ff8b11174b18a1ff1317196639624c622f3414db6cb5256b97"
   }
 }

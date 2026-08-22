@@ -1,0 +1,70 @@
+@use '../styles/variables' as *;
+
+.wrap {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+}
+
+.btn {
+  display: flex;
+  align-items: center;
+  gap: 0.55em;
+  font-family: $font-display;
+  font-weight: 900;
+  font-size: 0.748em;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: $color-muted;
+  background: transparent;
+  border: 1px solid $color-bg-section;
+  padding: 0.6em 1em;
+  border-radius: 0;
+  cursor: pointer;
+  height: 100%;
+  line-height: 1.35;
+  transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+
+  &:hover { color: $color-white; border-color: $color-muted; }
+  &:focus-visible { outline: 2px solid $color-white; outline-offset: 2px; }
+
+  svg { transition: transform 0.2s ease; }
+}
+
+.btnOn {
+  background: $color-white;
+  border-color: $color-white;
+  color: $color-price-text;
+
+  &:hover { color: $color-price-text; }
+
+  svg { transform: rotate(180deg); }
+}
+
+.panneau {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  right: 0;
+  z-index: 30;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.6rem;
+  width: min(34rem, calc(100vw - 3rem));
+  padding: 1rem;
+  background: $color-bg-section;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+
+  > * {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    min-height: 3em;
+    margin: 0;
+    width: 100%;
+  }
+
+  @media (max-width: 560px) {
+    grid-template-columns: 1fr;
+  }
+}

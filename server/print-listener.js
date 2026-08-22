@@ -66,6 +66,16 @@ function estLivraison(code) {
   return /^(LV|LIV)-/i.test(String(code || ''))
 }
 
+function sansTicketCaisse(order) {
+  const entree = (order.items || []).find((i) => i.name === '__CLIENT__')
+  if (!entree) return false
+  try {
+    return JSON.parse(entree.notes || '{}').sansTicket === true
+  } catch {
+    return false
+  }
+}
+
 function totalDe(order) {
   const entree = (order.items || []).find((i) => i.name === '__CLIENT__')
   if (!entree) return null
@@ -192,6 +202,14 @@ function buildNumberTicket(order) {
   t += GS + '!' + '\x55'
   t += code + '\n'
   t += GS + '!' + '\x00'
+  const client = clientInfoDe(order)
+  if (client && client.prenom) {
+    t += ESC + 'E' + '\x01'
+    t += GS + '!' + '\x11'
+    t += clean(client.prenom).toUpperCase() + '\n'
+    t += GS + '!' + '\x00'
+    t += ESC + 'E' + '\x00'
+  }
   t += '\n'
   const total = totalDe(order)
   if (total) {
@@ -287,7 +305,11 @@ const printed = new Set()
 let channel = null
 let resubscribeTimer = null
 
+let generation = 0
+let resubscribeDelay = 5000
+
 function subscribe() {
+  const gen = ++generation
   if (channel) supabase.removeChannel(channel)
   channel = supabase
     .channel('orders-print-' + Date.now())
@@ -298,14 +320,18 @@ function subscribe() {
       log('[print] nouvelle commande', order.code)
       printOrder(order)
       if (estLivraison(order.code)) log('[caisse] livraison, pas de ticket caisse', order.code)
+      else if (sansTicketCaisse(order)) log('[caisse] ticket client desactive en salle', order.code)
       else printNumberCaisse(order)
     })
     .subscribe((status) => {
+      if (gen !== generation) return
       log('[print] realtime:', status)
+      if (status === 'SUBSCRIBED') resubscribeDelay = 5000
       if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT' || status === 'CLOSED') {
-        logErr('[print] connexion temps reel perdue, nouvelle tentative dans 5s')
+        logErr('[print] connexion temps reel perdue, nouvelle tentative dans ' + resubscribeDelay / 1000 + 's')
         clearTimeout(resubscribeTimer)
-        resubscribeTimer = setTimeout(subscribe, 5000)
+        resubscribeTimer = setTimeout(subscribe, resubscribeDelay)
+        resubscribeDelay = Math.min(resubscribeDelay * 2, 60000)
       }
     })
 }
@@ -313,7 +339,11 @@ function subscribe() {
 let reprintChannel = null
 let reprintTimer = null
 
+let reprintGeneration = 0
+let reprintDelay = 5000
+
 function subscribeReprint() {
+  const gen = ++reprintGeneration
   if (reprintChannel) supabase.removeChannel(reprintChannel)
   reprintChannel = supabase
     .channel('reprint')
@@ -324,10 +354,13 @@ function subscribeReprint() {
       printOrder(order)
     })
     .subscribe((status) => {
+      if (gen !== reprintGeneration) return
       log('[print] canal reimpression:', status)
+      if (status === 'SUBSCRIBED') reprintDelay = 5000
       if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT' || status === 'CLOSED') {
         clearTimeout(reprintTimer)
-        reprintTimer = setTimeout(subscribeReprint, 5000)
+        reprintTimer = setTimeout(subscribeReprint, reprintDelay)
+        reprintDelay = Math.min(reprintDelay * 2, 60000)
       }
     })
 }
