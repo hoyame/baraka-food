@@ -1,12 +1,122 @@
 $color-bg: #0d0d0d;
 $color-bg-section: #161616;
+$color-bg-panel: #101010;
 $color-white: #ededea;
 $color-price-text: #0d0d0d;
 $color-muted: #777777;
 $color-dim: #444444;
+
+$color-accent: #f0b46a;
+$color-danger: #ff5c77;
+$color-valide: #7fc97f;
+$color-attention: #ffee00;
+
+$line-soft: 1px solid rgba(255, 255, 255, 0.08);
+$line: 1px solid rgba(255, 255, 255, 0.18);
+$line-strong: 1px solid rgba(255, 255, 255, 0.3);
 
 $font-display: var(--font-poppins), sans-serif;
 $font-body: var(--font-inter), sans-serif;
 
 $radius-sm: 0;
 $transition: 0.2s ease;
+
+@mixin etiquette($couleur: $color-muted) {
+  font-family: $font-display;
+  font-weight: 700;
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: $couleur;
+}
+
+@mixin carte($accent: transparent) {
+  background: $color-bg-section;
+  border-radius: $radius-sm;
+  border-left: 3px solid $accent;
+}
+
+@mixin bouton-icone {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5em;
+  font-family: $font-display;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  padding: 0.4em;
+  border: $line;
+  border-radius: $radius-sm;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+  transition: color $transition, border-color $transition, background $transition;
+
+  &:hover { color: $color-white; border-color: rgba(255, 255, 255, 0.4); }
+  &:active { background: rgba(255, 255, 255, 0.15); }
+  &:focus-visible { outline: 2px solid $color-white; outline-offset: 2px; }
+}
+
+@mixin badge-statut {
+  @include etiquette;
+  font-size: 0.62rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+@mixin telephone {
+  font-family: $font-display;
+  font-weight: 900;
+  line-height: 1.15;
+  letter-spacing: 0.06em;
+  font-variant-numeric: tabular-nums;
+  color: $color-white;
+  text-decoration: none;
+}
+
+@mixin champ-saisie($fond: $color-bg-section) {
+  font-family: $font-body;
+  font-size: 0.85rem;
+  padding: 0.7em 0.9em;
+  border: 1px solid transparent;
+  border-radius: $radius-sm;
+  background: $fond;
+  color: $color-white;
+  transition: border-color $transition, background $transition;
+
+  &::placeholder { color: $color-muted; }
+  &:focus {
+    outline: none;
+    border-color: rgba(255, 255, 255, 0.45);
+  }
+}
+
+@mixin onglet {
+  font-family: $font-display;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: $color-muted;
+  background: $color-bg-section;
+  border: none;
+  border-radius: $radius-sm;
+  cursor: pointer;
+  transition: color $transition, background $transition;
+
+  &:hover { color: $color-white; }
+  &:focus-visible { outline: 2px solid $color-white; outline-offset: 2px; }
+}
+
+@mixin onglet-actif {
+  color: $color-price-text;
+  background: $color-white;
+
+  &:hover { color: $color-price-text; }
+}
+
+@mixin etat-vide {
+  @include etiquette($color-dim);
+  font-size: 0.75rem;
+  text-align: center;
+  padding: 1.4rem 0;
+}

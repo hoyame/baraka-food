@@ -3,6 +3,50 @@
 import { useEffect, useRef, useState } from 'react'
 import styles from './OptionsMenu.module.scss'
 
+export function OptionInfo({ label, valeur }: { label: string; valeur: string }) {
+  return (
+    <div className={styles.info}>
+      <span className={styles.infoLabel}>{label}</span>
+      <span className={styles.infoValeur}>{valeur}</span>
+    </div>
+  )
+}
+
+export function OptionToggle({
+  label,
+  actif,
+  onToggle,
+}: {
+  label: string
+  actif: boolean
+  onToggle: () => void
+}) {
+  return (
+    <button className={styles.ligne} onClick={onToggle} role="switch" aria-checked={actif}>
+      <span className={styles.ligneLabel}>{label}</span>
+      <span className={`${styles.switch}${actif ? ` ${styles.switchOn}` : ''}`} aria-hidden="true">
+        <span className={styles.switchPastille} />
+      </span>
+    </button>
+  )
+}
+
+export function OptionAction({
+  label,
+  onClick,
+  ton = 'neutre',
+}: {
+  label: string
+  onClick: () => void
+  ton?: 'neutre' | 'danger' | 'valide'
+}) {
+  return (
+    <button className={`${styles.action} ${styles[`action_${ton}`]}`} onClick={onClick}>
+      {label}
+    </button>
+  )
+}
+
 export default function OptionsMenu({ children }: { children: React.ReactNode }) {
   const [ouvert, setOuvert] = useState(false)
   const bloc = useRef<HTMLDivElement>(null)

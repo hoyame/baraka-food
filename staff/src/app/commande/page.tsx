@@ -6,7 +6,7 @@ import { Toast, useToast } from '@/components/Toast'
 import { supabase } from '@/lib/supabase'
 import { watchTable } from '@/lib/realtime'
 import { sendReprint } from '@/lib/reprint'
-import { articlesDe, clientInfoDe } from '@/lib/clientInfo'
+import { articlesDe, clientInfoDe, formaterTel } from '@/lib/clientInfo'
 import type { MenuData, Order, OrderItem, OrderStatus } from '@/lib/types'
 import styles from './page.module.scss'
 
@@ -120,7 +120,7 @@ export default function CommandePage() {
         <div className={styles.list}>
           {orders.length === 0 && <div className={styles.empty}>Aucune commande</div>}
           {orders.map((order) => (
-            <div key={order.code} className={styles.card}>
+            <div key={order.code} className={`${styles.card}${/^(LV|LIV)-/i.test(order.code) ? ` ${styles.cardLV}` : ''}`}>
               <div className={styles.cardHead}>
                 <span className={styles.code}>{order.code}</span>
                 <span className={styles.status}>
@@ -145,10 +145,16 @@ export default function CommandePage() {
                 const client = clientInfoDe(order)
                 if (!client) return null
                 return (
-                  <div className={styles.clientInfo}>
-                    <span>{client.prenom}</span>
-                    {client.tel && <span>{client.tel}</span>}
-                    {client.adresse && <span>{client.adresse}</span>}
+                  <div className={styles.client}>
+                    <div className={styles.clientInfo}>
+                      {Boolean(client.prenom) && <span>{client.prenom}</span>}
+                      {Boolean(client.adresse) && <span>{client.adresse}</span>}
+                    </div>
+                    {Boolean(client.tel) && (
+                      <a className={styles.clientTel} href={`tel:${client.tel.replace(/\s/g, '')}`}>
+                        {formaterTel(client.tel)}
+                      </a>
+                    )}
                   </div>
                 )
               })()}

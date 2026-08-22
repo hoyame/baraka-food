@@ -42,7 +42,7 @@
 }
 
 .card {
-  background: $color-bg-section;
+  @include carte;
   padding: 0.9rem 1.1rem;
   display: flex;
   flex-direction: column;
@@ -62,12 +62,13 @@
   color: $color-white;
 }
 
+.cardLV {
+  border-left-color: $color-accent;
+}
+
 .status {
-  font-size: 0.68rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  color: $color-muted;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  @include badge-statut;
+  border: $line;
   padding: 0.25em 0.7em;
 }
 
@@ -78,20 +79,9 @@
 }
 
 .reprintBtn {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5em;
-  font-family: inherit;
-  font-weight: 700;
+  @include bouton-icone;
   font-size: 0.7rem;
-  letter-spacing: 0.06em;
   padding: 0.5em 0.9em;
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  background: transparent;
-  color: rgba(255, 255, 255, 0.75);
-  cursor: pointer;
-
-  &:active { background: rgba(255, 255, 255, 0.15); }
 }
 
 .items {
@@ -135,12 +125,24 @@
   font-variant-numeric: tabular-nums;
 }
 
+.client {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
 .clientInfo {
   display: flex;
   flex-wrap: wrap;
   gap: 0.3rem 1rem;
   font-size: 0.78rem;
   font-weight: 700;
-  color: #f0b46a;
+  color: $color-accent;
   letter-spacing: 0.03em;
+}
+
+.clientTel {
+  @include telephone;
+  align-self: flex-start;
+  font-size: 1.35rem;
 }

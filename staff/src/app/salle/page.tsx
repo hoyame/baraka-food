@@ -2,14 +2,14 @@
 
 import { useEffect, useState } from 'react'
 import StaffNav from '@/components/StaffNav'
-import OptionsMenu from '@/components/OptionsMenu'
+import OptionsMenu, { OptionAction, OptionInfo, OptionToggle } from '@/components/OptionsMenu'
 import { Toast, useToast } from '@/components/Toast'
 import { supabase } from '@/lib/supabase'
 import { watchTable } from '@/lib/realtime'
 import { sendReprint } from '@/lib/reprint'
 import { setBoardSound } from '@/lib/boardSound'
 import { sha256Hex } from '@/lib/sha256'
-import { clientInfoDe } from '@/lib/clientInfo'
+import { clientInfoDe, formaterTel } from '@/lib/clientInfo'
 import type { MenuData, Order, OrderStatus } from '@/lib/types'
 import styles from './page.module.scss'
 
@@ -105,6 +105,18 @@ function memoriserClient(tel: string, prenom: string, adresse: string) {
   } catch {}
 }
 
+const DELAI_PREPARATION = 15
+const DELAI_PRET = 15 * 60
+const DELAI_PRET_GROSSE = 30 * 60
+const SEUIL_GROSSE_COMMANDE = 5
+
+function delaiPret(order: Order): number {
+  const articles = (order.items || [])
+    .filter((i) => i.name !== '__CLIENT__')
+    .reduce((n, i) => n + (i.qty || 1), 0)
+  return articles >= SEUIL_GROSSE_COMMANDE ? DELAI_PRET_GROSSE : DELAI_PRET
+}
+
 let lineId = 0
 
 export default function SallePage() {
@@ -127,6 +139,7 @@ export default function SallePage() {
   const [boardSound, setBoardSoundState] = useState(true)
   const [prixTicket, setPrixTicket] = useState(false)
   const [ticketSurPlace, setTicketSurPlace] = useState(true)
+  const [autoDelais, setAutoDelais] = useState(true)
   const [service, setService] = useState<'SP' | 'EP' | 'LV'>('SP')
   const [clientPrenom, setClientPrenom] = useState('')
   const [clientTel, setClientTel] = useState('')
@@ -154,7 +167,15 @@ export default function SallePage() {
     setBoardSoundState(localStorage.getItem('board-son-cmd') !== '0')
     setPrixTicket(localStorage.getItem('ticket-prix') === '1')
     setTicketSurPlace(localStorage.getItem('ticket-sur-place') !== '0')
+    setAutoDelais(localStorage.getItem('auto-delais') !== '0')
   }, [])
+
+  function toggleAutoDelais() {
+    const next = !autoDelais
+    setAutoDelais(next)
+    localStorage.setItem('auto-delais', next ? '1' : '0')
+    show(next ? 'Les délais en cuisine avancent automatiquement' : 'Les délais en cuisine sont manuels')
+  }
 
   function toggleTicketSurPlace() {
     const next = !ticketSurPlace
@@ -379,6 +400,44 @@ export default function SallePage() {
     return watchTable('orders-salle', 'orders', loadTracking)
   }, [])
 
+  useEffect(() => {
+    if (!autoDelais) return
+    let vivant = true
+
+    async function avancer() {
+      const { data } = await supabase
+        .from('orders')
+        .select('code, status, created_at, items')
+        .in('status', ['attente', 'preparation'])
+      if (!vivant || !data) return
+
+      const maintenant = Date.now()
+      for (const order of data as Order[]) {
+        const age = (maintenant - new Date(order.created_at).getTime()) / 1000
+        if (order.status === 'attente' && age >= DELAI_PREPARATION) {
+          await supabase
+            .from('orders')
+            .update({ status: 'preparation', updated_at: new Date().toISOString() })
+            .eq('code', order.code)
+            .eq('status', 'attente')
+        } else if (order.status === 'preparation' && age >= delaiPret(order)) {
+          await supabase
+            .from('orders')
+            .update({ status: 'pret_cuisine', updated_at: new Date().toISOString() })
+            .eq('code', order.code)
+            .eq('status', 'preparation')
+        }
+      }
+    }
+
+    avancer()
+    const id = setInterval(avancer, 10000)
+    return () => {
+      vivant = false
+      clearInterval(id)
+    }
+  }, [autoDelais])
+
   function addToCart(name: string) {
     const meta = itemMeta[name] || emptyMeta
     show(`Ajouté : ${name}`)
@@ -590,42 +649,16 @@ export default function SallePage() {
             <span>{showTotal ? `${total.toFixed(2)}€` : 'Total'}</span>
           </button>
           <OptionsMenu>
-            {codeLivreur !== '' && (
-              <span className={styles.codeLivreur} title="Code d'accès de l'espace livreur, valable aujourd'hui">
-                Code livreur du jour : <b>{codeLivreur}</b>
-              </span>
-            )}
-            <button
-              className={`${styles.dangerBtn}${epuiserArme ? ` ${styles.dangerBtnArmed}` : ''}${toutEpuise ? ` ${styles.dangerBtnRestore}` : ''}`}
+            {codeLivreur !== '' && <OptionInfo label="Code livreur du jour" valeur={codeLivreur} />}
+            <OptionToggle label="Son des écrans" actif={boardSound} onToggle={toggleBoardSound} />
+            <OptionToggle label="Prix sur le ticket client" actif={prixTicket} onToggle={togglePrixTicket} />
+            <OptionToggle label="Ticket client sur place" actif={ticketSurPlace} onToggle={toggleTicketSurPlace} />
+            <OptionToggle label="Estimation automatique des délais en cuisine" actif={autoDelais} onToggle={toggleAutoDelais} />
+            <OptionAction
+              ton={toutEpuise ? 'valide' : 'danger'}
+              label={toutEpuise ? 'Tout remettre en vente' : epuiserArme ? 'Confirmer la rupture ?' : 'Passer tout en rupture'}
               onClick={basculerRupture}
-            >
-              {toutEpuise
-                ? 'Tout remettre en vente'
-                : epuiserArme
-                  ? 'Confirmer la rupture ?'
-                  : 'Ressources épuisées'}
-            </button>
-            <button
-              className={`${styles.soundBtn}${boardSound ? ` ${styles.soundBtnOn}` : ''}`}
-              onClick={toggleBoardSound}
-              aria-pressed={boardSound}
-            >
-              {boardSound ? 'Son écrans : activé' : 'Son écrans : coupé'}
-            </button>
-            <button
-              className={`${styles.soundBtn}${prixTicket ? ` ${styles.soundBtnOn}` : ''}`}
-              onClick={togglePrixTicket}
-              aria-pressed={prixTicket}
-            >
-              {prixTicket ? 'Prix sur ticket : activé' : 'Prix sur ticket : désactivé'}
-            </button>
-            <button
-              className={`${styles.soundBtn}${ticketSurPlace ? ` ${styles.soundBtnOn}` : ''}`}
-              onClick={toggleTicketSurPlace}
-              aria-pressed={ticketSurPlace}
-            >
-              {ticketSurPlace ? 'Ticket sur place : imprimé' : 'Ticket sur place : non imprimé'}
-            </button>
+            />
           </OptionsMenu>
         </div>
 
@@ -719,7 +752,7 @@ export default function SallePage() {
             </div>
           </div>
 
-          <div>
+          <div className={styles.ticketCol}>
             <p className={styles.blockTitle}>Ticket en cours</p>
             <div className={styles.cart}>
               {cart.length === 0 && <div className={styles.cartEmpty}>Aucun article</div>}
@@ -952,34 +985,50 @@ export default function SallePage() {
           {activeOrders.map((order) => {
             const isAlert = order.status === 'pret_cuisine'
             const estLivraison = /^(LV|LIV)-/i.test(order.code)
+            const client = clientInfoDe(order)
             return (
-              <div key={order.code} className={`${styles.trackCard}${isAlert ? ` ${styles.trackCardAlert}` : ''}`}>
-                <span className={styles.trackCode}>{order.code}</span>
-                <button className={styles.reprintBtn} onClick={() => reprint(order)} title="Réimprimer le ticket">
-                  <svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true">
-                    <path d="M6 9V3h12v6M6 18h12v3H6zM4 9h16a2 2 0 0 1 2 2v5h-4M2 16h4v-5a2 2 0 0 0-2-2" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round" />
-                  </svg>
-                </button>
-                {Boolean(clientInfoDe(order)?.prenom) && (
-                  <span className={styles.trackNom}>{clientInfoDe(order)?.prenom}</span>
-                )}
-                <span className={styles.trackStatus}>
-                  {estLivraison && order.status === 'disponible'
-                    ? 'En livraison'
-                    : estLivraison && order.status === 'pret_cuisine'
-                      ? 'Prête — à expédier'
-                      : trackLabel[order.status]}
+              <div key={order.code} className={`${styles.trackCard}${estLivraison ? ` ${styles.trackCardLV}` : ''}${isAlert ? ` ${styles.trackCardAlert}` : ''}`}>
+                <span className={styles.trackBadge}>
+                  {estLivraison ? 'Livraison' : order.code.startsWith('EP') ? 'À emporter' : 'Sur place'}
                 </span>
-                {order.status === 'pret_cuisine' && (
-                  <button className={styles.trackBtn} onClick={() => setOrderStatus(order.code, 'disponible')}>
-                    {estLivraison ? 'Lancer la livraison' : 'Mettre au comptoir'}
-                  </button>
-                )}
-                {order.status === 'disponible' && (
-                  <button className={styles.trackBtn} onClick={() => removeOrder(order.code)}>
-                    {estLivraison ? 'Livrée' : 'Récupérée'}
-                  </button>
-                )}
+
+                <div className={styles.trackMain}>
+                  <div className={styles.trackLine}>
+                    <span className={styles.trackCode}>{order.code}</span>
+                    {Boolean(client?.prenom) && <span className={styles.trackNom}>{client?.prenom}</span>}
+                    <button className={styles.reprintBtn} onClick={() => reprint(order)} title="Réimprimer le ticket">
+                      <svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true">
+                        <path d="M6 9V3h12v6M6 18h12v3H6zM4 9h16a2 2 0 0 1 2 2v5h-4M2 16h4v-5a2 2 0 0 0-2-2" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round" />
+                      </svg>
+                    </button>
+                  </div>
+                  {Boolean(client?.tel) && (
+                    <a className={styles.trackTel} href={`tel:${(client?.tel ?? '').replace(/\s/g, '')}`}>
+                      {formaterTel(client?.tel ?? '')}
+                    </a>
+                  )}
+                  {Boolean(client?.adresse) && <span className={styles.trackAdresse}>{client?.adresse}</span>}
+                </div>
+
+                <div className={styles.trackActions}>
+                  <span className={styles.trackStatus}>
+                    {estLivraison && order.status === 'disponible'
+                      ? 'En livraison'
+                      : estLivraison && order.status === 'pret_cuisine'
+                        ? 'Prête — à expédier'
+                        : trackLabel[order.status]}
+                  </span>
+                  {order.status === 'pret_cuisine' && (
+                    <button className={styles.trackBtn} onClick={() => setOrderStatus(order.code, 'disponible')}>
+                      {estLivraison ? 'Lancer la livraison' : 'Mettre au comptoir'}
+                    </button>
+                  )}
+                  {order.status === 'disponible' && (
+                    <button className={styles.trackBtn} onClick={() => removeOrder(order.code)}>
+                      {estLivraison ? 'Livrée' : 'Récupérée'}
+                    </button>
+                  )}
+                </div>
               </div>
             )
           })}

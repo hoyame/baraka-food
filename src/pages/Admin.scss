@@ -235,7 +235,7 @@
   }
 
   &__ingredient-input {
-    background: transparent;
+    background: #1a1a1a;
     border: 1px dashed #2c2c2c;
     border-radius: 0;
     color: $color-white;
@@ -473,12 +473,14 @@
   font-size: 1.1em;
   padding: 0.7em 0.9em;
   margin-bottom: 1.3em;
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  background: transparent;
+  border: 1px solid transparent;
+  background: #1f1f1f;
   color: $color-white;
   border-radius: 0;
+  transition: border-color 0.2s ease;
 
-  &::placeholder { color: rgba(255, 255, 255, 0.4); }
+  &::placeholder { color: #777; }
+  &:focus { outline: none; border-color: rgba(255, 255, 255, 0.45); }
 }
 
 

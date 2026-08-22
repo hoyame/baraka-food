@@ -9,20 +9,12 @@
 }
 
 .link {
-  font-family: $font-display;
-  font-weight: 700;
+  @include onglet;
   font-size: 0.78rem;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: $color-muted;
-  background: $color-bg-section;
   padding: 0.6em 1.4em;
-  border-radius: $radius-sm;
-  transition: color $transition, background $transition;
 }
 
 .linkActive {
-  color: $color-price-text;
-  background: $color-white;
+  @include onglet-actif;
 }
 

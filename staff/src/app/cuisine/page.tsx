@@ -7,7 +7,7 @@ import { supabase } from '@/lib/supabase'
 import { watchTable } from '@/lib/realtime'
 import { playNewOrderChime, unlockAudio } from '@/lib/chime'
 import { sendReprint } from '@/lib/reprint'
-import { articlesDe, clientInfoDe } from '@/lib/clientInfo'
+import { articlesDe, clientInfoDe, formaterTel } from '@/lib/clientInfo'
 import type { Order, OrderStatus } from '@/lib/types'
 import styles from './page.module.scss'
 
@@ -116,7 +116,7 @@ export default function CuisinePage() {
                 <div className={styles.colList}>
                   {list.length === 0 && <div className={styles.empty}>Aucune commande</div>}
                   {list.map((order) => (
-                    <div key={order.code} className={styles.card}>
+                    <div key={order.code} className={`${styles.card}${/^(LV|LIV)-/i.test(order.code) ? ` ${styles.cardLV}` : ''}`}>
                       <div className={styles.cardHead}>
                         <span className={styles.code}>{order.code}</span>
                         <button className={styles.reprintBtn} onClick={() => reprint(order)} title="Réimprimer le ticket">
@@ -132,10 +132,16 @@ export default function CuisinePage() {
                         const client = clientInfoDe(order)
                         if (!client) return null
                         return (
-                          <div className={styles.clientInfo}>
-                            <span>{client.prenom}</span>
-                            {client.tel && <span>{client.tel}</span>}
-                            {client.adresse && <span>{client.adresse}</span>}
+                          <div className={styles.client}>
+                            <div className={styles.clientInfo}>
+                              {Boolean(client.prenom) && <span>{client.prenom}</span>}
+                              {Boolean(client.adresse) && <span>{client.adresse}</span>}
+                            </div>
+                            {Boolean(client.tel) && (
+                              <a className={styles.clientTel} href={`tel:${client.tel.replace(/\s/g, '')}`}>
+                                {formaterTel(client.tel)}
+                              </a>
+                            )}
                           </div>
                         )
                       })()}

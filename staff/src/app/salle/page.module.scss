@@ -26,6 +26,18 @@
   }
 }
 
+.ticketCol {
+  position: sticky;
+  top: 1rem;
+  max-height: calc(100vh - 2rem);
+  overflow-y: auto;
+
+  @media (max-width: 800px) {
+    position: static;
+    max-height: none;
+  }
+}
+
 .blockTitle {
   font-family: $font-display;
   font-weight: 800;
@@ -45,26 +57,19 @@
 }
 
 .catTab {
-  font-family: $font-display;
-  font-weight: 700;
+  @include onglet;
   font-size: 0.609em;
-  letter-spacing: 0.06em;
-  color: $color-muted;
-  background: $color-bg-section;
-  border: none;
-  border-radius: 0;
   padding: 0.55em 0.9em;
 }
 
 .catTabActive {
-  color: $color-price-text;
-  background: $color-white;
+  @include onglet-actif;
 }
 
 .catalog {
-  display: flex;
-  flex-direction: column;
-  gap: 0.7rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+  gap: 0.6rem;
 }
 
 .catalogItem {
@@ -102,10 +107,7 @@
 }
 
 .cartEmpty {
-  color: #333333;
-  font-size: 0.696em;
-  padding: 1rem 0;
-  text-align: center;
+  @include etat-vide;
 }
 
 .cartLine {
@@ -156,32 +158,21 @@
 }
 
 .qtyInput {
+  @include champ-saisie($color-bg);
   width: 3.2em;
   font-family: $font-display;
   font-weight: 700;
   font-size: 0.696em;
   text-align: center;
-  background: $color-bg;
-  border: none;
-  border-radius: 0;
-  color: $color-white;
   padding: 0.4em;
 }
 
 .notesInput {
+  @include champ-saisie($color-bg);
   flex: 1;
-  font-family: $font-body;
   font-weight: 500;
   font-size: 0.678em;
-  background: $color-bg;
-  border: none;
-  border-radius: 0;
-  color: $color-white;
   padding: 0.4em 0.6em;
-
-  &::placeholder {
-    color: $color-dim;
-  }
 }
 
 .chipRow {
@@ -280,12 +271,61 @@
 }
 
 .trackCard {
+  @include carte(#2e2e2e);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75em 1em;
+}
+
+.trackBadge {
+  flex-shrink: 0;
+  align-self: center;
+  font-family: $font-display;
+  font-weight: 800;
+  font-size: 0.5em;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: $color-muted;
+  width: 7em;
+}
+
+.trackCardLV {
+  border-left-color: $color-accent;
+}
+
+.trackMain {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15em;
+}
+
+.trackLine {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+}
+
+.trackTel {
+  @include telephone;
+  font-size: 1.05em;
+}
+
+.trackAdresse {
+  font-size: 0.52em;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: $color-muted;
+}
+
+.trackActions {
   display: flex;
   align-items: center;
   gap: 0.8rem;
-  background: $color-bg-section;
-  border-radius: 0;
-  padding: 0.8em 1em;
+  flex-shrink: 0;
 }
 
 .trackCardAlert {
@@ -305,8 +345,20 @@
 }
 
 .trackCardAlert .trackCode,
-.trackCardAlert .trackStatus {
+.trackCardAlert .trackStatus,
+.trackCardAlert .trackTel,
+.trackCardAlert .trackBadge,
+.trackCardAlert .trackAdresse {
   color: $color-price-text;
+}
+
+.trackCardAlert {
+  border-left-color: $color-price-text;
+}
+
+.trackCardAlert .trackBadge,
+.trackCardAlert .trackAdresse {
+  opacity: 0.65;
 }
 
 .trackNom {
@@ -323,7 +375,7 @@
 }
 
 .trackStatus {
-  margin-left: auto;
+  text-align: right;
   font-size: 0.591em;
   font-weight: 700;
   letter-spacing: 0.06em;
@@ -414,16 +466,7 @@
 }
 
 .reprintBtn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0.35em;
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  background: transparent;
-  color: rgba(255, 255, 255, 0.65);
-  cursor: pointer;
-
-  &:active { background: rgba(255, 255, 255, 0.15); }
+  @include bouton-icone;
 }
 
 .trackingHead {
@@ -431,24 +474,6 @@
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-}
-
-.soundBtn {
-  font-family: inherit;
-  font-weight: 700;
-  font-size: 0.72rem;
-  letter-spacing: 0.04em;
-  padding: 0.5em 1em;
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  background: transparent;
-  color: rgba(255, 255, 255, 0.65);
-  cursor: pointer;
-}
-
-.soundBtnOn {
-  background: #ededea;
-  border-color: #ededea;
-  color: #0d0d0d;
 }
 
 .catalogItemName {
@@ -472,21 +497,13 @@
 }
 
 .serviceTab {
-  font-family: inherit;
-  font-weight: 700;
+  @include onglet;
   font-size: 0.8rem;
-  letter-spacing: 0.04em;
-  padding: 0.75em 0.5em;
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  background: transparent;
-  color: rgba(255, 255, 255, 0.65);
-  cursor: pointer;
+  padding: 0.85em 0.5em;
 }
 
 .serviceTabActive {
-  background: #ededea;
-  border-color: #ededea;
-  color: #0d0d0d;
+  @include onglet-actif;
 }
 
 .chipPair {
@@ -495,45 +512,11 @@
 }
 
 .chipMinus {
-  font-family: inherit;
+  @include bouton-icone;
   font-weight: 900;
   font-size: 0.9em;
   padding: 0 0.6em;
-  border: 1px solid rgba(255, 255, 255, 0.25);
   border-left: none;
-  background: transparent;
-  color: rgba(255, 255, 255, 0.75);
-  cursor: pointer;
-}
-
-.trackingBtns {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-}
-
-
-.dangerBtn {
-  font-family: inherit;
-  font-weight: 700;
-  font-size: 0.72rem;
-  letter-spacing: 0.04em;
-  padding: 0.5em 1em;
-  border: 1px solid rgba(255, 23, 68, 0.6);
-  background: transparent;
-  color: #ff5c77;
-  cursor: pointer;
-}
-
-.dangerBtnArmed {
-  background: #ff1744;
-  border-color: #ff1744;
-  color: #fff;
-}
-
-.dangerBtnRestore {
-  border-color: rgba(255, 255, 255, 0.4);
-  color: #ededea;
 }
 
 .clientFields {
@@ -544,31 +527,6 @@
 }
 
 .clientInput {
-  font-family: inherit;
-  font-size: 0.85rem;
-  padding: 0.7em 0.9em;
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  background: transparent;
-  color: #ededea;
-  border-radius: 0;
-
-  &::placeholder { color: rgba(255, 255, 255, 0.4); }
+  @include champ-saisie;
 }
 
-.codeLivreur {
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  color: rgba(255, 255, 255, 0.55);
-  padding: 0.5em 1em;
-  border: 1px dashed rgba(255, 255, 255, 0.25);
-
-  b {
-    font-family: inherit;
-    font-weight: 900;
-    font-size: 1.1em;
-    color: #f0b46a;
-    letter-spacing: 0.15em;
-    margin-left: 0.3em;
-  }
-}

@@ -1,30 +1,6 @@
 {
   "version": 4,
   "routes": {
-    "/salle": {
-      "experimentalBypassFor": [
-        {
-          "type": "header",
-          "key": "next-action"
-        },
-        {
-          "type": "header",
-          "key": "content-type",
-          "value": "multipart/form-data;.*"
-        }
-      ],
-      "initialRevalidateSeconds": false,
-      "srcRoute": "/salle",
-      "dataRoute": "/salle.rsc",
-      "allowHeader": [
-        "host",
-        "x-matched-path",
-        "x-prerender-revalidate",
-        "x-prerender-revalidate-if-generated",
-        "x-next-revalidated-tags",
-        "x-next-revalidate-tag-token"
-      ]
-    },
     "/_not-found": {
       "initialStatus": 404,
       "experimentalBypassFor": [
@@ -121,13 +97,37 @@
         "x-next-revalidated-tags",
         "x-next-revalidate-tag-token"
       ]
+    },
+    "/salle": {
+      "experimentalBypassFor": [
+        {
+          "type": "header",
+          "key": "next-action"
+        },
+        {
+          "type": "header",
+          "key": "content-type",
+          "value": "multipart/form-data;.*"
+        }
+      ],
+      "initialRevalidateSeconds": false,
+      "srcRoute": "/salle",
+      "dataRoute": "/salle.rsc",
+      "allowHeader": [
+        "host",
+        "x-matched-path",
+        "x-prerender-revalidate",
+        "x-prerender-revalidate-if-generated",
+        "x-next-revalidated-tags",
+        "x-next-revalidate-tag-token"
+      ]
     }
   },
   "dynamicRoutes": {},
   "notFoundRoutes": [],
   "preview": {
-    "previewModeId": "e0b014dbc31fd0c353ec050f3f31b735",
-    "previewModeSigningKey": "83ad7fbc19e295cf73fadbdc7a1e21387b53c735250e7dbe91aac1a7396899aa",
-    "previewModeEncryptionKey": "98f43192cdf933ff8b11174b18a1ff1317196639624c622f3414db6cb5256b97"
+    "previewModeId": "8b15925b1ac5364876c657268248de64",
+    "previewModeSigningKey": "424f6c3ffefb171e4c6808f76cd1c86f0a1d9db312966ff42ad66769aad2be27",
+    "previewModeEncryptionKey": "42de32e8922ce139bf7608df9601f3eccdb1d22c95add9aa97d930014feb95cb"
   }
 }

@@ -15,22 +15,22 @@
       "static/css/4c4421506af32ab3.css",
       "static/chunks/app/layout-946237957c9b9832.js"
     ],
-    "/commande/page": [
-      "static/chunks/webpack-550a3eba2f9a9c2c.js",
-      "static/chunks/4bd1b696-c023c6e3521b1417.js",
-      "static/chunks/255-62902f04efbdd792.js",
-      "static/chunks/main-app-7e17f17fa53e51b6.js",
-      "static/css/796418a0ec976532.css",
-      "static/chunks/44530001-36b3e4f4c85f2629.js",
-      "static/chunks/322-45780a8e8f064bb0.js",
-      "static/chunks/app/commande/page-0f1d9f89f9843043.js"
-    ],
     "/page": [
       "static/chunks/webpack-550a3eba2f9a9c2c.js",
       "static/chunks/4bd1b696-c023c6e3521b1417.js",
       "static/chunks/255-62902f04efbdd792.js",
       "static/chunks/main-app-7e17f17fa53e51b6.js",
       "static/chunks/app/page-713192c19c4fde8e.js"
+    ],
+    "/commande/page": [
+      "static/chunks/webpack-550a3eba2f9a9c2c.js",
+      "static/chunks/4bd1b696-c023c6e3521b1417.js",
+      "static/chunks/255-62902f04efbdd792.js",
+      "static/chunks/main-app-7e17f17fa53e51b6.js",
+      "static/css/e52e5bb4e2ec2920.css",
+      "static/chunks/44530001-36b3e4f4c85f2629.js",
+      "static/chunks/322-45780a8e8f064bb0.js",
+      "static/chunks/app/commande/page-74b2fe00b667cee4.js"
     ],
     "/salle/layout": [
       "static/chunks/webpack-550a3eba2f9a9c2c.js",
@@ -44,10 +44,10 @@
       "static/chunks/4bd1b696-c023c6e3521b1417.js",
       "static/chunks/255-62902f04efbdd792.js",
       "static/chunks/main-app-7e17f17fa53e51b6.js",
-      "static/css/796418a0ec976532.css",
+      "static/css/e52e5bb4e2ec2920.css",
       "static/chunks/44530001-36b3e4f4c85f2629.js",
       "static/chunks/322-45780a8e8f064bb0.js",
-      "static/chunks/app/salle/page-904921825e50d902.js"
+      "static/chunks/app/salle/page-bf522ab488c0eb39.js"
     ],
     "/cuisine/layout": [
       "static/chunks/webpack-550a3eba2f9a9c2c.js",
@@ -61,10 +61,10 @@
       "static/chunks/4bd1b696-c023c6e3521b1417.js",
       "static/chunks/255-62902f04efbdd792.js",
       "static/chunks/main-app-7e17f17fa53e51b6.js",
-      "static/css/796418a0ec976532.css",
+      "static/css/e52e5bb4e2ec2920.css",
       "static/chunks/44530001-36b3e4f4c85f2629.js",
       "static/chunks/322-45780a8e8f064bb0.js",
-      "static/chunks/app/cuisine/page-acfd915ac3d962dc.js"
+      "static/chunks/app/cuisine/page-73895052aee630aa.js"
     ]
   }
 }

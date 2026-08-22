@@ -42,19 +42,20 @@
 
 .empty {
   text-align: center;
-  color: #4a4a4a;
+  @include etat-vide;
   font-size: 1rem;
-  padding: 1rem 0;
 }
 
 .card {
-  background: $color-bg-section;
-  border-radius: 0;
-  border-left: 4px solid $color-white;
+  @include carte($color-white);
   padding: 0.9rem 1rem 1rem;
   display: flex;
   flex-direction: column;
   gap: 0.7rem;
+}
+
+.cardLV {
+  border-left-color: $color-accent;
 }
 
 .cardHead {
@@ -71,7 +72,7 @@
   font-size: 3rem;
   line-height: 1;
   letter-spacing: -0.02em;
-  color: #ffee00;
+  color: $color-attention;
   text-shadow: 0 0 18px rgba(255, 238, 0, 0.4);
 }
 
@@ -118,7 +119,7 @@
 
 .itemNotes {
   font-size: 1.2rem;
-  color: #f0b46a;
+  color: $color-accent;
   font-weight: 700;
   line-height: 1.25;
 }
@@ -141,15 +142,10 @@
 }
 
 .soundBtn {
-  font-family: inherit;
-  font-weight: 700;
+  @include bouton-icone;
   font-size: 0.8rem;
   letter-spacing: 0.04em;
   padding: 0.55em 1.1em;
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  border-radius: 0;
-  background: transparent;
-  color: rgba(255, 255, 255, 0.65);
   cursor: pointer;
 }
 
@@ -160,18 +156,15 @@
 }
 
 .reprintBtn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+  @include bouton-icone;
   margin-left: auto;
   margin-right: 0.6rem;
-  padding: 0.35em;
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  background: transparent;
-  color: rgba(255, 255, 255, 0.65);
-  cursor: pointer;
+}
 
-  &:active { background: rgba(255, 255, 255, 0.15); }
+.client {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
 }
 
 .clientInfo {
@@ -180,6 +173,12 @@
   gap: 0.3rem 1rem;
   font-size: 0.78rem;
   font-weight: 700;
-  color: #f0b46a;
+  color: $color-accent;
   letter-spacing: 0.03em;
+}
+
+.clientTel {
+  @include telephone;
+  align-self: flex-start;
+  font-size: 1.35rem;
 }
